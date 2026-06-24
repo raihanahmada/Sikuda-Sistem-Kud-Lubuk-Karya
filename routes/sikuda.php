@@ -10,6 +10,19 @@ use App\Http\Controllers\AdminKeuangan\LaporanController;
 use App\Http\Controllers\AdminKeuangan\SettingController;
 use App\Http\Controllers\Auth\SikudaLoginController;
 use Illuminate\Support\Facades\Route;
+//Pemilik
+use App\Http\Controllers\Pemilik\DashboardController;
+use App\Http\Controllers\Pemilik\AnggotaController;
+use App\Http\Controllers\Pemilik\LaporanPeriodikController;
+use App\Http\Controllers\Pemilik\PengaturanController;
+use App\Http\Controllers\Pemilik\SimpananController;
+use App\Http\Controllers\Pemilik\KasController;
+// ═══════════════════════════════════════════════════════════
+//  SIKUDA — Routes (terpisah dari web.php bawaan Breeze)
+//  File ini di-load dari bootstrap/app.php (Laravel 11)
+//  atau dari RouteServiceProvider (Laravel 10 ke bawah)
+// ═══════════════════════════════════════════════════════════
+
 
 // ── Auth (publik, tidak perlu login) ────────────────────────
 Route::middleware('guest:sikuda')->group(function () {
@@ -93,10 +106,18 @@ Route::middleware(['sikuda.auth', 'sikuda.role:pemilik'])
     ->group(function () {
 
         // Dashboard
-        Route::get('/dashboard', function () {
-            return inertia('Pemilik/Dashboard');
-        })->name('dashboard');
-
+        // Route::get('/dashboard', function () {
+        //     return inertia('Pemilik/Dashboard');
+        // })->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/anggota', [AnggotaController::class, 'index'])->name('anggota');
+        Route::get('/laporan-periodik', [LaporanPeriodikController::class, 'index'])->name('laporan.periodik');
+        Route::get('/pengaturan', function () {
+            return inertia('Pemilik/Pengaturan');
+        })->name('pengaturan');
+        Route::post('/pengaturan/update', [PengaturanController::class, 'update'])->name('pengaturan.update');
+        Route::get('/simpanan', [SimpananController::class, 'index'])->name('simpanan');
+        Route::get('/kas', [KasController::class, 'index'])->name('kas');
     });
 
 // ═══════════════════════════════════════════════════════════
@@ -114,3 +135,4 @@ Route::middleware(['sikuda.auth', 'sikuda.role:admin_keuangan,pemilik'])
         // Route::get('/laporan-keuangan', [LaporanController::class, 'index'])->name('laporan-keuangan.index');
         // ─────────────────────────────────────────────────
     });
+    Route::get('/test-laporan', [App\Http\Controllers\Pemilik\LaporanPeriodikController::class, 'index']);

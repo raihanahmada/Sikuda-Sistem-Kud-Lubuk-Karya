@@ -23,6 +23,14 @@
         "vite": "^8.0.0"
     },
     "dependencies": {
+        "docx": "^9.7.1",
+        "file-saver": "^2.0.5",
+        "jspdf": "^4.2.1",
+        "jspdf-autotable": "^5.0.8",
+        "lucide-react": "^1.18.0",
+        "react-is": "^19.2.7",
+        "recharts": "^3.8.1",
+        "xlsx": "^0.18.5"
         "recharts": "^3.8.1"
     }
 }
