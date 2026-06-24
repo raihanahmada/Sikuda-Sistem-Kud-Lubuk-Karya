@@ -11,7 +11,10 @@ class Anggota extends Model
     use HasFactory;
     protected $table = 'tb_anggota';
     protected $primaryKey = 'id_anggota';
-    public $timestamps = false;
+
+    // Laravel pakai kolom custom timestamp
+    const CREATED_AT = 'dibuat_pada';
+    const UPDATED_AT = 'diperbarui_pada';
 
     protected $fillable = [
         'nik',
@@ -26,13 +29,15 @@ class Anggota extends Model
     ];
 
     protected $casts = [
-        'tanggal_daftar'      => 'date',
-        'tanggal_verifikasi'  => 'date',
-        'dibuat_pada'         => 'datetime',
-        'diperbarui_pada'     => 'datetime',
+        'tanggal_daftar' => 'date',
+        'tanggal_verifikasi' => 'date',
+        'dibuat_pada' => 'datetime',
+        'diperbarui_pada' => 'datetime',
     ];
 
-    // ── Relasi ──────────────────────────────────────────────
+    // =========================
+    // Relasi
+    // =========================
 
     public function simpanan(): HasMany
     {

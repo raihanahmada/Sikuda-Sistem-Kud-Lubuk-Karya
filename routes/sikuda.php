@@ -9,29 +9,28 @@ use App\Http\Controllers\AdminKeuangan\PenyaluranDanaController;
 use App\Http\Controllers\AdminKeuangan\LaporanController;
 use App\Http\Controllers\AdminKeuangan\SettingController;
 use App\Http\Controllers\Auth\SikudaLoginController;
-use Illuminate\Support\Facades\Route;
-//Pemilik
+use App\Http\Controllers\AdminAnggota\PendaftaranController;
+use App\Http\Controllers\AdminAnggota\VerifikasiController;
+use App\Http\Controllers\AdminAnggota\DataAnggotaController;
+use App\Http\Controllers\AdminAnggota\SimpananController;
+use App\Http\Controllers\AdminAnggota\TrackingController;
 use App\Http\Controllers\Pemilik\DashboardController;
 use App\Http\Controllers\Pemilik\AnggotaController;
 use App\Http\Controllers\Pemilik\LaporanPeriodikController;
 use App\Http\Controllers\Pemilik\PengaturanController;
-use App\Http\Controllers\Pemilik\SimpananController;
+use App\Http\Controllers\Pemilik\SimpananController as PemilikSimpananController;
 use App\Http\Controllers\Pemilik\KasController;
-// ═══════════════════════════════════════════════════════════
-//  SIKUDA — Routes (terpisah dari web.php bawaan Breeze)
-//  File ini di-load dari bootstrap/app.php (Laravel 11)
-//  atau dari RouteServiceProvider (Laravel 10 ke bawah)
-// ═══════════════════════════════════════════════════════════
+use Illuminate\Support\Facades\Route;
+use App\Models\Anggota;
 
+// ═══════════════════════════════════════════════════════════
+//  SIKUDA — Routes
+// ═══════════════════════════════════════════════════════════
 
 // ── Auth (publik, tidak perlu login) ────────────────────────
 Route::middleware('guest:sikuda')->group(function () {
-
-    Route::get('/sikuda/login', [SikudaLoginController::class, 'create'])
-        ->name('sikuda.login');
-
-    Route::post('/sikuda/login', [SikudaLoginController::class, 'store'])
-        ->name('sikuda.login.post');
+    Route::get('/sikuda/login', [SikudaLoginController::class, 'create'])->name('sikuda.login');
+    Route::post('/sikuda/login', [SikudaLoginController::class, 'store'])->name('sikuda.login.post');
 });
 
 // Logout (perlu sudah login)
@@ -52,6 +51,53 @@ Route::middleware(['sikuda.auth', 'sikuda.role:admin_anggota'])
         Route::get('/dashboard', function () {
             return inertia('AdminAnggota/Dashboard');
         })->name('dashboard');
+
+        // =========================
+        // PENDAFTARAN ANGGOTA
+        // =========================
+        Route::get('/pendaftaran-anggota', [PendaftaranController::class, 'index'])->name('pendaftaran-anggota.index');
+        Route::get('/pendaftaran-anggota/create', [PendaftaranController::class, 'create'])->name('pendaftaran-anggota.create');
+        Route::post('/pendaftaran-anggota', [PendaftaranController::class, 'store'])->name('pendaftaran-anggota.store');
+        Route::get('/pendaftaran-anggota/{id}', [PendaftaranController::class, 'show'])->name('pendaftaran-anggota.show');
+        Route::get('/pendaftaran-anggota/{id}/edit', [PendaftaranController::class, 'edit'])->name('pendaftaran-anggota.edit');
+        Route::put('/pendaftaran-anggota/{id}', [PendaftaranController::class, 'update'])->name('pendaftaran-anggota.update');
+
+        // =========================
+        // ANTRIAN VERIFIKASI
+        // =========================
+        Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi.index');
+        Route::get('/verifikasi/{id}', [VerifikasiController::class, 'show'])->name('verifikasi.show');
+        Route::put('/verifikasi/{id}/terima', [VerifikasiController::class, 'terima'])->name('verifikasi.terima');
+        Route::put('/verifikasi/{id}/tolak', [VerifikasiController::class, 'tolak'])->name('verifikasi.tolak');
+
+        // =========================
+        // SIMPANAN ANGGOTA
+        // =========================
+        Route::get('/simpanan', [SimpananController::class, 'index'])->name('simpanan.index');
+        Route::get('/simpanan/create', [SimpananController::class, 'create'])->name('simpanan.create');
+        Route::post('/simpanan', [SimpananController::class, 'store'])->name('simpanan.store');
+        Route::get('/simpanan/{id}', [SimpananController::class, 'show'])->name('simpanan.show');
+        Route::get('/simpanan/{id}/edit', [SimpananController::class, 'edit'])->name('simpanan.edit');
+        Route::put('/simpanan/{id}', [SimpananController::class, 'update'])->name('simpanan.update');
+
+        // =========================
+        // TRACKING AKTIVITAS
+        // =========================
+        Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking.index');
+        Route::get('/tracking/{id}', [TrackingController::class, 'show'])->name('tracking.show');
+
+        // =========================
+        // DATA ANGGOTA
+        // =========================
+        Route::get('/data-anggota', [DataAnggotaController::class, 'index'])->name('data-anggota.index');
+        Route::get('/data-anggota/{id}/edit', [DataAnggotaController::class, 'edit'])->name('data-anggota.edit');
+        Route::put('/data-anggota/{id}', [DataAnggotaController::class, 'update'])->name('data-anggota.update');
+        Route::delete('/data-anggota/{id}', [DataAnggotaController::class, 'destroy'])->name('data-anggota.destroy');
+
+        // PENGATURAN
+        Route::get('/pengaturan', function () {
+            return inertia('AdminAnggota/Pengaturan/Index');
+        })->name('pengaturan.index');
 
     });
 
@@ -94,7 +140,8 @@ Route::middleware(['sikuda.auth', 'sikuda.role:admin_keuangan'])
         Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
         Route::put('/setting/profil', [SettingController::class, 'updateProfil'])->name('setting.profil');
         Route::put('/setting/password', [SettingController::class, 'updatePassword'])->name('setting.password');
-    });
+
+    }); // 🔹 SEKARANG SUDAH DITUTUP DI SINI
 
 // ═══════════════════════════════════════════════════════════
 //  PEMILIK
@@ -104,11 +151,6 @@ Route::middleware(['sikuda.auth', 'sikuda.role:pemilik'])
     ->prefix('pemilik')
     ->name('pemilik.')
     ->group(function () {
-
-        // Dashboard
-        // Route::get('/dashboard', function () {
-        //     return inertia('Pemilik/Dashboard');
-        // })->name('dashboard');
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/anggota', [AnggotaController::class, 'index'])->name('anggota');
         Route::get('/laporan-periodik', [LaporanPeriodikController::class, 'index'])->name('laporan.periodik');
@@ -116,23 +158,16 @@ Route::middleware(['sikuda.auth', 'sikuda.role:pemilik'])
             return inertia('Pemilik/Pengaturan');
         })->name('pengaturan');
         Route::post('/pengaturan/update', [PengaturanController::class, 'update'])->name('pengaturan.update');
-        Route::get('/simpanan', [SimpananController::class, 'index'])->name('simpanan');
+        Route::get('/simpanan', [PemilikSimpananController::class, 'index'])->name('simpanan');
         Route::get('/kas', [KasController::class, 'index'])->name('kas');
     });
 
 // ═══════════════════════════════════════════════════════════
-//  SHARED — Route yang bisa diakses oleh beberapa role
-//  Tambahkan role tambahan dengan koma
-//  Contoh: 'sikuda.role:admin_keuangan,pemilik'
+//  SHARED
 // ═══════════════════════════════════════════════════════════
 Route::middleware(['sikuda.auth', 'sikuda.role:admin_keuangan,pemilik'])
     ->prefix('shared')
     ->name('shared.')
     ->group(function () {
-
-        // ── Isi route shared di sini ──────────────────────
-        // Contoh:
-        // Route::get('/laporan-keuangan', [LaporanController::class, 'index'])->name('laporan-keuangan.index');
-        // ─────────────────────────────────────────────────
-    });
-    Route::get('/test-laporan', [App\Http\Controllers\Pemilik\LaporanPeriodikController::class, 'index']);
+        // Shared routes
+    }); // 🔹 DITUTUP DENGAN BENAR (TIDAK ADA DOUBLE PENUTUP LAGI)
