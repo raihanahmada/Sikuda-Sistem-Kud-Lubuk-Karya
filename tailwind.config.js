@@ -20,24 +20,20 @@ export default {
         },
     },
 
-    plugins: [
-        forms,
-        daisyui,
-    ],
-
-    daisyui: {
-        themes: [
-            {
-                kud: {
-                    primary: "#1B8A3A",
-                    "primary-content": "#ffffff",
-                    secondary: "#3B82F6",
-                    accent: "#22C55E",
-                    neutral: "#374151",
-                    "base-100": "#ffffff",
-                },
+plugins: [forms, daisyui],
+daisyui: {
+    themes: [
+        {
+            kud: {
+                primary: "#1B8A3A",
+                "primary-content": "#ffffff",
+                secondary: "#3B82F6",
+                accent: "#22C55E",
+                neutral: "#374151",
+                "base-100": "#ffffff",
             },
-            "dark",
-        ],
-    },
-};
+        },
+        "light",
+        "dark",
+    ],
+},
