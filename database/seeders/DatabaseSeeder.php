@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Database\Seeders\AnggotaSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -10,6 +11,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PenggunaSeeder::class,
+            AnggotaSeeder::class,
         ]);
     }
 }

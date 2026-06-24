@@ -1,5 +1,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
+import daisyui from 'daisyui'; // <-- TAMBAHAN
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -18,5 +19,19 @@ export default {
         },
     },
 
-    plugins: [forms],
+    plugins: [
+        forms,
+        daisyui, // <-- TAMBAHAN
+    ],
+
+    // ==========================================
+    // TAMBAHAN DAISYUI THEMES
+    // ==========================================
+    daisyui: {
+        themes: [
+            'light',
+            'dark',
+        ],
+    },
+    // ==========================================
 };
