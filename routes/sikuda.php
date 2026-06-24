@@ -1,5 +1,13 @@
 <?php
 
+use App\Http\Controllers\AdminKeuangan\DashboardController as KeuanganDashboard;
+use App\Http\Controllers\AdminKeuangan\HargaTbsController;
+use App\Http\Controllers\AdminKeuangan\KasHarianController;
+use App\Http\Controllers\AdminKeuangan\PembelianController;
+use App\Http\Controllers\AdminKeuangan\PenjualanTbsController;
+use App\Http\Controllers\AdminKeuangan\PenyaluranDanaController;
+use App\Http\Controllers\AdminKeuangan\LaporanController;
+use App\Http\Controllers\AdminKeuangan\SettingController;
 use App\Http\Controllers\Auth\SikudaLoginController;
 use App\Http\Controllers\AdminAnggota\PendaftaranController;
 use App\Http\Controllers\AdminAnggota\VerifikasiController;
@@ -24,7 +32,6 @@ Route::middleware('guest:sikuda')->group(function () {
 Route::post('/sikuda/logout', [SikudaLoginController::class, 'destroy'])
     ->middleware('sikuda.auth')
     ->name('sikuda.logout');
-
 
 // ═══════════════════════════════════════════════════════════
 //  ADMIN ANGGOTA
@@ -89,7 +96,6 @@ Route::middleware(['sikuda.auth', 'sikuda.role:admin_anggota'])
 
     });
 
-
 // ═══════════════════════════════════════════════════════════
 //  ADMIN KEUANGAN
 //  Akses: role = admin_keuangan
@@ -103,6 +109,14 @@ Route::middleware(['sikuda.auth', 'sikuda.role:admin_keuangan'])
         })->name('dashboard');
     });
 
+        Route::post('/harga-tbs', [HargaTbsController::class, 'store'])->name('harga-tbs.store');
+
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+
+        Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
+        Route::put('/setting/profil', [SettingController::class, 'updateProfil'])->name('setting.profil');
+        Route::put('/setting/password', [SettingController::class, 'updatePassword'])->name('setting.password');
+    });
 
 // ═══════════════════════════════════════════════════════════
 //  PEMILIK
@@ -116,7 +130,6 @@ Route::middleware(['sikuda.auth', 'sikuda.role:pemilik'])
             return inertia('Pemilik/Dashboard');
         })->name('dashboard');
     });
-
 
 // ═══════════════════════════════════════════════════════════
 //  SHARED
