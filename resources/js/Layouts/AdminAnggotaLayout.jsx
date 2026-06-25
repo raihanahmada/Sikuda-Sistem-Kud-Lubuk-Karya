@@ -18,7 +18,7 @@ export default function AdminAnggotaLayout({
             icon: '📝',
         },
         {
-            name: 'Antrian Verifikasi',
+            name: 'Verifikasi Anggota',
             href: '/admin-anggota/verifikasi',
             icon: '📄',
         },
@@ -33,7 +33,7 @@ export default function AdminAnggotaLayout({
             icon: '💰',
         },
         {
-            name: 'Tracking Aktivitas',
+            name: 'Pelacakan Aktivitas',
             href: '/admin-anggota/tracking',
             icon: '📊',
         },
