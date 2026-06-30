@@ -24,11 +24,11 @@ function Notifikasi({ notif }) {
       role="alert"
       className={`alert flex items-center shadow-sm rounded-xl py-3 border backdrop-blur-md ${
         sukses
-          ? "bg-emerald-50/80 text-emerald-700 border-emerald-200"
+          ? "bg-emerald-50/80 text-green-900 border-emerald-200"
           : "bg-rose-50/80 text-rose-700 border-rose-200"
       }`}
     >
-      {sukses ? <CheckCircle2 size={18} className="text-emerald-500" /> : <AlertCircle size={18} className="text-rose-500" />}
+      {sukses ? <CheckCircle2 size={18} className="text-green-700" /> : <AlertCircle size={18} className="text-rose-500" />}
       <span className="font-medium">{notif.message}</span>
     </div>
   );
@@ -49,14 +49,14 @@ function PasswordField({ label, placeholder, value, onChange, visible, onToggle,
           className={`input input-bordered w-full pr-10 rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 ${
             error
               ? "border-error focus:border-error focus:ring-error/20"
-              : "border-base-300 focus:border-primary focus:ring-primary/20"
+              : "border-base-300 focus:border-green-700 focus:ring-green-700/20"
           }`}
         />
         <button
           type="button"
           onClick={onToggle}
           tabIndex={-1}
-          className="btn btn-ghost btn-xs btn-circle absolute right-2 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-primary transition-colors"
+          className="btn btn-ghost btn-xs btn-circle absolute right-2 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-green-800 transition-colors"
         >
           {visible ? <EyeOff size={16} /> : <Eye size={16} />}
         </button>
@@ -179,7 +179,7 @@ export default function Pengaturan() {
       <div className="max-w-4xl mx-auto space-y-6 pb-10">
         {/* Header Gradient */}
         <div className="mb-8">
-          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-green-700 to-green-800 bg-clip-text text-transparent">
             Pengaturan Akun
           </h1>
           <p className="text-sm text-base-content/60 mt-1.5 font-medium">
@@ -190,11 +190,11 @@ export default function Pengaturan() {
         <Notifikasi notif={notif} />
 
         {/* ── Profil ─────────────────────────────────────────────────── */}
-        <div className="card bg-base-100/80 backdrop-blur-xl border border-base-200/60 shadow-xl shadow-base-200/40 rounded-2xl">
+        <div className="card bg-white border border-base-200/60 shadow-xl shadow-base-200/40 rounded-2xl">
           <div className="card-body p-6 sm:p-8">
             <div className="flex items-center gap-3 border-b border-base-200/60 pb-4 mb-6">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <User size={20} className="text-primary" />
+              <div className="p-2 bg-green-700/10 rounded-lg">
+                <User size={20} className="text-green-800" />
               </div>
               <h2 className="text-lg font-bold text-base-content">Informasi Akun</h2>
             </div>
@@ -202,8 +202,8 @@ export default function Pengaturan() {
             <div className="flex flex-col sm:flex-row gap-8 items-start">
               {/* Premium Avatar */}
               <div className="avatar placeholder relative group shrink-0 mx-auto sm:mx-0">
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-emerald-500 rounded-full blur opacity-40 group-hover:opacity-70 transition duration-500"></div>
-                <div className="bg-gradient-to-br from-primary to-emerald-600 text-white rounded-full w-28 h-28 flex items-center justify-center ring-4 ring-base-100 relative shadow-lg">
+                <div className="absolute -inset-1 bg-gradient-to-r from-green-700 to-green-800 rounded-full blur opacity-40 group-hover:opacity-70 transition duration-500"></div>
+                <div className="bg-gradient-to-br from-green-700 to-green-800 text-white rounded-full w-28 h-28 flex items-center justify-center ring-4 ring-base-100 relative shadow-lg">
                   <span className="text-5xl font-extrabold leading-none">{inisial}</span>
                 </div>
               </div>
@@ -221,7 +221,7 @@ export default function Pengaturan() {
                     className={`input input-bordered w-full rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 ${
                       profileForm.errors?.nama_pengguna
                         ? "border-error focus:border-error focus:ring-error/20"
-                        : "border-base-300 focus:border-primary focus:ring-primary/20"
+                        : "border-base-300 focus:border-green-700 focus:ring-green-700/20"
                     }`}
                   />
                   {profileForm.errors?.nama_pengguna && (
@@ -238,7 +238,7 @@ export default function Pengaturan() {
                     <span className="label-text font-medium text-base-content/80">Role Pengguna</span>
                   </label>
                   <div>
-                    <span className="badge badge-primary badge-outline badge-lg gap-2 px-4 py-3 rounded-xl border-primary/30 bg-primary/5 font-semibold">
+                    <span className="badge badge-outline badge-lg gap-2 px-4 py-3 rounded-xl border-green-700/30 bg-green-700/5 font-semibold">
                       <Shield size={14} />
                       {auth?.user?.role || "-"}
                     </span>
@@ -252,7 +252,7 @@ export default function Pengaturan() {
                 type="button"
                 onClick={handleSaveProfile}
                 disabled={profileForm.processing}
-                className="btn text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 border-none shadow-lg shadow-emerald-500/30 rounded-xl px-8 py-2.5 text-sm font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
+                className="btn text-white bg-gradient-to-r from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 border-none shadow-lg shadow-green-700/30 rounded-xl px-8 py-2.5 text-sm font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
               >
                 {profileForm.processing ? (
                   <>
@@ -271,12 +271,12 @@ export default function Pengaturan() {
         </div>
 
         {/* ── Keamanan ───────────────────────────────────────────────── */}
-        <div className="card bg-base-100/80 backdrop-blur-xl border border-base-200/60 shadow-xl shadow-base-200/40 rounded-2xl overflow-hidden">
+        <div className="card bg-white border border-base-200/60 shadow-xl shadow-base-200/40 rounded-2xl overflow-hidden">
           <div className="card-body p-0">
             <div className="p-6 sm:p-8">
               <div className="flex items-center gap-3 border-b border-base-200/60 pb-4 mb-2">
-                <div className="p-2 bg-amber-500/10 rounded-lg">
-                  <Shield size={20} className="text-amber-500" />
+                <div className="p-2 bg-green-700/10 rounded-lg">
+                  <Shield size={20} className="text-green-800" />
                 </div>
                 <h2 className="text-lg font-bold text-base-content">Keamanan Akun</h2>
               </div>
@@ -289,15 +289,15 @@ export default function Pengaturan() {
                 className="w-full flex items-center justify-between p-4 rounded-xl hover:bg-base-200/50 active:bg-base-300/50 transition-colors group border border-transparent hover:border-base-300"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-500/20 transition-all duration-300">
-                    <Lock size={22} className="text-amber-500" />
+                  <div className="w-12 h-12 rounded-2xl bg-green-700/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-green-700/20 transition-all duration-300">
+                    <Lock size={22} className="text-green-800" />
                   </div>
                   <div className="text-left">
                     <p className="text-base font-bold text-base-content">Ubah Password</p>
                     <p className="text-sm text-base-content/60 mt-0.5">Tingkatkan keamanan dengan kata sandi baru</p>
                   </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-base-100 flex items-center justify-center shadow-sm group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
+                <div className="w-10 h-10 rounded-full bg-base-100 flex items-center justify-center shadow-sm group-hover:bg-green-700 group-hover:text-white transition-all duration-300">
                   <ChevronRight size={20} />
                 </div>
               </button>
@@ -306,7 +306,7 @@ export default function Pengaturan() {
         </div>
 
         {/* ── Informasi Sistem ───────────────────────────────────────── */}
-        <div className="card bg-gradient-to-br from-base-100 to-base-200/50 border border-base-200/60 shadow-xl shadow-base-200/30 rounded-2xl">
+        <div className="card bg-white border border-base-200/60 shadow-xl shadow-base-200/30 rounded-2xl">
           <div className="card-body p-6 sm:p-8">
             <h2 className="text-sm font-bold text-base-content/50 uppercase tracking-wider mb-4">
               Informasi Sistem
@@ -327,7 +327,7 @@ export default function Pengaturan() {
 
       {/* ── Modal Ubah Password ─────────────────────────────────────── */}
       <dialog ref={passwordModalRef} className="modal" onClose={resetPasswordForm}>
-        <div className="modal-box relative bg-base-100/95 backdrop-blur-2xl border border-base-200/60 shadow-2xl rounded-3xl p-6 sm:p-8">
+        <div className="modal-box relative bg-white border border-base-200/60 shadow-2xl rounded-3xl p-6 sm:p-8">
           <form method="dialog">
             <button
               type="submit"
@@ -338,8 +338,8 @@ export default function Pengaturan() {
           </form>
 
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2.5 bg-amber-500/10 rounded-xl">
-              <Lock size={22} className="text-amber-500" />
+            <div className="p-2.5 bg-green-700/10 rounded-xl">
+              <Lock size={22} className="text-green-800" />
             </div>
             <div>
               <h3 className="font-extrabold text-xl">Ubah Password</h3>
@@ -398,7 +398,7 @@ export default function Pengaturan() {
               type="button"
               onClick={handleSavePassword}
               disabled={passwordForm.processing}
-              className="btn text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-none shadow-lg shadow-amber-500/30 rounded-xl px-8 py-2.5 text-sm font-medium transition-all duration-300 disabled:opacity-70"
+              className="btn text-white bg-gradient-to-r from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 border-none shadow-lg shadow-green-700/30 rounded-xl px-8 py-2.5 text-sm font-medium transition-all duration-300 disabled:opacity-70"
             >
               {passwordForm.processing ? (
                 <>

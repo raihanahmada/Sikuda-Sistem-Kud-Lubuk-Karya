@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
-import { Home, FileText, Users, Settings, LogOut, X } from "lucide-react";
+import { Home, FileText, Users, Settings, LogOut, X, AlertTriangle } from "lucide-react";
 
 const menuItems = [
   { name: "Dasbor Utama",     icon: Home,     href: "/pemilik/dashboard" },
@@ -10,6 +11,11 @@ const menuItems = [
 
 export default function Sidebar({ isOpen, setIsOpen }) {
   const { url } = usePage();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const handleConfirmLogout = () => {
+    router.post(route("sikuda.logout"));
+  };
 
   return (
     <>
@@ -82,14 +88,54 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             </div>
           </div>
           <button
-           onClick={() => router.post(route("sikuda.logout"))}
-            className="flex items-center gap-2 text-xs text-gray-400 hover:text-red-500 transition-colors"
+            onClick={() => setShowLogoutConfirm(true)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-semibold bg-gradient-to-b from-[#E24B4A] to-[#A32D2D] shadow-md shadow-red-900/30 hover:from-[#D43F3E] hover:to-[#8F2727] active:scale-[0.98] transition-all duration-200"
           >
-            <LogOut size={14} />
+            <LogOut size={16} />
             Logout
           </button>
         </div>
       </aside>
+
+      {/* ── Modal Konfirmasi Logout ───────────────────────────────── */}
+      {showLogoutConfirm && (
+        <div
+          className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center p-4"
+          onClick={() => setShowLogoutConfirm(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4">
+                <AlertTriangle size={24} className="text-red-500" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-1">
+                Yakin mau keluar?
+              </h3>
+              <p className="text-sm text-gray-500 mb-6">
+                Anda akan keluar dari sesi ini dan perlu login kembali untuk mengakses sistem.
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmLogout}
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-b from-[#E24B4A] to-[#A32D2D] shadow-md shadow-red-900/30 hover:from-[#D43F3E] hover:to-[#8F2727] active:scale-[0.98] transition-all duration-200"
+              >
+                Ya, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

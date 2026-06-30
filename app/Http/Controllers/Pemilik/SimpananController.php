@@ -20,12 +20,13 @@ class SimpananController extends Controller
         $cariRiwayat = $request->input('cari_riwayat');  // search di tab Riwayat
         $cariAnggota = $request->input('cari_anggota');  // search di tab Per Anggota
 
-        // ── 1. Breakdown per jenis simpanan (all-time, gak kefilter) ────
+        // ── 1. Breakdown per jenis simpanan — ikut difilter sesuai rentang tanggal ──
         // Catatan: ini tetap SUM(jumlah) polos per jenis (bukan net),
         // karena tiap kartu ("Simpanan Pokok", "Simpanan Wajib",
         // "Simpanan Pengambilan") memang menampilkan total per jenis
         // masing-masing, bukan saldo gabungan.
         $breakdownJenis = Simpanan::select('jenis_simpanan', DB::raw('SUM(jumlah) as total'), DB::raw('COUNT(*) as jumlah_transaksi'))
+            ->whereBetween('tanggal_transaksi', [$start, $end])
             ->groupBy('jenis_simpanan')
             ->get()
             ->map(fn($d) => [
@@ -34,10 +35,11 @@ class SimpananController extends Controller
                 'jumlah_transaksi' => $d->jumlah_transaksi,
             ]);
 
-        // ── Total Dana Simpanan (net: pokok + wajib - pengambilan) ──────
+        // ── Total Dana Simpanan (net: pokok + wajib - pengambilan) — ikut difilter ──
         // Pengambilan adalah dana KELUAR, jadi harus dikurangkan,
         // bukan dijumlahkan seperti SUM('jumlah') sebelumnya.
-        $totalSimpanan = Simpanan::selectRaw("
+        $totalSimpanan = Simpanan::whereBetween('tanggal_transaksi', [$start, $end])
+            ->selectRaw("
                 SUM(CASE WHEN jenis_simpanan = 'pengambilan' THEN -jumlah ELSE jumlah END) as total
             ")->value('total') ?? 0;
 

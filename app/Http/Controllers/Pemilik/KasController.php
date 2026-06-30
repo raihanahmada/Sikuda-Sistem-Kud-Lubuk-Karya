@@ -20,33 +20,45 @@ class KasController extends Controller
 
     public function index(Request $request)
     {
-        $start       = $request->input('start', Carbon::now()->startOfMonth()->toDateString());
-        $end         = $request->input('end',   Carbon::now()->endOfMonth()->toDateString());
+        $start       = $request->input('start', Carbon::now()->startOfYear()->toDateString());
+        $end         = $request->input('end',   Carbon::now()->endOfYear()->toDateString());
         $jenisFilter = $request->input('jenis');        // masuk | keluar | Semua | null
         $cariRiwayat = $request->input('cari_riwayat'); // search di tab Riwayat (keterangan)
         $cariSumber  = $request->input('cari_sumber');  // search di tab Per Sumber (nama sumber)
 
-        // ── 1. Ringkasan saldo (all-time, gak kefilter tanggal) ──────────
-        $totalMasuk     = TransaksiKas::where('jenis_kas', 'masuk')->sum('nominal');
-        $totalKeluar    = TransaksiKas::where('jenis_kas', 'keluar')->sum('nominal');
-        $saldoAkhir     = $totalMasuk - $totalKeluar;
-        $totalTransaksi = TransaksiKas::count();
+        // ── 1. Ringkasan saldo — ikut difilter sesuai rentang tanggal ──
+        $totalMasuk = TransaksiKas::where('jenis_kas', 'masuk')
+            ->whereBetween('tanggal_transaksi', [$start, $end])
+            ->sum('nominal');
 
-        // ── 1b. Total simpanan pokok & wajib (buat ringkasan keuangan) ───
+        $totalKeluar = TransaksiKas::where('jenis_kas', 'keluar')
+            ->whereBetween('tanggal_transaksi', [$start, $end])
+            ->sum('nominal');
+
+        $saldoAkhir = $totalMasuk - $totalKeluar;
+
+        $totalTransaksi = TransaksiKas::whereBetween('tanggal_transaksi', [$start, $end])->count();
+
+        // ── 1b. Total simpanan pokok & wajib — ikut difilter sesuai rentang tanggal ──
         // Pakai query builder langsung ke tabel, tanpa import model Simpanan.
         // Ambil count + sum sekaligus biar bisa dipakai ulang di breakdown bawah.
-        $simpananPokokRow = DB::table('tb_simpanan')->where('jenis_simpanan', 'pokok')
+        $simpananPokokRow = DB::table('tb_simpanan')
+            ->where('jenis_simpanan', 'pokok')
+            ->whereBetween('tanggal_transaksi', [$start, $end])
             ->selectRaw('COUNT(*) as jumlah_transaksi, SUM(jumlah) as total')->first();
-        $simpananWajibRow = DB::table('tb_simpanan')->where('jenis_simpanan', 'wajib')
+        $simpananWajibRow = DB::table('tb_simpanan')
+            ->where('jenis_simpanan', 'wajib')
+            ->whereBetween('tanggal_transaksi', [$start, $end])
             ->selectRaw('COUNT(*) as jumlah_transaksi, SUM(jumlah) as total')->first();
 
         $totalSimpananPokok = $simpananPokokRow->total ?? 0;
         $totalSimpananWajib = $simpananWajibRow->total ?? 0;
 
-        // ── 2. Per Sumber (all-time, dikelompokkan dari tipe_referensi) ──
+        // ── 2. Per Sumber — ikut difilter sesuai rentang tanggal ──
         // tipe_referensi null = transaksi manual/operasional (input langsung,
         // bukan hasil auto-posting dari penjualan TBS / penyaluran dana)
-        $perSumberRaw = TransaksiKas::selectRaw("
+        $perSumberRaw = TransaksiKas::whereBetween('tanggal_transaksi', [$start, $end])
+            ->selectRaw("
                 COALESCE(tipe_referensi, 'manual') as sumber,
                 SUM(CASE WHEN jenis_kas = 'masuk'  THEN nominal ELSE 0 END) as kas_masuk,
                 SUM(CASE WHEN jenis_kas = 'keluar' THEN nominal ELSE 0 END) as kas_keluar,

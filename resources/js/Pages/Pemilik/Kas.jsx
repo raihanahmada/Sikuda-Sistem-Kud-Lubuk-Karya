@@ -6,7 +6,7 @@ import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Document, Packer, Paragraph, Table, TableRow, TableCell } from "docx";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search, Calendar, ChevronDown } from "lucide-react";
 
 // ─── Static ───────────────────────────────────────────────────────────────────
 
@@ -17,10 +17,27 @@ const DEBOUNCE_MS = 500;
 const labelJenis = { masuk: "Masuk", keluar: "Keluar" };
 const colorJenis = { masuk: "#1B8A3A", keluar: "#EF4444" };
 
+const NAMA_BULAN = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+];
+
 // ─── Helper ───────────────────────────────────────────────────────────────────
 
 function formatRp(value) {
     return Number(value || 0).toLocaleString("id-ID");
+}
+
+function formatTanggalIndo(tanggalStr) {
+    if (!tanggalStr) return "";
+    const d = new Date(tanggalStr);
+    return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function formatTanggalSingkat(tanggalStr) {
+    if (!tanggalStr) return "";
+    const d = new Date(tanggalStr);
+    return d.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 }
 
 // ─── Pagination ────────────────────────────────────────────────────────────────
@@ -31,10 +48,7 @@ const Pagination = memo(function Pagination({ current, total, onChange }) {
         <div className="flex items-center justify-end gap-1.5 mt-4 text-sm text-gray-500">
             <button onClick={() => onChange(Math.max(1, current - 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md">‹</button>
             {pages.map((p) => (
-                <button key={p} onClick={() => onChange(p)}
-                    className={`w-8 h-8 rounded-md ${p === current ? "border border-emerald-500 text-emerald-600 bg-emerald-50" : "hover:bg-gray-100"}`}>
-                    {p}
-                </button>
+                <button key={p} onClick={() => onChange(p)} className={`w-8 h-8 rounded-md ${p === current ? "border border-emerald-500 text-emerald-600 bg-emerald-50" : "hover:bg-gray-100"}`}>{p}</button>
             ))}
             <button onClick={() => onChange(Math.min(total, current + 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md">›</button>
         </div>
@@ -52,14 +66,103 @@ const ExportButtons = memo(function ExportButtons({ onExport }) {
                 { label: "PDF",   type: "pdf",   cls: "bg-red-100"   },
                 { label: "DOCX",  type: "docx",  cls: "bg-blue-100"  },
             ].map(({ label, type, cls }) => (
-                <button key={type} onClick={() => onExport(type)}
-                    className={`px-2.5 py-1.5 ${cls} rounded-lg text-[11px] font-medium`}>
-                    {label}
-                </button>
+                <button key={type} onClick={() => onExport(type)} className={`px-2.5 py-1.5 ${cls} rounded-lg text-[11px] font-medium`}>{label}</button>
             ))}
         </div>
     );
 });
+
+// ─── Toggle Per Bulan / Per Tahun (gaya sama seperti Dashboard) ──────────────
+
+const TogglePeriode = memo(function TogglePeriode({ jenisPeriode, onPilihBulan, onPilihTahun }) {
+    return (
+        <div className="flex items-center bg-gray-100 rounded-lg p-1 text-xs font-medium">
+            <button onClick={onPilihBulan} className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "bulan" ? "bg-white text-[#1B8A3A] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                <Calendar size={12} />
+                Per Bulan
+                <ChevronDown size={11} />
+            </button>
+            <button onClick={onPilihTahun} className={`px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "tahun" ? "bg-white text-[#1B8A3A] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                Per Tahun
+            </button>
+        </div>
+    );
+});
+
+// ─── Popup pemilih bulan / rentang tanggal kustom ──────────────────────────
+
+function PopupPilihBulan({ tahun, bulan, onApplyBulan, onApplyRentang, onClose }) {
+    const [localTahun, setLocalTahun] = useState(tahun);
+    const [localBulan, setLocalBulan] = useState(bulan);
+    const [localMulai, setLocalMulai] = useState("");
+    const [localAkhir, setLocalAkhir] = useState("");
+
+    const tahunOptions = useMemo(() => {
+        const now = new Date().getFullYear();
+        return Array.from({ length: 6 }, (_, i) => now - 4 + i);
+    }, []);
+
+    return (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-2 mb-4">
+                    <Calendar size={16} className="text-[#1B8A3A]" />
+                    <h3 className="text-sm font-semibold text-gray-800">Pilih Periode Bulanan</h3>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div>
+                        <label className="text-[11px] text-gray-500 mb-1 block">Bulan</label>
+                        <select value={localBulan} onChange={(e) => setLocalBulan(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]">
+                            {NAMA_BULAN.map((nama, idx) => (
+                                <option key={nama} value={idx + 1}>{nama}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="text-[11px] text-gray-500 mb-1 block">Tahun</label>
+                        <select value={localTahun} onChange={(e) => setLocalTahun(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]">
+                            {tahunOptions.map((th) => (
+                                <option key={th} value={th}>{th}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div className="border-t border-gray-100 pt-3 mb-4">
+                    <p className="text-[11px] text-gray-500 mb-2">Atau pilih rentang tanggal kustom (opsional)</p>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="text-[11px] text-gray-500 mb-1 block">Dari tanggal</label>
+                            <input type="date" value={localMulai} onChange={(e) => setLocalMulai(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]" />
+                        </div>
+                        <div>
+                            <label className="text-[11px] text-gray-500 mb-1 block">Sampai tanggal</label>
+                            <input type="date" value={localAkhir} onChange={(e) => setLocalAkhir(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex gap-3">
+                    <button onClick={onClose} className="flex-1 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl py-2.5 transition-colors">
+                        Batal
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (localMulai && localAkhir) {
+                                onApplyRentang(localMulai, localAkhir);
+                            } else {
+                                onApplyBulan(localTahun, localBulan);
+                            }
+                        }}
+                        className="flex-1 text-sm font-semibold text-white bg-[#1B8A3A] hover:bg-[#157030] rounded-xl py-2.5 transition-colors">
+                        Terapkan
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -72,8 +175,10 @@ export default function Kas() {
     const lastDay  = (d) => { const last = new Date(d.getFullYear(), d.getMonth()+1, 0); return fmt(last); };
 
     const today        = new Date();
-    const defaultStart = firstDay(today);
-    const defaultEnd   = lastDay(today);
+    const thisYear      = today.getFullYear();
+    const thisMonth     = today.getMonth() + 1;
+    const defaultStart = `${thisYear}-01-01`;
+    const defaultEnd   = `${thisYear}-12-31`;
 
     // ── State ─────────────────────────────────────────────────────────────────
     const [activeTab, setActiveTab] = useState("sumber"); // "sumber" | "riwayat"
@@ -83,6 +188,10 @@ export default function Kas() {
     const [startDate, setStartDate] = useState(filterAktif?.start || defaultStart);
     const [endDate, setEndDate]     = useState(filterAktif?.end   || defaultEnd);
     const [jenis, setJenis]         = useState(filterAktif?.jenis || "Semua");
+
+    // Periode aktif — default: tahun berjalan
+    const [jenisPeriode, setJenisPeriode] = useState("tahun"); // "bulan" | "tahun"
+    const [showPopupBulan, setShowPopupBulan] = useState(false);
 
     const [cariSumber, setCariSumber]   = useState(filterAktif?.cari_sumber || "");
     const [cariRiwayat, setCariRiwayat] = useState(filterAktif?.cari_riwayat || "");
@@ -120,7 +229,23 @@ export default function Kas() {
         [perSumber, pageSumber]
     );
 
-    // ── Fetch ke server (partial reload, cuma data yang relevan) ────────────
+    // ── Fetch SEMUA data sekaligus (riwayat + perSumber + ringkasanKas + simpanan), dipakai oleh selektor periode di atas SUMMARY CARDS ──
+    const fetchSemua = (overrides = {}) => {
+        router.get(route('pemilik.kas'), {
+            start: overrides.start ?? startDate,
+            end: overrides.end ?? endDate,
+            jenis: overrides.jenis ?? jenis,
+            cari_riwayat: overrides.cari_riwayat ?? cariRiwayat,
+            cari_sumber: overrides.cari_sumber ?? cariSumber,
+        }, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+            only: ['riwayat', 'perSumber', 'ringkasanKas', 'totalSimpananPokok', 'totalSimpananWajib', 'filterAktif'],
+        });
+    };
+
+    // ── Fetch ke server (partial reload, cuma data yang relevan) — dipakai search/filter jenis di tab Riwayat ──
     const fetchRiwayat = (overrides = {}) => {
         router.get(route('pemilik.kas'), {
             start: overrides.start ?? startDate,
@@ -152,14 +277,12 @@ export default function Kas() {
     };
 
     // ── DEBOUNCE: pencarian sumber ────────────────────────────────────────────
-    // Baru manggil API 500ms SETELAH user berhenti ngetik, biar server gak
-    // dibanjiri request tiap satu huruf diketik.
     useEffect(() => {
         if (isFirstSumberSearch.current) { isFirstSumberSearch.current = false; return; }
         const timer = setTimeout(() => {
             fetchSumber({ cari_sumber: cariSumber });
         }, DEBOUNCE_MS);
-        return () => clearTimeout(timer); // reset timer tiap ketikan baru
+        return () => clearTimeout(timer);
     }, [cariSumber]);
 
     // ── DEBOUNCE: pencarian riwayat ───────────────────────────────────────────
@@ -171,7 +294,7 @@ export default function Kas() {
         return () => clearTimeout(timer);
     }, [cariRiwayat]);
 
-    // ── Shortcut tanggal ──────────────────────────────────────────────────────
+    // ── Shortcut tanggal (dipakai HANYA di modal export — tidak diubah) ──────
     const getShortcut = (label) => {
         const n = new Date();
         const shortcuts = {
@@ -183,19 +306,42 @@ export default function Kas() {
         return shortcuts[label];
     };
 
-    const applyDateShortcut = (label) => {
-        const [s, e] = getShortcut(label);
-        setStartDate(s);
-        setEndDate(e);
-        fetchRiwayat({ start: s, end: e });
-    };
-
     const applyJenis = (val) => {
         setJenis(val);
         fetchRiwayat({ jenis: val });
     };
 
-    // ── Export modal (Riwayat — pakai rentang tanggal) ───────────────────────
+    // ── Periode: Per Bulan (buka popup) / Per Tahun (langsung tahun ini) — SEKARANG ikut update SUMMARY CARDS juga ──
+    const pilihPerTahun = () => {
+        setJenisPeriode("tahun");
+        const s = `${thisYear}-01-01`;
+        const e = `${thisYear}-12-31`;
+        setStartDate(s);
+        setEndDate(e);
+        fetchSemua({ start: s, end: e });
+    };
+
+    const terapkanBulan = (tahun, bulan) => {
+        setJenisPeriode("bulan");
+        const start = new Date(tahun, bulan - 1, 1);
+        const end   = new Date(tahun, bulan, 0);
+        const s = fmt(start);
+        const e = fmt(end);
+        setStartDate(s);
+        setEndDate(e);
+        setShowPopupBulan(false);
+        fetchSemua({ start: s, end: e });
+    };
+
+    const terapkanRentang = (mulai, akhir) => {
+        setJenisPeriode("bulan");
+        setStartDate(mulai);
+        setEndDate(akhir);
+        setShowPopupBulan(false);
+        fetchSemua({ start: mulai, end: akhir });
+    };
+
+    // ── Export modal (Riwayat — pakai rentang tanggal) — TIDAK DIUBAH ───────
     const openExport = (type) => {
         setExportStart(startDate);
         setExportEnd(endDate);
@@ -322,45 +468,53 @@ export default function Kas() {
         <MainLayout>
 
             {/* HEADER */}
-            <div className="flex items-center gap-3 mb-2">
-                <Link href={route('pemilik.dashboard')} className="text-gray-400 hover:text-gray-600">
-                    <ArrowLeft size={18} />
-                </Link>
-                <h1 className="text-xl font-semibold text-gray-800">Detail Keuangan Koperasi</h1>
+            <div className="flex items-center justify-between gap-3 mb-2 flex-wrap">
+                <div className="flex items-center gap-3">
+                    <Link href={route('pemilik.dashboard')} className="text-gray-400 hover:text-gray-600">
+                        <ArrowLeft size={18} />
+                    </Link>
+                    <h1 className="text-xl font-semibold text-gray-800">Detail Keuangan Koperasi</h1>
+                </div>
+
+                {/* Selektor periode untuk SUMMARY CARDS di bawah ini */}
+                <div className="flex items-center gap-3">
+                    <TogglePeriode jenisPeriode={jenisPeriode} onPilihBulan={() => setShowPopupBulan(true)} onPilihTahun={pilihPerTahun} />
+                    <span className="text-xs text-gray-400">{formatTanggalIndo(startDate)} s/d {formatTanggalIndo(endDate)}</span>
+                </div>
             </div>
 
             {/* SUMMARY CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-2xl p-4 border border-gray-100 border-l-4 border-l-gray-700 shadow-sm">
-                    <p className="text-[11px] text-gray-400 mb-1">Saldo Kas Pusat</p>
+                <div className="bg-gray-50/60 rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-[11px] text-gray-500 mb-1">Saldo Kas Pusat</p>
                     <p className="text-xl font-semibold text-gray-800 mb-2">Rp {formatRp(saldoAkhir)}</p>
-                    <p className="text-[10px] text-gray-400">Kas Masuk: <span className="text-gray-600">Rp {formatRp(totalMasuk)}</span></p>
-                    <p className="text-[10px] text-gray-400">Kas Keluar: <span className="text-gray-600">Rp {formatRp(totalKeluar)}</span></p>
+                    <p className="text-[10px] text-gray-500">Kas Masuk: <span className="text-gray-600">Rp {formatRp(totalMasuk)}</span></p>
+                    <p className="text-[10px] text-gray-500">Kas Keluar: <span className="text-gray-600">Rp {formatRp(totalKeluar)}</span></p>
                 </div>
-                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm" style={{ borderLeft: `4px solid ${colorJenis.masuk}` }}>
-                    <p className="text-[11px] text-gray-400 mb-1">Kas Masuk</p>
+                <div className="bg-emerald-50/60 rounded-2xl p-4 border border-emerald-100 shadow-sm">
+                    <p className="text-[11px] text-gray-500 mb-1">Kas Masuk</p>
                     <p className="text-xl font-semibold text-gray-800 mb-2">Rp {formatRp(totalMasuk)}</p>
-                    <p className="text-[10px] text-gray-400">Total dana masuk</p>
+                    <p className="text-[10px] text-gray-500">Total dana masuk</p>
                 </div>
-                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm" style={{ borderLeft: `4px solid ${colorJenis.keluar}` }}>
-                    <p className="text-[11px] text-gray-400 mb-1">Kas Keluar</p>
+                <div className="bg-red-50/60 rounded-2xl p-4 border border-red-100 shadow-sm">
+                    <p className="text-[11px] text-gray-500 mb-1">Kas Keluar</p>
                     <p className="text-xl font-semibold text-gray-800 mb-2">Rp {formatRp(totalKeluar)}</p>
-                    <p className="text-[10px] text-gray-400">Total dana keluar</p>
+                    <p className="text-[10px] text-gray-500">Total dana keluar</p>
                 </div>
-                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm" style={{ borderLeft: "4px solid #3B82F6" }}>
-                    <p className="text-[11px] text-gray-400 mb-1">Jumlah Total Transaksi</p>
+                <div className="bg-blue-50/60 rounded-2xl p-4 border border-blue-100 shadow-sm">
+                    <p className="text-[11px] text-gray-500 mb-1">Jumlah Total Transaksi</p>
                     <p className="text-xl font-semibold text-gray-800 mb-2">{totalTransaksi}</p>
-                    <p className="text-[10px] text-gray-400">Sepanjang waktu</p>
+                    <p className="text-[10px] text-gray-500">Pada periode ini</p>
                 </div>
-                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm" style={{ borderLeft: "4px solid #1B8A3A" }}>
-                    <p className="text-[11px] text-gray-400 mb-1">Total Dana Simpanan Pokok</p>
+                <div className="bg-emerald-50/60 rounded-2xl p-4 border border-emerald-100 shadow-sm">
+                    <p className="text-[11px] text-gray-500 mb-1">Total Dana Simpanan Pokok</p>
                     <p className="text-xl font-semibold text-gray-800 mb-2">Rp {formatRp(simpananPokok)}</p>
-                    <p className="text-[10px] text-gray-400">Akumulasi seluruh anggota</p>
+                    <p className="text-[10px] text-gray-500">Pada periode ini</p>
                 </div>
-                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm" style={{ borderLeft: "4px solid #F59E0B" }}>
-                    <p className="text-[11px] text-gray-400 mb-1">Total Dana Simpanan Wajib</p>
+                <div className="bg-amber-50/60 rounded-2xl p-4 border border-amber-100 shadow-sm">
+                    <p className="text-[11px] text-gray-500 mb-1">Total Dana Simpanan Wajib</p>
                     <p className="text-xl font-semibold text-gray-800 mb-2">Rp {formatRp(simpananWajib)}</p>
-                    <p className="text-[10px] text-gray-400">Akumulasi seluruh anggota</p>
+                    <p className="text-[10px] text-gray-500">Pada periode ini</p>
                 </div>
             </div>
 
@@ -370,13 +524,7 @@ export default function Kas() {
                     { key: "sumber",  label: `Rincian Keuangan (${(perSumber || []).length})` },
                     { key: "riwayat", label: `Riwayat Transaksi (${(riwayat || []).length})` },
                 ].map((tab) => (
-                    <button key={tab.key}
-                        onClick={() => setActiveTab(tab.key)}
-                        className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition ${
-                            activeTab === tab.key
-                                ? "border-[#1B8A3A] text-[#1B8A3A]"
-                                : "border-transparent text-gray-400 hover:text-gray-600"
-                        }`}>
+                    <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition ${activeTab === tab.key ? "border-[#1B8A3A] text-[#1B8A3A]" : "border-transparent text-gray-400 hover:text-gray-600"}`}>
                         {tab.label}
                     </button>
                 ))}
@@ -390,9 +538,7 @@ export default function Kas() {
                     <div className="flex items-center gap-2 flex-wrap">
                         <div className="relative">
                             <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <input type="text" placeholder="Cari kategori..." value={cariSumber}
-                                onChange={(e) => setCariSumber(e.target.value)}
-                                className="border rounded-lg pl-8 pr-3 py-1.5 text-xs w-56" />
+                            <input type="text" placeholder="Cari kategori..." value={cariSumber} onChange={(e) => setCariSumber(e.target.value)} className="border rounded-lg pl-8 pr-3 py-1.5 text-xs w-56" />
                         </div>
                         <ExportButtons onExport={doExportSumber} />
                     </div>
@@ -443,12 +589,9 @@ export default function Kas() {
                     <div className="flex items-center gap-2 flex-wrap">
                         <div className="relative">
                             <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <input type="text" placeholder="Cari keterangan..." value={cariRiwayat}
-                                onChange={(e) => setCariRiwayat(e.target.value)}
-                                className="border rounded-lg pl-8 pr-3 py-1.5 text-xs w-56" />
+                            <input type="text" placeholder="Cari keterangan..." value={cariRiwayat} onChange={(e) => setCariRiwayat(e.target.value)} className="border rounded-lg pl-8 pr-3 py-1.5 text-xs w-56" />
                         </div>
-                        <select value={jenis} onChange={(e) => applyJenis(e.target.value)}
-                            className="border border-emerald-500 rounded-lg px-3 py-1.5 text-xs">
+                        <select value={jenis} onChange={(e) => applyJenis(e.target.value)} className="border border-emerald-500 rounded-lg px-3 py-1.5 text-xs">
                             {jenisFilterOptions.map((j) => (
                                 <option key={j} value={j}>{j === "Semua" ? "Semua Jenis" : labelJenis[j]}</option>
                             ))}
@@ -457,22 +600,7 @@ export default function Kas() {
                     </div>
                 </div>
 
-                {/* Date range */}
-                <div className="flex flex-wrap items-center gap-2 mb-5 pb-5 border-b border-gray-100">
-                    {["Bulan Ini", "3 Bulan", "6 Bulan", "Tahun Ini"].map((label) => (
-                        <button key={label} onClick={() => applyDateShortcut(label)}
-                            className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:border-emerald-500 hover:text-emerald-600 transition">
-                            {label}
-                        </button>
-                    ))}
-                    <input type="date" value={startDate}
-                        onChange={(e) => { setStartDate(e.target.value); fetchRiwayat({ start: e.target.value }); }}
-                        className="border rounded-lg px-3 py-1.5 text-xs" />
-                    <span className="text-xs text-gray-400">s/d</span>
-                    <input type="date" value={endDate}
-                        onChange={(e) => { setEndDate(e.target.value); fetchRiwayat({ end: e.target.value }); }}
-                        className="border rounded-lg px-3 py-1.5 text-xs" />
-                </div>
+                <p className="text-xs text-gray-400 mb-3">Menampilkan periode: {formatTanggalIndo(startDate)} s/d {formatTanggalIndo(endDate)} (atur di bagian atas halaman)</p>
 
                 <h3 className="text-xs text-gray-400 mb-3">{(riwayat || []).length} transaksi ditemukan</h3>
 
@@ -494,18 +622,13 @@ export default function Kas() {
                             <tbody className="divide-y divide-gray-100">
                                 {paginated.map((row, i) => (
                                     <tr key={i} className="hover:bg-gray-50">
-                                        <td className="py-3 px-4 text-[11px] text-gray-500">{row.tanggal}</td>
+                                        <td className="py-3 px-4 text-[11px] text-gray-500">{formatTanggalSingkat(row.tanggal)}</td>
                                         <td className="py-3 px-4 text-[11px]">
-                                            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium"
-                                                style={{ background: `${colorJenis[row.jenis]}1A`, color: colorJenis[row.jenis] }}>
-                                                {labelJenis[row.jenis] || row.jenis}
-                                            </span>
+                                            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium" style={{ background: `${colorJenis[row.jenis]}1A`, color: colorJenis[row.jenis] }}>{labelJenis[row.jenis] || row.jenis}</span>
                                         </td>
                                         <td className="py-3 px-4 text-[11px] text-gray-600">{row.sumber}</td>
                                         <td className="py-3 px-4 text-right font-medium">
-                                            <span className={row.jenis === "keluar" ? "text-red-500" : "text-emerald-600"}>
-                                                {row.jenis === "keluar" ? "-" : "+"} Rp {formatRp(row.jumlah)}
-                                            </span>
+                                            <span className={row.jenis === "keluar" ? "text-red-500" : "text-emerald-600"}>{row.jenis === "keluar" ? "-" : "+"} Rp {formatRp(row.jumlah)}</span>
                                         </td>
                                         <td className="py-3 px-4 text-[11px] text-gray-500">{row.keterangan}</td>
                                         <td className="py-3 px-4 text-[11px] text-gray-500">{row.oleh}</td>
@@ -522,20 +645,21 @@ export default function Kas() {
             </div>
             )}
 
-            {/* EXPORT MODAL — khusus Riwayat (pakai rentang tanggal) */}
+            {/* Popup pemilih bulan / rentang tanggal (selektor periode di header) */}
+            {showPopupBulan && (
+                <PopupPilihBulan tahun={thisYear} bulan={thisMonth} onApplyBulan={terapkanBulan} onApplyRentang={terapkanRentang} onClose={() => setShowPopupBulan(false)} />
+            )}
+
+            {/* EXPORT MODAL — khusus Riwayat (pakai rentang tanggal) — TIDAK DIUBAH SAMA SEKALI */}
             {exportModal.open && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
-                        <h3 className="font-semibold text-gray-800 mb-1">
-                            Export {exportModal.type?.toUpperCase()}
-                        </h3>
+                        <h3 className="font-semibold text-gray-800 mb-1">Export {exportModal.type?.toUpperCase()}</h3>
                         <p className="text-xs text-gray-400 mb-4">Pilih rentang tanggal yang ingin diekspor</p>
 
                         <div className="flex flex-wrap gap-2 mb-4">
                             {["Bulan Ini", "3 Bulan", "6 Bulan", "Tahun Ini"].map((label) => (
-                                <button key={label}
-                                    onClick={() => { const [s, e] = getShortcut(label); setExportStart(s); setExportEnd(e); }}
-                                    className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:border-emerald-500 hover:text-emerald-600 transition">
+                                <button key={label} onClick={() => { const [s, e] = getShortcut(label); setExportStart(s); setExportEnd(e); }} className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:border-emerald-500 hover:text-emerald-600 transition">
                                     {label}
                                 </button>
                             ))}
@@ -544,15 +668,11 @@ export default function Kas() {
                         <div className="flex gap-3 mb-3">
                             <div className="flex-1">
                                 <label className="block text-xs text-gray-500 mb-1">Dari</label>
-                                <input type="date" value={exportStart}
-                                    onChange={(e) => setExportStart(e.target.value)}
-                                    className="w-full border rounded-lg px-3 py-2 text-sm" />
+                                <input type="date" value={exportStart} onChange={(e) => setExportStart(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" />
                             </div>
                             <div className="flex-1">
                                 <label className="block text-xs text-gray-500 mb-1">Sampai</label>
-                                <input type="date" value={exportEnd}
-                                    onChange={(e) => setExportEnd(e.target.value)}
-                                    className="w-full border rounded-lg px-3 py-2 text-sm" />
+                                <input type="date" value={exportEnd} onChange={(e) => setExportEnd(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" />
                             </div>
                         </div>
 
@@ -564,12 +684,10 @@ export default function Kas() {
                         </p>
 
                         <div className="flex justify-end gap-2">
-                            <button onClick={() => setExportModal({ open: false, type: null })}
-                                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <button onClick={() => setExportModal({ open: false, type: null })} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">
                                 Batal
                             </button>
-                            <button onClick={handleExportConfirm}
-                                className="px-4 py-2 text-sm bg-[#1B8A3A] text-white rounded-lg hover:bg-[#156e2e]">
+                            <button onClick={handleExportConfirm} className="px-4 py-2 text-sm bg-[#1B8A3A] text-white rounded-lg hover:bg-[#156e2e]">
                                 Export
                             </button>
                         </div>

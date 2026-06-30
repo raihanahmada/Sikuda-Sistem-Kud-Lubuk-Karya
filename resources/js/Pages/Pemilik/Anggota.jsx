@@ -28,6 +28,7 @@ function useDebounce(value, delay = 500) {
 const BadgeStatus = memo(function BadgeStatus({ status }) {
   const config = {
     aktif       : { label: "Aktif",       bg: "#E8F5E9", color: "#1B8A3A" },
+    pasif       : { label: "Pasif",       bg: "#FEF3C7", color: "#D97706" },
     tidak_aktif : { label: "Tidak Aktif", bg: "#FEE2E2", color: "#DC2626" },
   };
   const s = config[status] || { label: status, bg: "#F3F4F6", color: "#6B7280" };
@@ -106,11 +107,12 @@ export default function Anggota() {
       </div>
 
       {/* STATISTIK CARD */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total Anggota", value: statistik?.total || 0, color: "#3B82F6" },
-          { label: "Aktif",         value: statistik?.aktif || 0, color: "#1B8A3A" },
-          { label: "Tidak Aktif",   value: statistik?.pasif || 0, color: "#DC2626" },
+          { label: "Total Anggota", value: statistik?.total       || 0, color: "#3B82F6" },
+          { label: "Aktif",         value: statistik?.aktif       || 0, color: "#1B8A3A" },
+          { label: "Pasif",         value: statistik?.pasif       || 0, color: "#D97706" },
+          { label: "Tidak Aktif",   value: statistik?.tidak_aktif || 0, color: "#DC2626" },
         ].map(({ label, value, color }) => (
           <div key={label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm text-center">
             <p className="text-2xl font-bold" style={{ color }}>{value}</p>
@@ -136,7 +138,7 @@ export default function Anggota() {
           />
         </div>
         <div className="flex gap-2">
-          {["semua", "aktif", "tidak_aktif"].map((s) => (
+          {["semua", "aktif", "pasif", "tidak_aktif"].map((s) => (
             <button
               key={s}
               onClick={() => setFilterStatus(s)}
@@ -146,7 +148,7 @@ export default function Anggota() {
                   : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
               }`}
             >
-              {s === "semua" ? "Semua" : s === "aktif" ? "Aktif" : "Tidak Aktif"}
+              {s === "semua" ? "Semua" : s === "aktif" ? "Aktif" : s === "pasif" ? "Pasif" : "Tidak Aktif"}
             </button>
           ))}
         </div>

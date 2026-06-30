@@ -18,26 +18,35 @@ class LaporanPeriodikController extends Controller
     {
         $tahunSekarang = Carbon::now()->year;
 
-        // ── Tentukan mode periode: 'tahun' atau 'bulan' ─────────────────
+        // ── Tentukan mode periode: 'tahun', 'bulan', atau 'rentang' ──────
         $modePeriode = $request->input('mode', 'tahun'); // default: tahun
 
         // ── Hitung start & end berdasarkan mode ─────────────────────────
-        if ($modePeriode === 'bulan') {
+        if ($modePeriode === 'rentang') {
+            // Rentang tanggal kustom dari popup kalender
+            $start = $request->input('tanggal_mulai');
+            $end   = $request->input('tanggal_akhir');
+            $tahun = Carbon::parse($start)->year;
+            $bulan = null;
+            $labelPeriode = Carbon::parse($start)->translatedFormat('d M Y')
+                . ' s.d. ' . Carbon::parse($end)->translatedFormat('d M Y');
+        } elseif ($modePeriode === 'bulan') {
             $tahun = (int) $request->input('tahun', $tahunSekarang);
             $bulan = (int) $request->input('bulan', Carbon::now()->month);
             $start = Carbon::create($tahun, $bulan, 1)->startOfMonth()->toDateString();
             $end   = Carbon::create($tahun, $bulan, 1)->endOfMonth()->toDateString();
             $labelPeriode = Carbon::create($tahun, $bulan, 1)->translatedFormat('F Y');
         } else {
-            // default: per tahun
+            // default: per tahun (juga fallback kalau mode tidak dikenali)
+            $modePeriode = 'tahun';
             $tahun = (int) $request->input('tahun', $tahunSekarang);
+            $bulan = null;
             $start = Carbon::create($tahun, 1, 1)->toDateString();
             $end   = Carbon::create($tahun, 12, 31)->toDateString();
             $labelPeriode = "Tahun $tahun";
         }
 
         // ── Ambil daftar tahun yang tersedia dari semua model ────────────
-        // Diambil dari tahun paling awal di database hingga tahun sekarang.
         $tahunTersedia = $this->getTahunTersedia($tahunSekarang);
 
         // ── 1. Kumpulkan semua transaksi dari semua model ────────────────
@@ -131,7 +140,7 @@ class LaporanPeriodikController extends Controller
             'filterAktif'   => [
                 'mode'         => $modePeriode,
                 'tahun'        => $tahun,
-                'bulan'        => $modePeriode === 'bulan' ? $bulan : null,
+                'bulan'        => $bulan,
                 'start'        => $start,
                 'end'          => $end,
                 'labelPeriode' => $labelPeriode,
