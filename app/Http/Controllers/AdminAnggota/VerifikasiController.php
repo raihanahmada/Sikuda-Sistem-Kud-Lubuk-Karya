@@ -28,7 +28,7 @@ class VerifikasiController extends Controller
     // Menampilkan detail verifikasi
     public function show($id)
     {
-        $anggota = Anggota::findOrFail($id);
+        $anggota = Anggota::with('dataPendaftaran')->findOrFail($id);
         return Inertia::render('AdminAnggota/Verifikasi/Show', ['anggota' => $anggota]);
     }
 

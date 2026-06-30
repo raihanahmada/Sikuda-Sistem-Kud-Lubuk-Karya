@@ -9,6 +9,9 @@ export default function Create() {
         alamat: '',
         no_telepon: '',
         tanggal_daftar: '',
+        file_kk: null,
+        file_ktp: null,
+        file_surat_pernyataan: null,
     });
 
     function submit(e) {
@@ -79,6 +82,41 @@ export default function Create() {
                         onChange={e => setData('tanggal_daftar', e.target.value)}
                     />
                     {errors.tanggal_daftar && <div className="text-red-500 text-sm">{errors.tanggal_daftar}</div>}
+                </div>
+
+                {/* Dokumen Persyaratan */}
+                <div>
+                    <label className="block text-sm font-medium mb-1">File Kartu Keluarga (KK)</label>
+                    <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        className="border p-2 w-full"
+                        onChange={e => setData('file_kk', e.target.files[0])}
+                    />
+                    {errors.file_kk && <div className="text-red-500 text-sm">{errors.file_kk}</div>}
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium mb-1">File KTP</label>
+                    <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        className="border p-2 w-full"
+                        onChange={e => setData('file_ktp', e.target.files[0])}
+                    />
+                    {errors.file_ktp && <div className="text-red-500 text-sm">{errors.file_ktp}</div>}
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium mb-1">File Surat Pernyataan</label>
+                    <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        className="border p-2 w-full"
+                        onChange={e => setData('file_surat_pernyataan', e.target.files[0])}
+                    />
+                    {errors.file_surat_pernyataan && <div className="text-red-500 text-sm">{errors.file_surat_pernyataan}</div>}
+                    <p className="text-xs text-gray-400 mt-1">Format: JPG, PNG, atau PDF. Maks 5MB.</p>
                 </div>
 
                 {/* Button */}

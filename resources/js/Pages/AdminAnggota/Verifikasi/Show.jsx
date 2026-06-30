@@ -2,6 +2,46 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
 
+// Menampilkan satu berkas persyaratan (gambar tampil sebagai thumbnail, PDF sebagai tautan)
+function DokumenPreview({ label, url }) {
+    if (!url) {
+        return (
+            <div>
+                <p className="text-sm text-gray-500 mb-2">{label}</p>
+                <div className="w-full h-32 flex items-center justify-center border border-dashed rounded-lg text-sm text-gray-400 italic">
+                    Belum diunggah
+                </div>
+            </div>
+        );
+    }
+
+    const isPdf = url.toLowerCase().endsWith('.pdf');
+
+    return (
+        <div>
+            <p className="text-sm text-gray-500 mb-2">{label}</p>
+            {isPdf ? (
+                <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center w-full h-32 border rounded-lg bg-gray-50 text-blue-600 hover:bg-gray-100 font-medium"
+                >
+                    📄 Lihat PDF
+                </a>
+            ) : (
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                    <img
+                        src={url}
+                        alt={label}
+                        className="w-full h-32 object-cover rounded-lg border hover:opacity-80 transition"
+                    />
+                </a>
+            )}
+        </div>
+    );
+}
+
 export default function Show({ anggota }) {
     // State untuk memunculkan form input alasan penolakan
     const [tampilFormTolak, setTampilFormTolak] = useState(false);
@@ -134,9 +174,17 @@ export default function Show({ anggota }) {
                     )}
                 </div>
             </div>
-            
-            {/* Bagian Dummy Dokumen KTP/KK sudah dihapus total sesuai dengan desain database DPPL */}
-            
+
+            {/* DOKUMEN PERSYARATAN (KK, KTP, Surat Pernyataan) dari tb_data_pendaftaran */}
+            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">Dokumen Persyaratan</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <DokumenPreview label="Kartu Keluarga (KK)" url={anggota.data_pendaftaran?.file_kk_url} />
+                    <DokumenPreview label="KTP" url={anggota.data_pendaftaran?.file_ktp_url} />
+                    <DokumenPreview label="Surat Pernyataan" url={anggota.data_pendaftaran?.file_surat_pernyataan_url} />
+                </div>
+            </div>
+
         </AdminAnggotaLayout>
     );
 }

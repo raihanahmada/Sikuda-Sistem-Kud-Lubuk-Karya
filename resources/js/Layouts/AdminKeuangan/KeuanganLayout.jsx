@@ -7,7 +7,7 @@ const menu = [
     { label: 'Penjualan TBS',   href: '/admin-keuangan/penjualan-tbs' }, // UC09 — penimbangan TBS via unit RAM
     { label: 'Penyaluran Dana', href: '/admin-keuangan/penyaluran-dana' }, // UC10 — distribusi dana bersih
     { label: 'Laporan Periodik',href: '/admin-keuangan/laporan' }, // UC11 — mingguan/15 harian/bulanan/tahunan
-    { label: 'Setting',         href: '/admin-keuangan/setting' }, // UC12 — ubah nama & password
+    { label: 'Pengaturan',         href: '/admin-keuangan/setting' }, // UC12 — ubah nama & password
 ];
 
 export default function KeuanganLayout({ title, children }) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminAnggota;
 use App\Http\Controllers\Controller;
 use App\Models\Anggota;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class PendaftaranController extends Controller
@@ -38,14 +39,30 @@ class PendaftaranController extends Controller
             'alamat' => 'required|string',
             'no_telepon' => 'nullable|string|max:15',
             'tanggal_daftar' => 'required|date',
+            'file_kk' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'file_ktp' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'file_surat_pernyataan' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
-        // Tambahkan data otomatis sesuai aturan di dokumen DPPL/SKPL
-        $validated['status_keanggotaan'] = 'menunggu_verifikasi';
-        $validated['no_surat_permohonan'] = 'SP/KUD/' . date('Y') . '/' . rand(1000,9999);
+        DB::transaction(function () use ($validated, $request) {
+            // Tambahkan data otomatis sesuai aturan di dokumen DPPL/SKPL
+            $anggota = Anggota::create([
+                'nik' => $validated['nik'],
+                'nama_lengkap' => $validated['nama_lengkap'],
+                'alamat' => $validated['alamat'],
+                'no_telepon' => $validated['no_telepon'] ?? null,
+                'tanggal_daftar' => $validated['tanggal_daftar'],
+                'status_keanggotaan' => 'menunggu_verifikasi',
+                'no_surat_permohonan' => 'SP/KUD/' . date('Y') . '/' . rand(1000, 9999),
+            ]);
 
-        // Simpan ke database tb_anggota
-        Anggota::create($validated);
+            // Simpan berkas persyaratan ke disk publik & data pendaftaran ke tb_data_pendaftaran
+            $anggota->dataPendaftaran()->create([
+                'file_kk' => $request->file('file_kk')->store('data-pendaftaran/kk', 'public'),
+                'file_ktp' => $request->file('file_ktp')->store('data-pendaftaran/ktp', 'public'),
+                'file_surat_pernyataan' => $request->file('file_surat_pernyataan')->store('data-pendaftaran/surat-pernyataan', 'public'),
+            ]);
+        });
 
         // Arahkan kembali ke halaman index (Daftar Antrian/Pendaftaran) setelah sukses
         return redirect()->route('admin-anggota.pendaftaran-anggota.index');
@@ -54,8 +71,8 @@ class PendaftaranController extends Controller
     // 4. Menampilkan halaman Detail (Show)
     public function show($id)
     {
-        $anggota = Anggota::findOrFail($id);
-        
+        $anggota = Anggota::with('dataPendaftaran')->findOrFail($id);
+
         return Inertia::render('AdminAnggota/PendaftaranAnggota/Show', [
             'anggota' => $anggota
         ]);
