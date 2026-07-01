@@ -22,6 +22,7 @@ use App\Http\Controllers\Pemilik\LaporanPeriodikController;
 use App\Http\Controllers\Pemilik\PengaturanController;
 use App\Http\Controllers\Pemilik\SimpananController as PemilikSimpananController;
 use App\Http\Controllers\Pemilik\KasController;
+use App\Http\Controllers\Pemilik\PenjualanTbsController as PemilikPenjualanTbsController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Anggota;
 
@@ -160,6 +161,7 @@ Route::middleware(['sikuda.auth', 'sikuda.role:pemilik'])
         Route::post('/pengaturan/update', [PengaturanController::class, 'update'])->name('pengaturan.update');
         Route::get('/simpanan', [PemilikSimpananController::class, 'index'])->name('simpanan');
         Route::get('/kas', [KasController::class, 'index'])->name('kas');
+        Route::get('/penjualan-tbs', [PemilikPenjualanTbsController::class, 'index'])->name('penjualan-tbs');
     });
 
 // ═══════════════════════════════════════════════════════════

@@ -23,6 +23,11 @@ function useDebounce(value, delay = 500) {
   return debouncedValue;
 }
 
+// ─── Status yang boleh tampil di tabel ─────────────────────────────────────
+// Kalau backend ngirim data dengan status di luar 3 ini (misal "menunggu",
+// "ditolak", null, dll), baris itu tidak akan ditampilkan di tabel.
+const STATUS_VALID = ["aktif", "pasif", "tidak_aktif"];
+
 // ─── Badge Status ─────────────────────────────────────────────────────────────
 
 const BadgeStatus = memo(function BadgeStatus({ status }) {
@@ -85,8 +90,14 @@ export default function Anggota() {
     );
   }, [debouncedSearch, filterStatus]);
 
-  // Data sudah difilter di server (lewat controller), jadi dipakai apa adanya.
-  const dataAnggota = useMemo(() => anggota || [], [anggota]);
+  // ─── Tabel hanya menampilkan status aktif/pasif/tidak_aktif, dan
+  // diurutkan alfabetis A-Z berdasarkan nama lengkap ───────────────────────
+  const dataAnggota = useMemo(() => {
+    const filtered = (anggota || []).filter((a) => STATUS_VALID.includes(a.status_keanggotaan));
+    return [...filtered].sort((a, b) =>
+      (a.nama_lengkap || "").localeCompare(b.nama_lengkap || "", "id", { sensitivity: "base" })
+    );
+  }, [anggota]);
 
   // Indikator loading: nyala selagi nunggu debounce ATAU nunggu response server.
   const isWaiting = search !== debouncedSearch || isSearching;

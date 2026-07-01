@@ -12,7 +12,6 @@ import { ArrowLeft, Search, Calendar, ChevronDown } from "lucide-react";
 
 const ROWS_PER_PAGE = 10;
 const DEBOUNCE_MS = 500;
-const labelJenis = { pokok: "Pokok", wajib: "Wajib", pengambilan: "Pengambilan" };
 
 const NAMA_BULAN = [
     "Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -174,8 +173,8 @@ const ModalPilihPeriode = memo(function ModalPilihPeriode({ tahun, bulan, onAppl
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-export default function Simpanan() {
-    const { totalSimpanan, breakdownJenis, perAnggota, filterAktif } = usePage().props;
+export default function PenjualanTbs() {
+    const { ringkasanTbs, transaksi, filterAktif } = usePage().props;
 
     const fmt      = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     const firstDay = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
@@ -188,39 +187,29 @@ export default function Simpanan() {
     const defaultEnd   = lastDay(today);
 
     // ── State ─────────────────────────────────────────────────────────────────
-    const [pageAnggota, setPageAnggota]       = useState(1);
-    const [cariAnggota, setCariAnggota]       = useState(filterAktif?.cari_anggota || "");
+    const [pageTransaksi, setPageTransaksi]   = useState(1);
+    const [cari, setCari]                     = useState(filterAktif?.cari || "");
     const [startDate, setStartDate]           = useState(filterAktif?.start || defaultStart);
     const [endDate, setEndDate]               = useState(filterAktif?.end   || defaultEnd);
     const [jenisPeriode, setJenisPeriode]     = useState("bulan");
     const [showPopupBulan, setShowPopupBulan] = useState(false);
 
-    const isFirstAnggotaSearch = useRef(true);
+    const isFirstSearch = useRef(true);
 
     // ── Reset pagination tiap server ngirim data baru ────────────────────────
-    useEffect(() => { setPageAnggota(1); }, [perAnggota]);
-
-    // ── Ringkasan breakdown jenis ─────────────────────────────────────────────
-    const ringkasanJenis = useMemo(() => {
-        const map = { pokok: 0, wajib: 0, pengambilan: 0 };
-        (breakdownJenis || []).forEach((b) => { map[b.jenis] = Number(b.total || 0); });
-        return map;
-    }, [breakdownJenis]);
-
-    const danaMasuk  = ringkasanJenis.pokok + ringkasanJenis.wajib;
-    const danaKeluar = ringkasanJenis.pengambilan;
+    useEffect(() => { setPageTransaksi(1); }, [transaksi]);
 
     // ── Pagination client-side ──────────────────────────────────────────────
-    const totalPagesAnggota = Math.ceil((perAnggota || []).length / ROWS_PER_PAGE);
-    const paginatedAnggota  = useMemo(() => (perAnggota || []).slice((pageAnggota - 1) * ROWS_PER_PAGE, pageAnggota * ROWS_PER_PAGE), [perAnggota, pageAnggota]);
+    const totalPagesTransaksi = Math.ceil((transaksi || []).length / ROWS_PER_PAGE);
+    const paginatedTransaksi  = useMemo(() => (transaksi || []).slice((pageTransaksi - 1) * ROWS_PER_PAGE, pageTransaksi * ROWS_PER_PAGE), [transaksi, pageTransaksi]);
 
     // ── Fetch ke server ──────────────────────────────────────────────────────
-    const fetchAnggota = (overrides = {}) => {
-        router.get(route('pemilik.simpanan'), {
-            start:        overrides.start        ?? startDate,
-            end:          overrides.end          ?? endDate,
-            cari_anggota: overrides.cari_anggota ?? cariAnggota,
-        }, { preserveState: true, preserveScroll: true, replace: true, only: ['perAnggota', 'totalSimpanan', 'breakdownJenis', 'filterAktif'] });
+    const fetchTransaksi = (overrides = {}) => {
+        router.get(route('pemilik.penjualan-tbs'), {
+            start: overrides.start ?? startDate,
+            end:   overrides.end   ?? endDate,
+            cari:  overrides.cari  ?? cari,
+        }, { preserveState: true, preserveScroll: true, replace: true, only: ['transaksi', 'ringkasanTbs', 'filterAktif'] });
     };
 
     const pilihPerTahun = () => {
@@ -228,7 +217,7 @@ export default function Simpanan() {
         const [s, e] = getYearRange(thisYear);
         setStartDate(s);
         setEndDate(e);
-        fetchAnggota({ start: s, end: e });
+        fetchTransaksi({ start: s, end: e });
     };
 
     const terapkanBulan = (tahun, bulan) => {
@@ -240,7 +229,7 @@ export default function Simpanan() {
         setStartDate(s);
         setEndDate(e);
         setShowPopupBulan(false);
-        fetchAnggota({ start: s, end: e });
+        fetchTransaksi({ start: s, end: e });
     };
 
     const terapkanRentang = (mulai, akhir) => {
@@ -248,49 +237,69 @@ export default function Simpanan() {
         setStartDate(mulai);
         setEndDate(akhir);
         setShowPopupBulan(false);
-        fetchAnggota({ start: mulai, end: akhir });
+        fetchTransaksi({ start: mulai, end: akhir });
     };
 
-    // ── DEBOUNCE: pencarian anggota ───────────────────────────────────────────
+    // ── DEBOUNCE: pencarian anggota/transaksi ─────────────────────────────────
     useEffect(() => {
-        if (isFirstAnggotaSearch.current) { isFirstAnggotaSearch.current = false; return; }
-        const timer = setTimeout(() => { fetchAnggota({ cari_anggota: cariAnggota }); }, DEBOUNCE_MS);
+        if (isFirstSearch.current) { isFirstSearch.current = false; return; }
+        const timer = setTimeout(() => { fetchTransaksi({ cari }); }, DEBOUNCE_MS);
         return () => clearTimeout(timer);
-    }, [cariAnggota]);
+    }, [cari]);
 
-    // ── Export Per Anggota ────────────────────────────────────────────────────
-    const doExportAnggota = (type) => {
-        const data = perAnggota || [];
+    // ── Export ─────────────────────────────────────────────────────────────────
+    const doExport = (type) => {
+        const data = transaksi || [];
         if (type === "csv" || type === "excel") {
-            const ws = XLSX.utils.json_to_sheet(data.map(a => ({ Nama: a.nama_lengkap, Pokok: a.pokok, Wajib: a.wajib, Pengambilan: a.pengambilan, Total: a.total })));
+            const ws = XLSX.utils.json_to_sheet(data.map(t => ({
+                Tanggal: formatTanggalIndo(t.tanggal_timbang),
+                Anggota: t.nama_anggota,
+                "Berat (kg)": t.berat_bersih_kg,
+                "Harga/kg": t.harga_per_kg,
+                "Total Nilai": t.total_nilai,
+            })));
             if (type === "csv") {
-                saveAs(new Blob([XLSX.utils.sheet_to_csv(ws)]), "simpanan-per-anggota.csv");
+                saveAs(new Blob([XLSX.utils.sheet_to_csv(ws)]), "penjualan-tbs.csv");
             } else {
                 const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Per Anggota");
-                XLSX.writeFile(wb, "simpanan-per-anggota.xlsx");
+                XLSX.utils.book_append_sheet(wb, ws, "Penjualan TBS");
+                XLSX.writeFile(wb, "penjualan-tbs.xlsx");
             }
         }
         if (type === "pdf") {
             const doc = new jsPDF();
-            doc.text("Simpanan per Anggota", 14, 10);
+            doc.text("Penjualan TBS", 14, 10);
             autoTable(doc, {
-                head: [["Nama", "Pokok", "Wajib", "Pengambilan", "Total"]],
-                body: data.map((a) => [a.nama_lengkap, `Rp ${formatRp(a.pokok)}`, `Rp ${formatRp(a.wajib)}`, `Rp ${formatRp(a.pengambilan)}`, `Rp ${formatRp(a.total)}`]),
+                head: [["Tanggal", "Anggota", "Berat (kg)", "Harga/kg", "Total Nilai"]],
+                body: data.map((t) => [
+                    formatTanggalIndo(t.tanggal_timbang),
+                    t.nama_anggota,
+                    t.berat_bersih_kg,
+                    `Rp ${formatRp(t.harga_per_kg)}`,
+                    `Rp ${formatRp(t.total_nilai)}`,
+                ]),
             });
-            doc.save("simpanan-per-anggota.pdf");
+            doc.save("penjualan-tbs.pdf");
         }
         if (type === "docx") {
             (async () => {
                 const table = new Table({
                     rows: [
-                        new TableRow({ children: ["Nama", "Pokok", "Wajib", "Pengambilan", "Total"].map((h) => new TableCell({ children: [new Paragraph(h)] })) }),
-                        ...data.map((a) => new TableRow({ children: [a.nama_lengkap, `Rp ${formatRp(a.pokok)}`, `Rp ${formatRp(a.wajib)}`, `Rp ${formatRp(a.pengambilan)}`, `Rp ${formatRp(a.total)}`].map((t) => new TableCell({ children: [new Paragraph(String(t))] })) })),
+                        new TableRow({ children: ["Tanggal", "Anggota", "Berat (kg)", "Harga/kg", "Total Nilai"].map((h) => new TableCell({ children: [new Paragraph(h)] })) }),
+                        ...data.map((t) => new TableRow({
+                            children: [
+                                formatTanggalIndo(t.tanggal_timbang),
+                                t.nama_anggota,
+                                String(t.berat_bersih_kg),
+                                `Rp ${formatRp(t.harga_per_kg)}`,
+                                `Rp ${formatRp(t.total_nilai)}`,
+                            ].map((v) => new TableCell({ children: [new Paragraph(v)] })),
+                        })),
                     ],
                 });
                 const doc  = new Document({ sections: [{ children: [table] }] });
                 const blob = await Packer.toBlob(doc);
-                saveAs(blob, "simpanan-per-anggota.docx");
+                saveAs(blob, "penjualan-tbs.docx");
             })();
         }
     };
@@ -304,7 +313,7 @@ export default function Simpanan() {
                 <Link href={route('pemilik.dashboard')} className="text-gray-400 hover:text-gray-600">
                     <ArrowLeft size={18} />
                 </Link>
-                <h1 className="text-xl font-semibold text-gray-800">Detail Dana Simpanan</h1>
+                <h1 className="text-xl font-semibold text-gray-800">Detail Penjualan TBS</h1>
             </div>
 
             {/* FILTER PERIODE */}
@@ -319,33 +328,29 @@ export default function Simpanan() {
 
             {/* SUMMARY CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-gray-100 rounded-2xl p-4 border border-gray-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Dana Simpanan</p>
-                    <p className="text-xl font-bold text-gray-900 mb-2">Rp {formatRp(totalSimpanan)}</p>
-                    <p className="text-[11px] text-gray-600">Dana Masuk: <span className="font-medium text-gray-800">Rp {formatRp(danaMasuk)}</span></p>
-                    <p className="text-[11px] text-gray-600">Dana Keluar: <span className="font-medium text-gray-800">Rp {formatRp(danaKeluar)}</span></p>
+                <div className="bg-lime-100 rounded-2xl p-4 border border-lime-200 shadow-sm">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Nilai Penjualan</p>
+                    <p className="text-xl font-bold text-lime-800">Rp {formatRp(ringkasanTbs?.totalNilai)}</p>
                 </div>
-                {["pokok", "wajib", "pengambilan"].map((j) => {
-                    const warna = j === "pokok"
-                        ? { bg: "bg-emerald-100", border: "border-emerald-200", text: "text-emerald-800" }
-                        : j === "wajib"
-                        ? { bg: "bg-amber-100", border: "border-amber-200", text: "text-amber-800" }
-                        : { bg: "bg-red-100", border: "border-red-200", text: "text-red-800" };
-                    return (
-                        <div key={j} className={`rounded-2xl p-4 border shadow-sm ${warna.bg} ${warna.border}`}>
-                            <p className="text-[11px] text-gray-600 font-medium mb-1">Simpanan {labelJenis[j]}</p>
-                            <p className={`text-xl font-bold mb-2 ${warna.text}`}>Rp {formatRp(ringkasanJenis[j])}</p>
-                            <p className="text-[11px] text-gray-600">{(breakdownJenis || []).find(b => b.jenis === j)?.jumlah_transaksi || 0} transaksi</p>
-                        </div>
-                    );
-                })}
+                <div className="bg-gray-100 rounded-2xl p-4 border border-gray-200 shadow-sm">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Berat</p>
+                    <p className="text-xl font-bold text-gray-900">{formatRp(ringkasanTbs?.totalBeratKg)} kg</p>
+                </div>
+                <div className="bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1">Harga TBS Berlaku</p>
+                    <p className="text-xl font-bold text-emerald-800">Rp {formatRp(ringkasanTbs?.hargaBerlaku)}<span className="text-xs font-normal text-gray-600"> /kg</span></p>
+                </div>
+                <div className="bg-blue-100 rounded-2xl p-4 border border-blue-200 shadow-sm">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1">Jumlah Transaksi</p>
+                    <p className="text-xl font-bold text-blue-800">{(transaksi || []).length}</p>
+                </div>
             </div>
 
-            {/* TABEL SIMPANAN PER ANGGOTA */}
+            {/* TABEL PENJUALAN TBS */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6 p-6">
                 <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
                     <h2 className="font-semibold text-gray-800">
-                        Simpanan per Anggota ({(perAnggota || []).length})
+                        Riwayat Penjualan ({(transaksi || []).length})
                     </h2>
                     <div className="flex items-center gap-2 flex-wrap">
                         <div className="relative">
@@ -353,39 +358,39 @@ export default function Simpanan() {
                             <input
                                 type="text"
                                 placeholder="Cari nama anggota..."
-                                value={cariAnggota}
-                                onChange={(e) => setCariAnggota(e.target.value)}
+                                value={cari}
+                                onChange={(e) => setCari(e.target.value)}
                                 className="border rounded-lg pl-8 pr-3 py-1.5 text-xs w-56"
                             />
                         </div>
-                        <ExportButtons onExport={doExportAnggota} />
+                        <ExportButtons onExport={doExport} />
                     </div>
                 </div>
 
-                {(perAnggota || []).length === 0 ? (
+                {(transaksi || []).length === 0 ? (
                     <div className="text-center py-12 text-gray-300 italic text-sm">
-                        Belum ada data anggota
+                        Belum ada data penjualan TBS
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="bg-gray-50 text-gray-500 text-xs uppercase">
-                                    <th className="py-3 px-4 text-left">Nama Anggota</th>
-                                    <th className="py-3 px-4 text-right">Pokok</th>
-                                    <th className="py-3 px-4 text-right">Wajib</th>
-                                    <th className="py-3 px-4 text-right">Pengambilan</th>
-                                    <th className="py-3 px-4 text-right">Total</th>
+                                    <th className="py-3 px-4 text-left">Tanggal</th>
+                                    <th className="py-3 px-4 text-left">Anggota</th>
+                                    <th className="py-3 px-4 text-right">Berat (kg)</th>
+                                    <th className="py-3 px-4 text-right">Harga/kg</th>
+                                    <th className="py-3 px-4 text-right">Total Nilai</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                                {paginatedAnggota.map((a) => (
-                                    <tr key={a.id_anggota} className="hover:bg-gray-50">
-                                        <td className="py-3 px-4 text-[11px] text-gray-600">{a.nama_lengkap}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600">Rp {formatRp(a.pokok)}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600">Rp {formatRp(a.wajib)}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600">Rp {formatRp(a.pengambilan)}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] font-medium text-gray-800">Rp {formatRp(a.total)}</td>
+                                {paginatedTransaksi.map((t) => (
+                                    <tr key={t.id_penjualan} className="hover:bg-gray-50">
+                                        <td className="py-3 px-4 text-[11px] text-gray-500">{formatTanggalIndo(t.tanggal_timbang)}</td>
+                                        <td className="py-3 px-4 text-[11px] text-gray-600">{t.nama_anggota}</td>
+                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600">{t.berat_bersih_kg}</td>
+                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600">Rp {formatRp(t.harga_per_kg)}</td>
+                                        <td className="py-3 px-4 text-right text-[11px] font-medium text-gray-800">Rp {formatRp(t.total_nilai)}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -393,8 +398,8 @@ export default function Simpanan() {
                     </div>
                 )}
 
-                {totalPagesAnggota > 1 && (
-                    <Pagination current={pageAnggota} total={totalPagesAnggota} onChange={setPageAnggota} />
+                {totalPagesTransaksi > 1 && (
+                    <Pagination current={pageTransaksi} total={totalPagesTransaksi} onChange={setPageTransaksi} />
                 )}
             </div>
 

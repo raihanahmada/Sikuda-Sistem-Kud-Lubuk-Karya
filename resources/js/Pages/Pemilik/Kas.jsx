@@ -330,36 +330,36 @@ export default function Kas() {
 
             {/* SUMMARY CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gray-50/60 rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <p className="text-[11px] text-gray-500 mb-1">Saldo Kas Pusat</p>
-                    <p className="text-xl font-semibold text-gray-800 mb-2">Rp {formatRp(saldoAkhir)}</p>
-                    <p className="text-[10px] text-gray-500">Kas Masuk: <span className="text-gray-600">Rp {formatRp(totalMasuk)}</span></p>
-                    <p className="text-[10px] text-gray-500">Kas Keluar: <span className="text-gray-600">Rp {formatRp(totalKeluar)}</span></p>
+                <div className="bg-gray-100 rounded-2xl p-4 border border-gray-200 shadow-sm">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1">Saldo Kas Pusat</p>
+                    <p className="text-xl font-bold text-gray-900 mb-2">Rp {formatRp(saldoAkhir)}</p>
+                    <p className="text-[11px] text-gray-600">Kas Masuk: <span className="font-medium text-gray-800">Rp {formatRp(totalMasuk)}</span></p>
+                    <p className="text-[11px] text-gray-600">Kas Keluar: <span className="font-medium text-gray-800">Rp {formatRp(totalKeluar)}</span></p>
                 </div>
-                <div className="bg-emerald-50/60 rounded-2xl p-4 border border-emerald-100 shadow-sm">
-                    <p className="text-[11px] text-gray-500 mb-1">Kas Masuk</p>
-                    <p className="text-xl font-semibold text-gray-800 mb-2">Rp {formatRp(totalMasuk)}</p>
-                    <p className="text-[10px] text-gray-500">Total dana masuk</p>
+                <div className="bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1">Kas Masuk</p>
+                    <p className="text-xl font-bold text-emerald-800 mb-2">Rp {formatRp(totalMasuk)}</p>
+                    <p className="text-[11px] text-gray-600">Total dana masuk</p>
                 </div>
-                <div className="bg-red-50/60 rounded-2xl p-4 border border-red-100 shadow-sm">
-                    <p className="text-[11px] text-gray-500 mb-1">Kas Keluar</p>
-                    <p className="text-xl font-semibold text-gray-800 mb-2">Rp {formatRp(totalKeluar)}</p>
-                    <p className="text-[10px] text-gray-500">Total dana keluar</p>
+                <div className="bg-red-100 rounded-2xl p-4 border border-red-200 shadow-sm">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1">Kas Keluar</p>
+                    <p className="text-xl font-bold text-red-800 mb-2">Rp {formatRp(totalKeluar)}</p>
+                    <p className="text-[11px] text-gray-600">Total dana keluar</p>
                 </div>
-                <div className="bg-blue-50/60 rounded-2xl p-4 border border-blue-100 shadow-sm">
-                    <p className="text-[11px] text-gray-500 mb-1">Jumlah Total Transaksi</p>
-                    <p className="text-xl font-semibold text-gray-800 mb-2">{totalTransaksi}</p>
-                    <p className="text-[10px] text-gray-500">Pada periode ini</p>
+                <div className="bg-blue-100 rounded-2xl p-4 border border-blue-200 shadow-sm">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1">Jumlah Total Transaksi</p>
+                    <p className="text-xl font-bold text-blue-800 mb-2">{totalTransaksi}</p>
+                    <p className="text-[11px] text-gray-600">Pada periode ini</p>
                 </div>
-                <div className="bg-emerald-50/60 rounded-2xl p-4 border border-emerald-100 shadow-sm">
-                    <p className="text-[11px] text-gray-500 mb-1">Total Dana Simpanan Pokok</p>
-                    <p className="text-xl font-semibold text-gray-800 mb-2">Rp {formatRp(simpananPokok)}</p>
-                    <p className="text-[10px] text-gray-500">Pada periode ini</p>
+                <div className="bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Dana Simpanan Pokok</p>
+                    <p className="text-xl font-bold text-emerald-800 mb-2">Rp {formatRp(simpananPokok)}</p>
+                    <p className="text-[11px] text-gray-600">Pada periode ini</p>
                 </div>
-                <div className="bg-amber-50/60 rounded-2xl p-4 border border-amber-100 shadow-sm">
-                    <p className="text-[11px] text-gray-500 mb-1">Total Dana Simpanan Wajib</p>
-                    <p className="text-xl font-semibold text-gray-800 mb-2">Rp {formatRp(simpananWajib)}</p>
-                    <p className="text-[10px] text-gray-500">Pada periode ini</p>
+                <div className="bg-amber-100 rounded-2xl p-4 border border-amber-200 shadow-sm">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Dana Simpanan Wajib</p>
+                    <p className="text-xl font-bold text-amber-800 mb-2">Rp {formatRp(simpananWajib)}</p>
+                    <p className="text-[11px] text-gray-600">Pada periode ini</p>
                 </div>
             </div>
 

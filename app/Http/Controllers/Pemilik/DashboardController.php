@@ -9,6 +9,7 @@ use App\Models\TransaksiKas;
 use App\Models\Simpanan;
 use App\Models\Anggota;
 use App\Models\PenjualanTbs;
+use App\Models\HargaTbs;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -20,8 +21,6 @@ class DashboardController extends Controller
 
         $anggotaAktif = Anggota::where('status_keanggotaan', 'aktif')->count();
         $anggotaPasif = Anggota::where('status_keanggotaan', 'tidak_aktif')->count();
-
-        $totalBeratTbs = PenjualanTbs::whereMonth('tanggal_timbang', date('m'))->sum('berat_bersih_kg');
 
         // ─── Tentukan rentang tanggal berdasarkan parameter periode ───────────
         // Default: bulan & tahun saat ini (kalau tidak ada parameter dikirim)
@@ -66,6 +65,25 @@ class DashboardController extends Controller
             ->orderBy('tanggal', 'asc')
             ->get();
 
+        // ─── Ringkasan Penjualan TBS, ikut difilter sesuai periode terpilih ────
+        $totalNilaiTbs = PenjualanTbs::whereBetween('tanggal_timbang', [$awal, $akhir])
+            ->sum('total_nilai');
+
+        $totalBeratTbs = PenjualanTbs::whereBetween('tanggal_timbang', [$awal, $akhir])
+            ->sum('berat_bersih_kg');
+
+        // Harga TBS yang sedang berlaku saat ini (bukan berdasarkan filter periode)
+        $hargaTbsBerlaku = HargaTbs::latest('berlaku_mulai')->first();
+
+        $grafikTbs = PenjualanTbs::select(
+                DB::raw('DATE(tanggal_timbang) as tanggal'),
+                DB::raw('SUM(total_nilai) as total_nilai')
+            )
+            ->whereBetween('tanggal_timbang', [$awal, $akhir])
+            ->groupBy('tanggal')
+            ->orderBy('tanggal', 'asc')
+            ->get();
+
         return Inertia::render('Pemilik/Dashboard', [
             'ringkasanKas' => [
                 'totalMasuk'  => $kasMasuk,
@@ -78,8 +96,11 @@ class DashboardController extends Controller
                 'aktif' => $anggotaAktif,
                 'pasif' => $anggotaPasif,
             ],
-            'performaTbs'  => [
-                'totalBerat' => $totalBeratTbs,
+            'ringkasanTbs' => [
+                'totalNilai'   => $totalNilaiTbs,
+                'totalBeratKg' => $totalBeratTbs,
+                'hargaBerlaku' => $hargaTbsBerlaku->harga_per_kg ?? null,
+                'grafik'       => $grafikTbs,
             ],
             'grafikArusKas' => $grafikArusKas,
         ]);

@@ -9,12 +9,18 @@ use Inertia\Inertia;
 
 class AnggotaController extends Controller
 {
+    // Status yang boleh muncul di halaman ini. Kalau ada data dengan status
+    // di luar daftar ini (misal "menunggu", "ditolak", atau null), datanya
+    // tidak akan pernah ditampilkan maupun dihitung di halaman ini.
+    private const STATUS_VALID = ['aktif', 'pasif', 'tidak_aktif'];
+
     public function index(Request $request)
     {
         $cari   = $request->input('cari');
         $status = $request->input('status');
 
         $query = Anggota::query()
+            ->whereIn('status_keanggotaan', self::STATUS_VALID)
             ->orderBy('tanggal_daftar', 'desc')
             ->select([
                 'id_anggota',
@@ -37,20 +43,24 @@ class AnggotaController extends Controller
             });
         }
 
-        // ── Filter status keanggotaan (sekarang menerima: aktif, pasif, tidak_aktif) ──
-        if ($status) {
+        // ── Filter status keanggotaan (menerima: aktif, pasif, tidak_aktif) ──
+        // Kalau $status diisi tapi bukan salah satu dari 3 status valid,
+        // diabaikan saja (tetap fallback ke whereIn di atas).
+        if ($status && in_array($status, self::STATUS_VALID)) {
             $query->where('status_keanggotaan', $status);
         }
 
         $anggota = $query->get();
 
         // Statistik tetap dihitung dari SELURUH data (bukan hasil yang sudah
-        // difilter), supaya angka di card statistik konsisten / tidak ikut
-        // berubah-ubah cuma karena user mengetik di kolom search.
-        $semuaAnggota = Anggota::select('status_keanggotaan')->get();
+        // difilter pencarian), supaya angka di card statistik konsisten /
+        // tidak ikut berubah-ubah cuma karena user mengetik di kolom search.
+        // Tapi tetap dibatasi ke 3 status valid, biar "total" selalu sama
+        // dengan aktif + pasif + tidak_aktif.
+        $semuaAnggota = Anggota::whereIn('status_keanggotaan', self::STATUS_VALID)
+            ->select('status_keanggotaan')
+            ->get();
 
-        // ── PERBAIKAN: 'pasif' sebelumnya salah menghitung status 'tidak_aktif'.
-        // Sekarang masing-masing status dihitung benar-benar sesuai namanya.
         $statistik = [
             'total'       => $semuaAnggota->count(),
             'aktif'       => $semuaAnggota->where('status_keanggotaan', 'aktif')->count(),

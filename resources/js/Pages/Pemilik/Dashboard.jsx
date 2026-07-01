@@ -13,10 +13,36 @@ const NAMA_BULAN = [
     "Juli", "Agustus", "September", "Oktober", "November", "Desember",
 ];
 
+const NAMA_BULAN_SINGKAT = [
+    "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+    "Jul", "Agu", "Sep", "Okt", "Nov", "Des",
+];
+
 // ─── Helper ───────────────────────────────────────────────────────────────────
 
 function tidakAdaData(value) {
     return value === null || value === undefined || Number(value) === 0;
+}
+
+function formatTanggalSingkat(tanggal) {
+    if (!tanggal) return "";
+    const d = new Date(tanggal);
+    if (isNaN(d.getTime())) return tanggal;
+    const hari = String(d.getDate()).padStart(2, "0");
+    const bulan = NAMA_BULAN_SINGKAT[d.getMonth()];
+    const tahun = d.getFullYear();
+    return `${hari} ${bulan} ${tahun}`;
+}
+
+function formatAngkaSingkat(value) {
+    const num = Number(value) || 0;
+    const abs = Math.abs(num);
+    if (abs >= 1000) {
+        const ribu = num / 1000;
+        const dibulatkan = Number.isInteger(ribu) ? ribu : ribu.toFixed(1);
+        return `${dibulatkan}K`;
+    }
+    return num.toLocaleString("id-ID");
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -70,9 +96,9 @@ function NilaiData({ value, prefix = "", suffix = "", className = "" }) {
 
 function LihatDetail() {
     return (
-        <div className="flex items-center gap-0.5 text-[10px] text-gray-400 hover:text-gray-600 transition mt-1">
+        <div className="flex items-center gap-0.5 text-[11px] text-gray-600 font-medium hover:text-gray-800 transition mt-1">
             <span>Lihat detail</span>
-            <ChevronRight size={11} />
+            <ChevronRight size={12} />
         </div>
     );
 }
@@ -147,7 +173,7 @@ function PopupPilihBulan({ tahun, bulan, tanggalMulai, tanggalAkhir, onApply, on
 // ─── Dashboard Page ───────────────────────────────────────────────────────────
 
 export default function Dashboard() {
-    const { ringkasanKas, totalSimpanan, statistikAnggota, grafikArusKas } = usePage().props;
+    const { ringkasanKas, totalSimpanan, statistikAnggota, grafikArusKas, ringkasanTbs } = usePage().props;
 
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
@@ -195,7 +221,7 @@ export default function Dashboard() {
                 tanggal_mulai: tanggalMulai || undefined,
                 tanggal_akhir: tanggalAkhir || undefined,
             },
-            only: ["ringkasanKas", "totalSimpanan", "statistikAnggota", "grafikArusKas"],
+            only: ["ringkasanKas", "totalSimpanan", "statistikAnggota", "grafikArusKas", "ringkasanTbs"],
         });
     }
 
@@ -243,19 +269,26 @@ export default function Dashboard() {
             : miniChartFallback,
     [grafikData]);
 
+    // ── Mini chart Penjualan TBS ───────────────────────────────────────────
+    const miniChartTbsData = useMemo(() =>
+        ringkasanTbs?.grafik?.length
+            ? ringkasanTbs.grafik.map((d) => ({ v: d.total_nilai || d.nilai || 0 }))
+            : miniChartFallback,
+    [ringkasanTbs]);
+
     // ── Judul grafik dinamis sesuai periode yang sedang ditampilkan ───────
     const judulGrafik = useMemo(() => {
         if (jenisPeriode === "tahun") {
             return `Tren Arus Kas Tahun ${tahunDipilih}`;
         }
         if (tanggalMulai && tanggalAkhir) {
-            return `Tren Arus Kas ${tanggalMulai} s.d. ${tanggalAkhir}`;
+            return `Tren Arus Kas ${formatTanggalSingkat(tanggalMulai)} s.d. ${formatTanggalSingkat(tanggalAkhir)}`;
         }
         return `Tren Arus Kas Bulan ${NAMA_BULAN[bulanDipilih - 1]} ${tahunDipilih}`;
     }, [jenisPeriode, tahunDipilih, bulanDipilih, tanggalMulai, tanggalAkhir]);
 
     const saldoFormatted = useMemo(
-        () => Number(ringkasanKas?.saldoAkhir || 0).toLocaleString("id-ID"),
+        () => formatAngkaSingkat(ringkasanKas?.saldoAkhir || 0),
         [ringkasanKas],
     );
 
@@ -275,9 +308,10 @@ export default function Dashboard() {
             {hasError && <ErrorBanner onRetry={handleRetry} />}
 
             {/* METRIC CARDS */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-stretch">
                 {isLoading ? (
                     <>
+                        <SkeletonCard />
                         <SkeletonCard />
                         <SkeletonCard />
                         <SkeletonCard />
@@ -286,19 +320,19 @@ export default function Dashboard() {
                     <>
                         {/* ── Kas ── */}
                         <Link href="/pemilik/kas" className="block h-full">
-                            <div className="h-full flex flex-col justify-between bg-emerald-50/60 rounded-2xl p-4 border border-emerald-100 shadow-sm hover:shadow-md transition cursor-pointer">
+                            <div className="h-full flex flex-col justify-between bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm hover:shadow-md transition cursor-pointer">
                                 <div>
-                                    <p className="text-[11px] text-gray-400 mb-1">Saldo Kas Pusat</p>
-                                    <p className="text-xl font-semibold text-[#1B8A3A] mb-2">
-                                        <NilaiData value={ringkasanKas?.saldoAkhir} prefix="Rp " className="text-xl font-semibold text-[#1B8A3A]" />
+                                    <p className="text-[11px] text-gray-600 font-medium mb-1">Saldo Kas Pusat</p>
+                                    <p className="text-xl font-bold text-emerald-800 mb-2">
+                                        <NilaiData value={ringkasanKas?.saldoAkhir} prefix="Rp " className="text-xl font-bold text-emerald-800" />
                                     </p>
-                                    <p className="text-[10px] text-gray-400">
+                                    <p className="text-[11px] text-gray-600">
                                         Kas Masuk:&nbsp;
-                                        <NilaiData value={ringkasanKas?.totalMasuk} prefix="Rp " className="text-[10px] text-gray-600" />
+                                        <NilaiData value={ringkasanKas?.totalMasuk} prefix="Rp " className="text-[11px] font-medium text-gray-800" />
                                     </p>
-                                    <p className="text-[10px] text-gray-400 mb-1">
+                                    <p className="text-[11px] text-gray-600 mb-1">
                                         Kas Keluar:&nbsp;
-                                        <NilaiData value={ringkasanKas?.totalKeluar} prefix="Rp " className="text-[10px] text-gray-600" />
+                                        <NilaiData value={ringkasanKas?.totalKeluar} prefix="Rp " className="text-[11px] font-medium text-gray-800" />
                                     </p>
                                     <LihatDetail />
                                 </div>
@@ -308,19 +342,19 @@ export default function Dashboard() {
 
                         {/* ── Simpanan ── */}
                         <Link href="/pemilik/simpanan" className="block h-full">
-                            <div className="h-full flex flex-col justify-between bg-amber-50/60 rounded-2xl p-4 border border-amber-100 shadow-sm hover:shadow-md transition cursor-pointer">
+                            <div className="h-full flex flex-col justify-between bg-amber-100 rounded-2xl p-4 border border-amber-200 shadow-sm hover:shadow-md transition cursor-pointer">
                                 <div>
-                                    <p className="text-[11px] text-gray-400 mb-1">Total Dana Simpanan</p>
-                                    <p className="text-xl font-semibold text-gray-800 mb-2">
-                                        <NilaiData value={totalSimpanan} prefix="Rp " className="text-xl font-semibold text-gray-800" />
+                                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Dana Simpanan</p>
+                                    <p className="text-xl font-bold text-amber-800 mb-2">
+                                        <NilaiData value={totalSimpanan} prefix="Rp " className="text-xl font-bold text-amber-800" />
                                     </p>
-                                    <p className="text-[10px] text-gray-400">
+                                    <p className="text-[11px] text-gray-600">
                                         Dana Masuk:&nbsp;
-                                        <NilaiData value={ringkasanKas?.totalMasuk} prefix="Rp " className="text-[10px] text-gray-600" />
+                                        <NilaiData value={ringkasanKas?.totalMasuk} prefix="Rp " className="text-[11px] font-medium text-gray-800" />
                                     </p>
-                                    <p className="text-[10px] text-gray-400 mb-1">
+                                    <p className="text-[11px] text-gray-600 mb-1">
                                         Dana Keluar:&nbsp;
-                                        <NilaiData value={ringkasanKas?.totalKeluar} prefix="Rp " className="text-[10px] text-gray-600" />
+                                        <NilaiData value={ringkasanKas?.totalKeluar} prefix="Rp " className="text-[11px] font-medium text-gray-800" />
                                     </p>
                                     <LihatDetail />
                                 </div>
@@ -328,13 +362,35 @@ export default function Dashboard() {
                             </div>
                         </Link>
 
+                        {/* ── Penjualan TBS ── */}
+                        <Link href="/pemilik/penjualan-tbs" className="block h-full">
+                            <div className="h-full flex flex-col justify-between bg-lime-100 rounded-2xl p-4 border border-lime-200 shadow-sm hover:shadow-md transition cursor-pointer">
+                                <div>
+                                    <p className="text-[11px] text-gray-600 font-medium mb-1">Penjualan TBS</p>
+                                    <p className="text-xl font-bold text-lime-800 mb-2">
+                                        <NilaiData value={ringkasanTbs?.totalNilai} prefix="Rp " className="text-xl font-bold text-lime-800" />
+                                    </p>
+                                    <p className="text-[11px] text-gray-600">
+                                        Berat Total:&nbsp;
+                                        <NilaiData value={ringkasanTbs?.totalBeratKg} suffix=" kg" className="text-[11px] font-medium text-gray-800" />
+                                    </p>
+                                    <p className="text-[11px] text-gray-600 mb-1">
+                                        Harga/kg:&nbsp;
+                                        <NilaiData value={ringkasanTbs?.hargaBerlaku} prefix="Rp " className="text-[11px] font-medium text-gray-800" />
+                                    </p>
+                                    <LihatDetail />
+                                </div>
+                                <MiniChart data={miniChartTbsData} color="#65A30D" />
+                            </div>
+                        </Link>
+
                         {/* ── Anggota ── */}
                         <Link href="/pemilik/anggota" className="block h-full">
-                            <div className="h-full flex flex-col justify-between bg-blue-50/60 rounded-2xl p-4 border border-blue-100 shadow-sm hover:shadow-md transition cursor-pointer">
+                            <div className="h-full flex flex-col justify-between bg-blue-100 rounded-2xl p-4 border border-blue-200 shadow-sm hover:shadow-md transition cursor-pointer">
                                 <div>
-                                    <p className="text-[11px] text-gray-400 mb-1">Status Keanggotaan</p>
-                                    <p className="text-xl font-semibold text-gray-800 mb-1">
-                                        {total > 0 ? `${total} Orang` : <span className="text-gray-300 italic text-sm">Belum ada data</span>}
+                                    <p className="text-[11px] text-gray-600 font-medium mb-1">Status Keanggotaan</p>
+                                    <p className="text-xl font-bold text-blue-800 mb-1">
+                                        {total > 0 ? `${total} Orang` : <span className="text-gray-400 italic text-sm">Belum ada data</span>}
                                     </p>
                                     <LihatDetail />
                                 </div>
@@ -344,7 +400,7 @@ export default function Dashboard() {
                                     {barAnggota.map(({ pct, color, label }) => (
                                         <div key={label} className="flex flex-col items-center gap-1 flex-1">
                                             <div className="w-full rounded-t transition-all duration-500" style={{ height: pct > 0 ? `${pct}%` : undefined, minHeight: pct > 0 ? 8 : 4, background: color, opacity: pct > 0 ? 1 : 0.25 }} />
-                                            <span className="text-[9px] text-gray-400">{label}</span>
+                                            <span className="text-[10px] text-gray-600 font-medium">{label}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -408,9 +464,14 @@ export default function Dashboard() {
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                            <XAxis dataKey="tanggal" tick={{ fontSize: 10, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-                            <YAxis tick={{ fontSize: 10, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-                            <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }} itemStyle={{ color: "#374151" }} />
+                            <XAxis dataKey="tanggal" tickFormatter={formatTanggalSingkat} tick={{ fontSize: 10, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+                            <YAxis tickFormatter={formatAngkaSingkat} tick={{ fontSize: 10, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+                            <Tooltip
+                                contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }}
+                                itemStyle={{ color: "#374151" }}
+                                labelFormatter={formatTanggalSingkat}
+                                formatter={(value, name) => [`Rp ${formatAngkaSingkat(value)}`, name]}
+                            />
                             <Area type="monotone" dataKey="pemasukan" stroke="#1B8A3A" strokeWidth={2} fill="url(#gradMasuk)" />
                             <Area type="monotone" dataKey="pengeluaran" stroke="#EF4444" strokeWidth={1.5} strokeDasharray="4 3" fill="url(#gradKeluar)" />
                         </AreaChart>
