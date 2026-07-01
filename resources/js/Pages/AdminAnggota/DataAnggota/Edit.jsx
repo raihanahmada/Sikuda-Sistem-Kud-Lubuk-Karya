@@ -1,5 +1,22 @@
 import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
 import { useForm, Link } from '@inertiajs/react';
+import InputField from '@/Components/anggota/InputField'; // ===== PENERAPAN MATERI: import Reusable Component =====
+
+// ===== PENERAPAN MATERI: Component Parent-Child (Pertemuan 2) — tetap dipertahankan =====
+function InfoNikReadonly({ nik }) {
+    return (
+        <div>
+            <label className="block mb-1 font-semibold text-gray-600">NIK (Nomor Induk Kependudukan)</label>
+            <input
+                type="text"
+                className="border p-2 w-full rounded bg-gray-100 text-gray-500 cursor-not-allowed"
+                value={nik}
+                disabled
+            />
+        </div>
+    );
+}
+// ===== AKHIR CHILD COMPONENT =====
 
 export default function Edit({ anggota }) {
     const { data, setData, put, processing, errors } = useForm({
@@ -20,18 +37,8 @@ export default function Edit({ anggota }) {
                 <h2 className="text-xl font-bold mb-4 border-b pb-2">Edit Data & Status Anggota</h2>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                    {/* NIK (Readonly, karena NIK tidak boleh sembarangan diubah) */}
-                    <div>
-                        <label className="block mb-1 font-semibold text-gray-600">NIK (Nomor Induk Kependudukan)</label>
-                        <input
-                            type="text"
-                            className="border p-2 w-full rounded bg-gray-100 text-gray-500 cursor-not-allowed"
-                            value={anggota.nik}
-                            disabled
-                        />
-                    </div>
+                    <InfoNikReadonly nik={anggota.nik} />
 
-                    {/* Status Keanggotaan */}
                     <div>
                         <label className="block mb-1 font-semibold">Status Keanggotaan</label>
                         <select
@@ -46,19 +53,17 @@ export default function Edit({ anggota }) {
                         {errors.status_keanggotaan && <div className="text-red-500 text-sm mt-1">{errors.status_keanggotaan}</div>}
                     </div>
 
-                    {/* Nama Lengkap */}
+                    {/* ===== PENERAPAN MATERI: Memanggil Reusable Component InputField ===== */}
                     <div className="md:col-span-2">
-                        <label className="block mb-1 font-semibold">Nama Lengkap</label>
-                        <input
-                            type="text"
-                            className="border p-2 w-full rounded focus:ring-green-500 focus:border-green-500"
+                        <InputField
+                            label="Nama Lengkap"
                             value={data.nama_lengkap}
                             onChange={e => setData('nama_lengkap', e.target.value)}
+                            error={errors.nama_lengkap}
                         />
-                        {errors.nama_lengkap && <div className="text-red-500 text-sm mt-1">{errors.nama_lengkap}</div>}
                     </div>
+                    {/* ================================================================ */}
 
-                    {/* Alamat */}
                     <div className="md:col-span-2">
                         <label className="block mb-1 font-semibold">Alamat</label>
                         <textarea
@@ -70,17 +75,16 @@ export default function Edit({ anggota }) {
                         {errors.alamat && <div className="text-red-500 text-sm mt-1">{errors.alamat}</div>}
                     </div>
 
-                    {/* No Telepon */}
+                    {/* ===== PENERAPAN MATERI: Memanggil Reusable Component InputField ===== */}
                     <div className="md:col-span-2">
-                        <label className="block mb-1 font-semibold">No Telepon</label>
-                        <input
-                            type="text"
-                            className="border p-2 w-full rounded focus:ring-green-500 focus:border-green-500"
+                        <InputField
+                            label="No Telepon"
                             value={data.no_telepon}
                             onChange={e => setData('no_telepon', e.target.value)}
+                            error={errors.no_telepon}
                         />
-                        {errors.no_telepon && <div className="text-red-500 text-sm mt-1">{errors.no_telepon}</div>}
                     </div>
+                    {/* ================================================================ */}
                 </div>
 
                 <div className="flex space-x-3 pt-6">

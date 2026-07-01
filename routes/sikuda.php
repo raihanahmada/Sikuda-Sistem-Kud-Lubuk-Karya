@@ -10,10 +10,12 @@ use App\Http\Controllers\AdminKeuangan\LaporanController;
 use App\Http\Controllers\AdminKeuangan\SettingController;
 use App\Http\Controllers\Auth\SikudaLoginController;
 use App\Http\Controllers\AdminAnggota\PendaftaranController;
+use App\Http\Controllers\AdminAnggota\DashboardController as AnggotaDashboard;
 use App\Http\Controllers\AdminAnggota\VerifikasiController;
 use App\Http\Controllers\AdminAnggota\DataAnggotaController;
 use App\Http\Controllers\AdminAnggota\SimpananController;
 use App\Http\Controllers\AdminAnggota\TrackingController;
+use App\Http\Controllers\AdminAnggota\PengaturanController as AnggotaPengaturan;
 use App\Http\Controllers\Pemilik\DashboardController;
 use App\Http\Controllers\Pemilik\AnggotaController;
 use App\Http\Controllers\Pemilik\LaporanPeriodikController;
@@ -48,9 +50,7 @@ Route::middleware(['sikuda.auth', 'sikuda.role:admin_anggota'])
     ->group(function () {
 
         // Dashboard
-        Route::get('/dashboard', function () {
-            return inertia('AdminAnggota/Dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [AnggotaDashboard::class, 'index'])->name('dashboard');
 
         // =========================
         // PENDAFTARAN ANGGOTA
@@ -95,9 +95,9 @@ Route::middleware(['sikuda.auth', 'sikuda.role:admin_anggota'])
         Route::delete('/data-anggota/{id}', [DataAnggotaController::class, 'destroy'])->name('data-anggota.destroy');
 
         // PENGATURAN
-        Route::get('/pengaturan', function () {
-            return inertia('AdminAnggota/Pengaturan/Index');
-        })->name('pengaturan.index');
+        Route::get('/pengaturan', [AnggotaPengaturan::class, 'index'])->name('pengaturan.index');
+        Route::put('/pengaturan/profil', [AnggotaPengaturan::class, 'updateProfil'])->name('pengaturan.profil');
+        Route::put('/pengaturan/password', [AnggotaPengaturan::class, 'updatePassword'])->name('pengaturan.password');
 
     });
 

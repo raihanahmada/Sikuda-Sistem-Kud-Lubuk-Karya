@@ -1,17 +1,22 @@
+// File: resources/js/Pages/AdminAnggota/DataAnggota/Index.jsx
+
 import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
 import { Link, router } from '@inertiajs/react';
-import { useState } from 'react';
+// ===== PENERAPAN MATERI: Import lazy dan Suspense =====
+import { useState, lazy, Suspense } from 'react';
 
-// 🔴 PERBAIKAN: Ubah props menjadi 'dataAnggota' sesuai yang dikirim dari Controller
+// Meng-import komponen tabel secara dinamis.
+// File tabel ini baru akan di-load oleh browser saat baris kode Suspense di bawah dijalankan.
+const TableAnggotaLazy = lazy(() => import('@/Components/Anggota/TableAnggota'));
+// =======================================================
+
 export default function Index({ dataAnggota = [] }) {
-    // State untuk fitur Filter Status (Sesuai SKPL UC06)
     const [statusFilter, setStatusFilter] = useState('');
 
     const handleFilterChange = (e) => {
         const selectedStatus = e.target.value;
         setStatusFilter(selectedStatus);
         
-        // Mengirim request filter ke Laravel
         router.get('/admin-anggota/data-anggota', 
             { status: selectedStatus }, 
             { preserveState: true, replace: true }
@@ -24,6 +29,24 @@ export default function Index({ dataAnggota = [] }) {
         }
     };
 
+    const [dataForm, setDataForm] = useState({
+        searchTerm: '',
+    });
+
+    const handleChange = (evt) => {
+        const { name, value } = evt.target;
+        setDataForm({
+            ...dataForm,
+            [name]: value,
+        });
+    };
+
+    const _searchTerm = dataForm.searchTerm.toLowerCase();
+    const hasilPencarian = dataAnggota.filter((item) =>
+        item.nama_lengkap.toLowerCase().includes(_searchTerm) ||
+        item.nik.includes(_searchTerm)
+    );
+
     return (
         <AdminAnggotaLayout title="Data Anggota">
             <div className="bg-white p-6 rounded-xl shadow">
@@ -31,8 +54,16 @@ export default function Index({ dataAnggota = [] }) {
                 <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
                     <h2 className="text-xl font-bold">Data Anggota Koperasi</h2>
                     
-                    <div className="flex space-x-3">
-                        {/* 🟢 FITUR BARU: Filter Status (SKPL UC06 S.2) */}
+                    <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+                        <input
+                            type="text"
+                            name="searchTerm"
+                            placeholder="Cari nama atau NIK..."
+                            className="border p-2 rounded-lg w-full md:w-64"
+                            value={dataForm.searchTerm}
+                            onChange={handleChange}
+                        />
+
                         <select 
                             className="border p-2 rounded-lg bg-gray-50"
                             value={statusFilter}
@@ -46,77 +77,30 @@ export default function Index({ dataAnggota = [] }) {
 
                         <Link
                             href="/admin-anggota/pendaftaran-anggota/create"
-                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-center"
                         >
                             + Tambah Anggota Lama
                         </Link>
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full border border-gray-200">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="border p-3 text-left">No</th>
-                                <th className="border p-3 text-left">NIK</th>
-                                <th className="border p-3 text-left">Nama Lengkap</th>
-                                <th className="border p-3 text-left">No HP</th>
-                                <th className="border p-3 text-center">Status</th>
-                                <th className="border p-3 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {dataAnggota.length > 0 ? (
-                                dataAnggota.map((item, index) => (
-                                    <tr key={item.id_anggota} className="hover:bg-gray-50">
-                                        <td className="border p-3">{index + 1}</td>
-                                        
-                                        <td className="border p-3">{item.nik}</td>
-                                        
-                                        {/* 🔴 PERBAIKAN: Menggunakan nama_lengkap sesuai DPPL */}
-                                        <td className="border p-3 font-medium text-gray-800">{item.nama_lengkap}</td>
-                                        
-                                        {/* 🔴 PERBAIKAN: Menggunakan no_telepon sesuai DPPL */}
-                                        <td className="border p-3">{item.no_telepon || '-'}</td>
-                                        
-                                        {/* 🟢 FITUR BARU: Menampilkan badge status anggota */}
-                                        <td className="border p-3 text-center">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                                item.status_keanggotaan === 'aktif' ? 'bg-green-100 text-green-700' : 
-                                                item.status_keanggotaan === 'pasif' ? 'bg-yellow-100 text-yellow-700' : 
-                                                'bg-red-100 text-red-700'
-                                            }`}>
-                                                {item.status_keanggotaan.toUpperCase()}
-                                            </span>
-                                        </td>
-                                        
-                                        <td className="border p-3 text-center space-x-3">
-                                            <Link 
-                                                href={`/admin-anggota/data-anggota/${item.id_anggota}/edit`}
-                                                className="text-orange-500 hover:text-orange-700 font-medium"
-                                            >
-                                                Edit
-                                            </Link>
-                                            <button 
-                                                onClick={() => handleDelete(item.id_anggota)}
-                                                className="text-red-500 hover:text-red-700 font-medium"
-                                            >
-                                                Hapus
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="6" className="border p-6 text-center text-gray-500">
-                                        Tidak ada data anggota ditemukan.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                {/* ===== PENERAPAN MATERI: Membungkus komponen Lazy dengan Suspense ===== */}
+                {/* Fallback di bawah ini akan tampil berbentuk teks "Memuat data tabel..." 
+                    saat browser sedang mengunduh komponen TableAnggotaLazy.
+                    Kamu bisa menggantinya dengan animasi spinner/loading yang lebih keren.
+                */}
+                <Suspense fallback={
+                    <div className="py-10 text-center">
+                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500 mb-2"></div>
+                        <p className="text-gray-500 font-medium">Memuat data tabel anggota...</p>
+                    </div>
+                }>
+                    <TableAnggotaLazy 
+                        hasilPencarian={hasilPencarian} 
+                        handleDelete={handleDelete} 
+                    />
+                </Suspense>
+                {/* ======================================================================= */}
 
             </div>
         </AdminAnggotaLayout>

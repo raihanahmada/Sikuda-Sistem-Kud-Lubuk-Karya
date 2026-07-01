@@ -2,27 +2,82 @@
 
 namespace App\Http\Controllers\AdminAnggota;
 
-// Karena berada di subfolder, kita wajib memanggil Base Controller utama Laravel
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    /**
-     * Menampilkan halaman Dashboard Admin Anggota
-     */
     public function index()
     {
-        // Mengirimkan data statistik persis seperti di Figma
+        // ===== PENERAPAN MATERI: Data real dari database =====
+        $stats = [
+            'total_anggota'       => DB::table('tb_anggota')->count(),
+            'aktif'               => DB::table('tb_anggota')
+                                        ->where('status_keanggotaan', 'aktif')
+                                        ->count(),
+            'pasif'               => DB::table('tb_anggota')
+                                        ->where('status_keanggotaan', 'pasif')
+                                        ->count(),
+            'anggota_baru'        => DB::table('tb_anggota')
+                                        ->whereMonth('tanggal_daftar', now()->month)
+                                        ->whereYear('tanggal_daftar', now()->year)
+                                        ->count(),
+            'menunggu_verifikasi' => DB::table('tb_anggota')
+                                        ->where('status_keanggotaan', 'menunggu_verifikasi')
+                                        ->count(),
+        ];
+
+        // ===== Grafik 12 bulan terakhir =====
+        $grafikData = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $bulan = now()->subMonths($i);
+            $grafikData[] = [
+                'bulan' => $bulan->format('M y'),
+                'total' => DB::table('tb_anggota')
+                            ->whereMonth('tanggal_daftar', $bulan->month)
+                            ->whereYear('tanggal_daftar', $bulan->year)
+                            ->count(),
+            ];
+        }
+
+        // ===== Aktivitas terbaru dari tb_anggota =====
+        $aktivitas = DB::table('tb_anggota')
+            ->select(
+                'nama_lengkap',
+                'status_keanggotaan',
+                'tanggal_daftar',
+                'tanggal_verifikasi',
+                'dibuat_pada',
+                'diperbarui_pada'
+            )
+            ->orderBy('diperbarui_pada', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function ($item) {
+                if ($item->status_keanggotaan === 'aktif' && $item->tanggal_verifikasi) {
+                    $jenis = 'Verifikasi';
+                    $waktu = \Carbon\Carbon::parse($item->tanggal_verifikasi)->format('d M Y');
+                } elseif ($item->status_keanggotaan === 'menunggu_verifikasi') {
+                    $jenis = 'Pendaftaran';
+                    $waktu = \Carbon\Carbon::parse($item->tanggal_daftar)->format('d M Y');
+                } else {
+                    $jenis = 'Update';
+                    $waktu = \Carbon\Carbon::parse($item->diperbarui_pada ?? $item->dibuat_pada)->format('d M Y');
+                }
+
+                return [
+                    'nama'   => $item->nama_lengkap,
+                    'status' => $item->status_keanggotaan,
+                    'jenis'  => $jenis,
+                    'waktu'  => $waktu,
+                ];
+            });
+
         return Inertia::render('AdminAnggota/Dashboard', [
-            'stats' => [
-                'total_anggota' => '1.250',
-                'aktif' => '1.100',
-                'pasif' => '150',
-                'anggota_baru' => '45',
-                'menunggu_verifikasi' => '30'
-            ]
+            'stats'      => $stats,
+            'grafikData' => $grafikData,
+            'aktivitas'  => $aktivitas,
         ]);
     }
-};
+}

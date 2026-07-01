@@ -1,8 +1,8 @@
 import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
 import { useForm } from '@inertiajs/react';
+import InputField from '@/Components/anggota/InputField'; // ===== PENERAPAN MATERI: import Reusable Component =====
 
 export default function Create() {
-
     const { data, setData, post, processing, errors } = useForm({
         nik: '',
         nama_lengkap: '',
@@ -16,42 +16,33 @@ export default function Create() {
 
     function submit(e) {
         e.preventDefault();
-
         post('/admin-anggota/pendaftaran-anggota');
     }
 
     return (
         <AdminAnggotaLayout title="Tambah Anggota">
-
             <form onSubmit={submit} className="bg-white p-6 rounded-xl shadow space-y-4">
-
                 <h2 className="text-xl font-bold">Form Pendaftaran Anggota</h2>
 
-                {/* NIK */}
-                <div>
-                    <input
-                        type="text"
-                        placeholder="NIK"
-                        className="border p-2 w-full"
-                        value={data.nik}
-                        onChange={e => setData('nik', e.target.value)}
-                    />
-                    {errors.nik && <div className="text-red-500 text-sm">{errors.nik}</div>}
-                </div>
+                {/* ===== PENERAPAN MATERI: Memanggil Reusable Component InputField ===== */}
+                <InputField
+                    label="NIK"
+                    placeholder="NIK"
+                    value={data.nik}
+                    onChange={e => setData('nik', e.target.value)}
+                    error={errors.nik}
+                />
 
-                {/* Nama */}
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Nama Lengkap"
-                        className="border p-2 w-full"
-                        value={data.nama_lengkap}
-                        onChange={e => setData('nama_lengkap', e.target.value)}
-                    />
-                    {errors.nama_lengkap && <div className="text-red-500 text-sm">{errors.nama_lengkap}</div>}
-                </div>
+                <InputField
+                    label="Nama Lengkap"
+                    placeholder="Nama Lengkap"
+                    value={data.nama_lengkap}
+                    onChange={e => setData('nama_lengkap', e.target.value)}
+                    error={errors.nama_lengkap}
+                />
+                {/* ================================================================ */}
 
-                {/* Alamat */}
+                {/* Alamat tetap pakai textarea biasa, karena InputField hanya untuk <input> */}
                 <div>
                     <textarea
                         placeholder="Alamat"
@@ -62,29 +53,24 @@ export default function Create() {
                     {errors.alamat && <div className="text-red-500 text-sm">{errors.alamat}</div>}
                 </div>
 
-                {/* No Telepon */}
-                <div>
-                    <input
-                        type="text"
-                        placeholder="No Telepon"
-                        className="border p-2 w-full"
-                        value={data.no_telepon}
-                        onChange={e => setData('no_telepon', e.target.value)}
-                    />
-                </div>
+                {/* ===== PENERAPAN MATERI: Memanggil Reusable Component InputField ===== */}
+                <InputField
+                    label="No Telepon"
+                    placeholder="No Telepon"
+                    value={data.no_telepon}
+                    onChange={e => setData('no_telepon', e.target.value)}
+                />
 
-                {/* Tanggal Daftar */}
-                <div>
-                    <input
-                        type="date"
-                        className="border p-2 w-full"
-                        value={data.tanggal_daftar}
-                        onChange={e => setData('tanggal_daftar', e.target.value)}
-                    />
-                    {errors.tanggal_daftar && <div className="text-red-500 text-sm">{errors.tanggal_daftar}</div>}
-                </div>
+                <InputField
+                    label="Tanggal Daftar"
+                    type="date"
+                    value={data.tanggal_daftar}
+                    onChange={e => setData('tanggal_daftar', e.target.value)}
+                    error={errors.tanggal_daftar}
+                />
+                {/* ================================================================ */}
 
-                {/* Dokumen Persyaratan */}
+                {/* Dokumen Persyaratan (tetap input type="file", karena InputField tidak menangani file) */}
                 <div>
                     <label className="block text-sm font-medium mb-1">File Kartu Keluarga (KK)</label>
                     <input
@@ -119,16 +105,21 @@ export default function Create() {
                     <p className="text-xs text-gray-400 mt-1">Format: JPG, PNG, atau PDF. Maks 5MB.</p>
                 </div>
 
-                {/* Button */}
+                {/* ===== PENERAPAN MATERI: Conditional Rendering (Pertemuan 3) ===== */}
+                {data.nik && data.nik.length !== 16 ? (
+                    <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-3 text-sm rounded">
+                        NIK harus terdiri dari 16 digit angka.
+                    </div>
+                ) : null}
+                {/* ================================================================ */}
+
                 <button
                     disabled={processing}
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
                 >
                     Simpan
                 </button>
-
             </form>
-
         </AdminAnggotaLayout>
     );
 }

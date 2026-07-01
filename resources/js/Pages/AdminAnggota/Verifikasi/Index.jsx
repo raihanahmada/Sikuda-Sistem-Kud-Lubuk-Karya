@@ -1,8 +1,29 @@
 import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
 import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
 
-// ✅ PENTING 1: Tangkap props 'antrian' dan 'stats' dari VerifikasiController
 export default function Index({ antrian = [], stats = {} }) {
+
+    // ===== PENERAPAN MATERI: Data JSON Search & Filter (Pertemuan 4) =====
+    // Inisialisasi state dataForm (Best Practice State dari modul)
+    const [dataForm, setDataForm] = useState({
+        searchTerm: '',
+    });
+
+    const handleChange = (evt) => {
+        const { name, value } = evt.target;
+        setDataForm({
+            ...dataForm,
+            [name]: value,
+        });
+    };
+
+    // Logic filter pencarian nama menggunakan .filter()
+    const _searchTerm = dataForm.searchTerm.toLowerCase();
+    const hasilPencarian = antrian.filter((item) =>
+        item.nama_lengkap.toLowerCase().includes(_searchTerm)
+    );
+    // ===== AKHIR LOGIC SEARCH =====
     
     return (
         <AdminAnggotaLayout title="Antrian Verifikasi">
@@ -12,7 +33,6 @@ export default function Index({ antrian = [], stats = {} }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-red-500 text-white rounded-2xl p-6 shadow-sm">
                     <h3 className="text-sm font-medium opacity-90">Menunggu Verifikasi</h3>
-                    {/* ✅ PENTING 2: Tampilkan angka dinamis dari database */}
                     <p className="text-4xl font-bold mt-3">{stats.menunggu || 0}</p>
                 </div>
 
@@ -29,11 +49,22 @@ export default function Index({ antrian = [], stats = {} }) {
 
             {/* Card Tabel */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="flex items-center justify-between px-6 py-5 border-b">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between px-6 py-5 border-b gap-4">
                     <div>
                         <h2 className="text-lg font-semibold text-gray-800">Daftar Pengajuan Anggota</h2>
                         <p className="text-sm text-gray-500">Pengajuan anggota yang memerlukan verifikasi</p>
                     </div>
+
+                    {/* ===== PENERAPAN MATERI: Inputan Search ===== */}
+                    <input
+                        type="text"
+                        name="searchTerm"
+                        placeholder="Cari nama pengajuan..."
+                        className="border p-2 rounded-lg w-full md:w-64"
+                        value={dataForm.searchTerm}
+                        onChange={handleChange}
+                    />
+                    {/* ================================================== */}
                 </div>
 
                 <div className="overflow-x-auto">
@@ -48,9 +79,9 @@ export default function Index({ antrian = [], stats = {} }) {
                         </thead>
 
                         <tbody>
-                            {/* ✅ PENTING 3: Looping data dari 'antrian' (bukan data dummy lagi) */}
-                            {antrian.length > 0 ? (
-                                antrian.map((item) => (
+                            {/* ===== PENERAPAN MATERI: Data JSON (List) - pakai hasilPencarian ===== */}
+                            {hasilPencarian.length > 0 ? (
+                                hasilPencarian.map((item) => (
                                     <tr key={item.id_anggota} className="border-t hover:bg-gray-50 transition">
                                         <td className="px-6 py-4 font-medium text-gray-800">
                                             {item.nama_lengkap}
@@ -64,7 +95,6 @@ export default function Index({ antrian = [], stats = {} }) {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            {/* ✅ PENTING 4: URL Detail disesuaikan dengan ID anggota */}
                                             <Link
                                                 href={`/admin-anggota/verifikasi/${item.id_anggota}`}
                                                 className="inline-flex items-center px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium"
@@ -81,6 +111,7 @@ export default function Index({ antrian = [], stats = {} }) {
                                     </td>
                                 </tr>
                             )}
+                            {/* ================================================================ */}
                         </tbody>
                     </table>
                 </div>

@@ -1,8 +1,40 @@
 import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
 import { Link } from '@inertiajs/react';
+import { useState } from 'react';
 
-// 1. Ubah parameter props menjadi 'pendaftar' sesuai yang dikirim dari Controller
 export default function Index({ pendaftar = [] }) {
+
+    // ===== PENERAPAN MATERI: Data JSON Search & Filter (Pertemuan 4) =====
+    // Inisialisasi state dataForm (Best Practice State dari modul)
+    const [dataForm, setDataForm] = useState({
+        searchTerm: '',
+        selectedStatus: '',
+    });
+
+    // Handle perubahan nilai input form secara general
+    const handleChange = (evt) => {
+        const { name, value } = evt.target;
+        setDataForm({
+            ...dataForm,
+            [name]: value,
+        });
+    };
+
+    // Terapkan logic dalam memfilter data JSON sesuai dengan searchTerm dan selectedStatus
+    const _searchTerm = dataForm.searchTerm.toLowerCase();
+    const filteredPendaftar = pendaftar.filter((item) => {
+        const matchesSearch = item.nama_lengkap
+            .toLowerCase()
+            .includes(_searchTerm);
+
+        const matchesStatus = dataForm.selectedStatus
+            ? item.status_keanggotaan === dataForm.selectedStatus
+            : true;
+
+        return matchesSearch && matchesStatus;
+    });
+    // ===== AKHIR LOGIC SEARCH & FILTER =====
+
     return (
         <AdminAnggotaLayout title="Pendaftaran Anggota">
 
@@ -19,6 +51,31 @@ export default function Index({ pendaftar = [] }) {
                     </Link>
                 </div>
 
+                {/* ===== PENERAPAN MATERI: Inputan Search & Select Filter ===== */}
+                <div className="flex flex-col md:flex-row gap-3 mb-4">
+                    <input
+                        type="text"
+                        name="searchTerm"
+                        placeholder="Cari nama pendaftar..."
+                        className="border p-2 w-full rounded"
+                        value={dataForm.searchTerm}
+                        onChange={handleChange}
+                    />
+
+                    <select
+                        name="selectedStatus"
+                        className="border p-2 w-full md:w-64 rounded"
+                        value={dataForm.selectedStatus}
+                        onChange={handleChange}
+                    >
+                        <option value="">Semua Status</option>
+                        <option value="aktif">Aktif</option>
+                        <option value="pasif">Pasif</option>
+                        <option value="keluar">Keluar</option>
+                    </select>
+                </div>
+                {/* ================================================================ */}
+
                 <table className="w-full border">
                     <thead>
                         <tr className="bg-gray-100">
@@ -30,22 +87,17 @@ export default function Index({ pendaftar = [] }) {
                     </thead>
 
                     <tbody>
-                        {pendaftar.length > 0 ? (
-                            pendaftar.map((item, index) => (
-                                // 2. Sesuaikan 'item.id' menjadi 'item.id_anggota'
+                        {/* ===== PENERAPAN MATERI: Data JSON (List) - menggunakan hasil filter ===== */}
+                        {filteredPendaftar.length > 0 ? (
+                            filteredPendaftar.map((item, index) => (
                                 <tr key={item.id_anggota} className="text-center">
                                     <td className="border p-2">{index + 1}</td>
-                                    
-                                    {/* 3. Sesuaikan 'item.nama' menjadi 'item.nama_lengkap' */}
                                     <td className="border p-2">{item.nama_lengkap}</td>
-                                    
-                                    {/* 4. Sesuaikan 'item.status' menjadi 'item.status_keanggotaan' */}
                                     <td className="border p-2">
                                         <span className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded text-sm">
                                             {item.status_keanggotaan}
                                         </span>
                                     </td>
-                                    
                                     <td className="border p-2 space-x-2">
                                         <Link 
                                             href={`/admin-anggota/pendaftaran-anggota/${item.id_anggota}`}
@@ -64,13 +116,13 @@ export default function Index({ pendaftar = [] }) {
                                 </tr>
                             ))
                         ) : (
-                            // 5. Tampilan jika data masih kosong
                             <tr>
                                 <td colSpan="4" className="border p-4 text-center text-gray-500">
                                     Belum ada data pendaftaran anggota.
                                 </td>
                             </tr>
                         )}
+                        {/* ================================================================ */}
                     </tbody>
 
                 </table>

@@ -10,4 +10,10 @@ export default defineConfig({
         }),
         react(),
     ],
+    optimizeDeps: {
+        // recharts (dan dependency d3-nya) dipakai lewat React.lazy di GrafikArusKas.
+        // Tanpa ini, Vite baru meng-optimize-nya saat komponen pertama kali diakses,
+        // sehingga delay pre-bundling terasa di navigasi user, bukan di start dev server.
+        include: ['recharts'],
+    },
 });
