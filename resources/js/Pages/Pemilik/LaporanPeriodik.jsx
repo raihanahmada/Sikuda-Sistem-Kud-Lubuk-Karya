@@ -6,7 +6,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Document, Packer, Paragraph, Table, TableRow, TableCell } from "docx";
+import { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, HeadingLevel } from "docx";
 import { Calendar, ChevronDown, Download, Filter } from "lucide-react";
 
 // ─── Static ───────────────────────────────────────────────────────────────────
@@ -38,6 +38,22 @@ function fmt(d)      { return `${d.getFullYear()}-${String(d.getMonth()+1).padSt
 function firstDay(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`; }
 function lastDay(d)  { const last = new Date(d.getFullYear(), d.getMonth()+1, 0); return fmt(last); }
 function getYearRange(year) { return [`${year}-01-01`, `${year}-12-31`]; }
+
+// Ringkasan total masuk/keluar + rincian per jenis — dipakai untuk preview & isi dokumen cetak (PDF/DOCX)
+function hitungRingkasan(data) {
+    const totalMasuk  = data.filter((d) => d.tipe === "masuk").reduce((s, d) => s + Number(d.jumlah || 0), 0);
+    const totalKeluar = data.filter((d) => d.tipe === "keluar").reduce((s, d) => s + Number(d.jumlah || 0), 0);
+
+    const perJenis = {};
+    data.forEach((d) => {
+        if (!perJenis[d.jenis]) perJenis[d.jenis] = { jenis: d.jenis, jumlahTransaksi: 0, totalMasuk: 0, totalKeluar: 0 };
+        perJenis[d.jenis].jumlahTransaksi += 1;
+        if (d.tipe === "masuk") perJenis[d.jenis].totalMasuk += Number(d.jumlah || 0);
+        else perJenis[d.jenis].totalKeluar += Number(d.jumlah || 0);
+    });
+
+    return { totalMasuk, totalKeluar, labaBersih: totalMasuk - totalKeluar, breakdown: Object.values(perJenis) };
+}
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
 
@@ -154,7 +170,9 @@ function PopupPilihBulan({ tahunTersedia, tahun, bulan, onApplyBulan, onApplyRen
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function LaporanPeriodik() {
-    const { transaksi, summary, filterAktif, tahunTersedia, auth } = usePage().props;
+    const inertiaPage = usePage();
+    const { transaksi, summary, filterAktif, tahunTersedia, auth } = inertiaPage.props;
+    const inertiaVersion = inertiaPage.version;
 
     // ── Halaman ini diakses bersama oleh role pemilik & admin_keuangan — tampilkan shell/layout sesuai role login ──
     const isAdminKeuangan = auth?.user?.role === "admin_keuangan";
@@ -189,6 +207,10 @@ export default function LaporanPeriodik() {
     const [exportEnd, setExportEnd] = useState("");
     const [exportLoading, setExportLoading] = useState(false);
     const [exportPreviewCount, setExportPreviewCount] = useState(null);
+
+    // ── State preview dokumen — khusus PDF & DOCX, tampil sebelum benar-benar dicetak/diunduh ──
+    const [previewDoc, setPreviewDoc] = useState({ open: false, type: null, data: [], ringkasan: null, periodeLabel: "" });
+    const [previewDownloading, setPreviewDownloading] = useState(false);
 
     // ── Kirim filter ke server ────────────────────────────────────────────────
     const applyFilter = (mode, tahun, bulan) => {
@@ -285,7 +307,7 @@ export default function LaporanPeriodik() {
         const params = new URLSearchParams({ mode: "rentang", tanggal_mulai: exportStart, tanggal_akhir: exportEnd }).toString();
 
         fetch(`${route("shared.laporan.periodik")}?${params}`, {
-            headers: { "X-Inertia": "true", "X-Inertia-Version": "", Accept: "application/json" },
+            headers: { "X-Inertia": "true", "X-Inertia-Version": inertiaVersion, Accept: "application/json" },
             signal: ctrl.signal,
         })
             .then((r) => r.json())
@@ -305,22 +327,48 @@ export default function LaporanPeriodik() {
         try {
             const params = new URLSearchParams({ mode: "rentang", tanggal_mulai: exportStart, tanggal_akhir: exportEnd }).toString();
             const res = await fetch(`${route("shared.laporan.periodik")}?${params}`, {
-                headers: { "X-Inertia": "true", "X-Inertia-Version": "", Accept: "application/json" },
+                headers: { "X-Inertia": "true", "X-Inertia-Version": inertiaVersion, Accept: "application/json" },
             });
+            if (!res.ok) throw new Error(`Gagal mengambil data (status ${res.status})`);
             const json = await res.json();
             const list = json?.props?.transaksi ?? [];
             const data = jenis === "Semua" ? list : list.filter((t) => t.jenis === jenis);
 
             const { type } = exportModal;
-            if (type === "csv") doExportCSV(data);
-            if (type === "excel") doExportExcel(data);
-            if (type === "pdf") doExportPDF(data);
-            if (type === "docx") await doExportDocx(data);
+            if (type === "csv" || type === "excel") {
+                if (type === "csv") doExportCSV(data);
+                if (type === "excel") doExportExcel(data);
+                setExportModal({ open: false, type: null });
+            } else {
+                // PDF & DOCX adalah dokumen "cetak" — tampilkan preview dulu, unduh sesungguhnya baru terjadi setelah user konfirmasi di preview
+                setPreviewDoc({
+                    open: true,
+                    type,
+                    data,
+                    ringkasan: hitungRingkasan(data),
+                    periodeLabel: `${formatTanggalSingkat(exportStart)} s.d. ${formatTanggalSingkat(exportEnd)}`,
+                });
+                setExportModal({ open: false, type: null });
+            }
         } catch (e) {
             console.error("Export gagal:", e);
         } finally {
             setExportLoading(false);
-            setExportModal({ open: false, type: null });
+        }
+    };
+
+    // ── Konfirmasi dari preview → baru generate & unduh file sesungguhnya ──
+    const handlePreviewConfirm = async () => {
+        setPreviewDownloading(true);
+        try {
+            const { type, data, ringkasan, periodeLabel } = previewDoc;
+            if (type === "pdf") doExportPDF(data, ringkasan, periodeLabel);
+            if (type === "docx") await doExportDocx(data, ringkasan, periodeLabel);
+        } catch (e) {
+            console.error("Export gagal:", e);
+        } finally {
+            setPreviewDownloading(false);
+            setPreviewDoc({ open: false, type: null, data: [], ringkasan: null, periodeLabel: "" });
         }
     };
 
@@ -343,36 +391,115 @@ export default function LaporanPeriodik() {
         XLSX.writeFile(wb, "laporan.xlsx");
     };
 
-    const doExportPDF = (data) => {
+    const doExportPDF = (data, ringkasan, periodeLabel) => {
         const doc = new jsPDF();
-        doc.text(`Laporan Periodik Koperasi — ${filterAktif?.labelPeriode || ""}`, 14, 10);
-        autoTable(doc, {
-            head: [["Tanggal", "Jenis", "Deskripsi", "Jumlah", "Unit", "Tipe"]],
-            body: data.map((d) => [d.tanggal, d.jenis, d.deskripsi, `Rp ${formatRp(d.jumlah)}`, d.unit, d.tipe]),
-        });
-        doc.save("laporan.pdf");
-    };
 
-    const doExportDocx = async (data) => {
-        const table = new Table({
-            rows: [
-                new TableRow({
-                    children: ["Tanggal", "Jenis", "Deskripsi", "Jumlah", "Unit"].map(
-                        (h) => new TableCell({ children: [new Paragraph(h)] })
-                    ),
-                }),
-                ...data.map((d) =>
-                    new TableRow({
-                        children: [d.tanggal, d.jenis, d.deskripsi, `Rp ${formatRp(d.jumlah)}`, d.unit].map(
-                            (t) => new TableCell({ children: [new Paragraph(String(t))] })
-                        ),
-                    })
-                ),
+        doc.setFontSize(14);
+        doc.text("Laporan Periodik Koperasi", 14, 15);
+        doc.setFontSize(10);
+        doc.setTextColor(110);
+        doc.text(`Periode: ${periodeLabel}`, 14, 21);
+        doc.text(`Dicetak: ${formatTanggalSingkat(fmt(new Date()))}`, 14, 26);
+        doc.setTextColor(0);
+
+        // Ringkasan total masuk / keluar / laba bersih
+        autoTable(doc, {
+            startY: 32,
+            theme: "plain",
+            styles: { fontSize: 9, cellPadding: 1 },
+            columnStyles: { 0: { fontStyle: "bold", cellWidth: 55 } },
+            body: [
+                ["Total Pemasukan", `Rp ${formatRp(ringkasan.totalMasuk)}`],
+                ["Total Pengeluaran", `Rp ${formatRp(ringkasan.totalKeluar)}`],
+                ["Laba / Rugi Bersih", `Rp ${formatRp(ringkasan.labaBersih)}`],
             ],
         });
-        const doc = new Document({ sections: [{ children: [table] }] });
+
+        // Rincian per jenis laporan (mis. Transaksi Kas: total masuk & keluar)
+        autoTable(doc, {
+            startY: doc.lastAutoTable.finalY + 6,
+            head: [["Jenis", "Jml Transaksi", "Total Masuk", "Total Keluar"]],
+            body: ringkasan.breakdown.map((b) => [
+                b.jenis, String(b.jumlahTransaksi), `Rp ${formatRp(b.totalMasuk)}`, `Rp ${formatRp(b.totalKeluar)}`,
+            ]),
+            headStyles: { fillColor: [27, 138, 58] },
+            styles: { fontSize: 9 },
+        });
+
+        // Detail transaksi
+        autoTable(doc, {
+            startY: doc.lastAutoTable.finalY + 8,
+            head: [["Tanggal", "Jenis", "Deskripsi", "Jumlah", "Unit", "Tipe"]],
+            body: data.map((d) => [d.tanggal, d.jenis, d.deskripsi, `Rp ${formatRp(d.jumlah)}`, d.unit, d.tipe]),
+            headStyles: { fillColor: [27, 138, 58] },
+            styles: { fontSize: 8 },
+        });
+
+        doc.save("laporan-periodik.pdf");
+    };
+
+    const doExportDocx = async (data, ringkasan, periodeLabel) => {
+        const baris = (label, value, bold = false) => new TableRow({
+            children: [
+                new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: label, bold: true })] })] }),
+                new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: value, bold })] })] }),
+            ],
+        });
+
+        const ringkasanTable = new Table({
+            rows: [
+                baris("Total Pemasukan", `Rp ${formatRp(ringkasan.totalMasuk)}`),
+                baris("Total Pengeluaran", `Rp ${formatRp(ringkasan.totalKeluar)}`),
+                baris("Laba / Rugi Bersih", `Rp ${formatRp(ringkasan.labaBersih)}`, true),
+            ],
+        });
+
+        const headerRow = (labels) => new TableRow({
+            children: labels.map((h) => new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: h, bold: true })] })] })),
+        });
+
+        const breakdownTable = new Table({
+            rows: [
+                headerRow(["Jenis", "Jml Transaksi", "Total Masuk", "Total Keluar"]),
+                ...ringkasan.breakdown.map((b) => new TableRow({
+                    children: [b.jenis, String(b.jumlahTransaksi), `Rp ${formatRp(b.totalMasuk)}`, `Rp ${formatRp(b.totalKeluar)}`].map(
+                        (t) => new TableCell({ children: [new Paragraph(String(t))] })
+                    ),
+                })),
+            ],
+        });
+
+        const detailTable = new Table({
+            rows: [
+                headerRow(["Tanggal", "Jenis", "Deskripsi", "Jumlah", "Unit"]),
+                ...data.map((d) => new TableRow({
+                    children: [d.tanggal, d.jenis, d.deskripsi, `Rp ${formatRp(d.jumlah)}`, d.unit].map(
+                        (t) => new TableCell({ children: [new Paragraph(String(t))] })
+                    ),
+                })),
+            ],
+        });
+
+        const doc = new Document({
+            sections: [{
+                children: [
+                    new Paragraph({ text: "Laporan Periodik Koperasi", heading: HeadingLevel.HEADING_1 }),
+                    new Paragraph({ text: `Periode: ${periodeLabel}` }),
+                    new Paragraph({ text: `Dicetak: ${formatTanggalSingkat(fmt(new Date()))}` }),
+                    new Paragraph({ text: "" }),
+                    new Paragraph({ text: "Ringkasan", heading: HeadingLevel.HEADING_2 }),
+                    ringkasanTable,
+                    new Paragraph({ text: "" }),
+                    new Paragraph({ text: "Rincian per Jenis Laporan", heading: HeadingLevel.HEADING_2 }),
+                    breakdownTable,
+                    new Paragraph({ text: "" }),
+                    new Paragraph({ text: "Detail Transaksi", heading: HeadingLevel.HEADING_2 }),
+                    detailTable,
+                ],
+            }],
+        });
         const blob = await Packer.toBlob(doc);
-        saveAs(blob, "laporan.docx");
+        saveAs(blob, "laporan-periodik.docx");
     };
 
     // ── Render ────────────────────────────────────────────────────────────────
@@ -628,7 +755,118 @@ export default function LaporanPeriodik() {
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                                     </svg>
                                 )}
-                                {exportLoading ? "Mengunduh..." : "Export"}
+                                {exportLoading
+                                    ? "Memuat..."
+                                    : (exportModal.type === "pdf" || exportModal.type === "docx")
+                                        ? "Lihat Preview"
+                                        : "Export"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* PREVIEW DOKUMEN — khusus PDF & DOCX, tampil sebelum file benar-benar dicetak/diunduh */}
+            {previewDoc.open && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+                        {/* Header dokumen */}
+                        <div className="p-6 pb-0">
+                            <div className="flex items-center justify-between mb-1">
+                                <h3 className="font-semibold text-gray-800">Preview Dokumen — {previewDoc.type?.toUpperCase()}</h3>
+                                <span className="text-[10px] px-2 py-1 rounded-full bg-gray-100 text-gray-500">{previewDoc.data.length} transaksi</span>
+                            </div>
+                            <p className="text-xs text-gray-400 mb-4">Laporan Periodik Koperasi &middot; Periode: {previewDoc.periodeLabel}</p>
+                        </div>
+
+                        <div className="px-6 overflow-y-auto flex-1">
+                            {/* Ringkasan */}
+                            <div className="grid grid-cols-3 gap-3 mb-4">
+                                {previewDoc.ringkasan && [
+                                    { label: "Pemasukan", value: previewDoc.ringkasan.totalMasuk, color: "text-emerald-700 bg-emerald-50" },
+                                    { label: "Pengeluaran", value: previewDoc.ringkasan.totalKeluar, color: "text-red-600 bg-red-50" },
+                                    { label: "Laba Bersih", value: previewDoc.ringkasan.labaBersih, color: "text-emerald-700 bg-emerald-50" },
+                                ].map(({ label, value, color }) => (
+                                    <div key={label} className={`rounded-xl p-3 ${color}`}>
+                                        <p className="text-[10px] opacity-70">{label}</p>
+                                        <p className="text-sm font-bold">Rp {formatRp(Math.abs(value))}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Rincian per jenis */}
+                            <p className="text-[10px] text-gray-400 uppercase font-medium mb-1.5 tracking-wide">Rincian per Jenis</p>
+                            <div className="overflow-x-auto mb-4 border border-gray-100 rounded-lg">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="bg-gray-50 text-gray-500 text-[10px] uppercase">
+                                            <th className="py-2 px-3 text-left">Jenis</th>
+                                            <th className="py-2 px-3 text-right">Jml</th>
+                                            <th className="py-2 px-3 text-right">Total Masuk</th>
+                                            <th className="py-2 px-3 text-right">Total Keluar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {previewDoc.ringkasan?.breakdown.map((b) => (
+                                            <tr key={b.jenis}>
+                                                <td className="py-2 px-3 text-gray-600">{b.jenis}</td>
+                                                <td className="py-2 px-3 text-right text-gray-500">{b.jumlahTransaksi}</td>
+                                                <td className="py-2 px-3 text-right text-emerald-600">Rp {formatRp(b.totalMasuk)}</td>
+                                                <td className="py-2 px-3 text-right text-red-500">Rp {formatRp(b.totalKeluar)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Detail transaksi */}
+                            <p className="text-[10px] text-gray-400 uppercase font-medium mb-1.5 tracking-wide">Detail Transaksi</p>
+                            <div className="overflow-x-auto mb-4 border border-gray-100 rounded-lg">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="bg-gray-50 text-gray-500 text-[10px] uppercase">
+                                            <th className="py-2 px-3 text-left">Tanggal</th>
+                                            <th className="py-2 px-3 text-left">Jenis</th>
+                                            <th className="py-2 px-3 text-left">Deskripsi</th>
+                                            <th className="py-2 px-3 text-right">Jumlah</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {previewDoc.data.map((row, i) => (
+                                            <tr key={i}>
+                                                <td className="py-2 px-3 text-gray-500">{formatTanggalSingkat(row.tanggal)}</td>
+                                                <td className="py-2 px-3 text-gray-600">{row.jenis}</td>
+                                                <td className="py-2 px-3 text-gray-600">{row.deskripsi}</td>
+                                                <td className="py-2 px-3 text-right font-medium">
+                                                    <span className={row.tipe === "masuk" ? "text-emerald-600" : "text-red-500"}>
+                                                        {row.tipe === "masuk" ? "+" : "-"} Rp {formatRp(row.jumlah)}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-2 p-6 pt-4 border-t border-gray-100">
+                            <button
+                                onClick={() => setPreviewDoc({ open: false, type: null, data: [], ringkasan: null, periodeLabel: "" })}
+                                disabled={previewDownloading}
+                                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50">
+                                Batal
+                            </button>
+                            <button
+                                onClick={handlePreviewConfirm}
+                                disabled={previewDownloading}
+                                className="px-4 py-2 text-sm bg-[#1B8A3A] text-white rounded-lg hover:bg-[#156e2e] disabled:opacity-50 flex items-center gap-2">
+                                {previewDownloading && (
+                                    <svg className="animate-spin h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                    </svg>
+                                )}
+                                {previewDownloading ? "Mengunduh..." : `Unduh ${previewDoc.type?.toUpperCase()}`}
                             </button>
                         </div>
                     </div>
