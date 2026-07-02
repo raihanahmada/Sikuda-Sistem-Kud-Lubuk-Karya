@@ -6,7 +6,6 @@ use App\Http\Controllers\AdminKeuangan\KasHarianController;
 use App\Http\Controllers\AdminKeuangan\PembelianController;
 use App\Http\Controllers\AdminKeuangan\PenjualanTbsController;
 use App\Http\Controllers\AdminKeuangan\PenyaluranDanaController;
-use App\Http\Controllers\AdminKeuangan\LaporanController;
 use App\Http\Controllers\AdminKeuangan\SettingController;
 use App\Http\Controllers\Auth\SikudaLoginController;
 use App\Http\Controllers\AdminAnggota\PendaftaranController;
@@ -136,8 +135,6 @@ Route::middleware(['sikuda.auth', 'sikuda.role:admin_keuangan'])
 
         Route::post('/harga-tbs', [HargaTbsController::class, 'store'])->name('harga-tbs.store');
 
-        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-
         Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
         Route::put('/setting/profil', [SettingController::class, 'updateProfil'])->name('setting.profil');
         Route::put('/setting/password', [SettingController::class, 'updatePassword'])->name('setting.password');
@@ -154,7 +151,6 @@ Route::middleware(['sikuda.auth', 'sikuda.role:pemilik'])
     ->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/anggota', [AnggotaController::class, 'index'])->name('anggota');
-        Route::get('/laporan-periodik', [LaporanPeriodikController::class, 'index'])->name('laporan.periodik');
         Route::get('/pengaturan', function () {
             return inertia('Pemilik/Pengaturan');
         })->name('pengaturan');
@@ -171,5 +167,5 @@ Route::middleware(['sikuda.auth', 'sikuda.role:admin_keuangan,pemilik'])
     ->prefix('shared')
     ->name('shared.')
     ->group(function () {
-        // Shared routes
+        Route::get('/laporan-periodik', [LaporanPeriodikController::class, 'index'])->name('laporan.periodik');
     }); // 🔹 DITUTUP DENGAN BENAR (TIDAK ADA DOUBLE PENUTUP LAGI)

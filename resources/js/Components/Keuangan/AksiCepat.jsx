@@ -5,7 +5,7 @@ export default function AksiCepat() {
         { label: 'Catat Kas Masuk',        href: route('admin-keuangan.kas-harian.index', { jenis: 'masuk' }),  warna: 'text-green-600' },
         { label: 'Catat Kas Keluar',       href: route('admin-keuangan.kas-harian.index', { jenis: 'keluar' }), warna: 'text-red-600' },
         { label: 'Pembelian',              href: route('admin-keuangan.pembelian.index'),                       warna: 'text-blue-600' },
-        { label: 'Cetak Laporan Keuangan', href: route('admin-keuangan.laporan.index'),                         warna: 'text-gray-700' },
+        { label: 'Cetak Laporan Keuangan', href: route('shared.laporan.periodik'),                              warna: 'text-gray-700' },
     ];
 
     return (

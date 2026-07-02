@@ -3,8 +3,8 @@ import { Link, usePage, router } from "@inertiajs/react";
 import { Home, FileText, Users, Settings, LogOut, X, AlertTriangle } from "lucide-react";
 
 const menuItems = [
-  { name: "Dasbor Utama",     icon: Home,     href: "/pemilik/dashboard" },
-  { name: "Laporan Periodik", icon: FileText, href: "/pemilik/laporan-periodik" },
+  { name: "Dasbor Pantauan",     icon: Home,     href: "/pemilik/dashboard" },
+  { name: "Laporan Periodik", icon: FileText, href: "/shared/laporan-periodik" },
   // { name: "Analisis Anggota", icon: Users,    href: "/pemilik/analisis-anggota" },
   { name: "Pengaturan",       icon: Settings, href: "/pemilik/pengaturan" },
 ];

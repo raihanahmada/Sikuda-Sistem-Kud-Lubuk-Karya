@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, memo } from "react";
-import MainLayout from "../../layouts/Pemilik/MainLayout";
+import MainLayout from "@/Layouts/Pemilik/MainLayout";
+import KeuanganLayout from "@/Layouts/AdminKeuangan/KeuanganLayout";
 import { usePage, router } from "@inertiajs/react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -153,7 +154,12 @@ function PopupPilihBulan({ tahunTersedia, tahun, bulan, onApplyBulan, onApplyRen
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function LaporanPeriodik() {
-    const { transaksi, summary, filterAktif, tahunTersedia } = usePage().props;
+    const { transaksi, summary, filterAktif, tahunTersedia, auth } = usePage().props;
+
+    // ── Halaman ini diakses bersama oleh role pemilik & admin_keuangan — tampilkan shell/layout sesuai role login ──
+    const isAdminKeuangan = auth?.user?.role === "admin_keuangan";
+    const Layout = isAdminKeuangan ? KeuanganLayout : MainLayout;
+    const layoutProps = isAdminKeuangan ? { title: "Laporan Periodik — Keuangan" } : {};
 
     const today = new Date();
     const thisYear = today.getFullYear();
@@ -189,7 +195,7 @@ export default function LaporanPeriodik() {
         setPage(1);
         const params = { mode, tahun };
         if (mode === "bulan") params.bulan = bulan;
-        router.get(route("pemilik.laporan.periodik"), params, {
+        router.get(route("shared.laporan.periodik"), params, {
             preserveState: false,
             replace: true,
         });
@@ -197,7 +203,7 @@ export default function LaporanPeriodik() {
 
     const applyFilterRentang = (mulai, akhir) => {
         setPage(1);
-        router.get(route("pemilik.laporan.periodik"), {
+        router.get(route("shared.laporan.periodik"), {
             mode: "rentang",
             tanggal_mulai: mulai,
             tanggal_akhir: akhir,
@@ -278,7 +284,7 @@ export default function LaporanPeriodik() {
         const ctrl = new AbortController();
         const params = new URLSearchParams({ mode: "rentang", tanggal_mulai: exportStart, tanggal_akhir: exportEnd }).toString();
 
-        fetch(`${route("pemilik.laporan.periodik")}?${params}`, {
+        fetch(`${route("shared.laporan.periodik")}?${params}`, {
             headers: { "X-Inertia": "true", "X-Inertia-Version": "", Accept: "application/json" },
             signal: ctrl.signal,
         })
@@ -298,7 +304,7 @@ export default function LaporanPeriodik() {
         setExportLoading(true);
         try {
             const params = new URLSearchParams({ mode: "rentang", tanggal_mulai: exportStart, tanggal_akhir: exportEnd }).toString();
-            const res = await fetch(`${route("pemilik.laporan.periodik")}?${params}`, {
+            const res = await fetch(`${route("shared.laporan.periodik")}?${params}`, {
                 headers: { "X-Inertia": "true", "X-Inertia-Version": "", Accept: "application/json" },
             });
             const json = await res.json();
@@ -371,7 +377,7 @@ export default function LaporanPeriodik() {
 
     // ── Render ────────────────────────────────────────────────────────────────
     return (
-        <MainLayout>
+        <Layout {...layoutProps}>
             {/* HEADER */}
             <div className="flex items-center justify-between mb-2">
                 <div>
@@ -628,6 +634,6 @@ export default function LaporanPeriodik() {
                     </div>
                 </div>
             )}
-        </MainLayout>
+        </Layout>
     );
 }

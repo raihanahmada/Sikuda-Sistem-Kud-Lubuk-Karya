@@ -11,7 +11,7 @@ const menuItems = [
     { name: 'Pembelian',        icon: ShoppingCart,    href: '/admin-keuangan/pembelian' },
     { name: 'Penjualan TBS',    icon: Leaf,            href: '/admin-keuangan/penjualan-tbs' },
     { name: 'Penyaluran Dana',  icon: Banknote,        href: '/admin-keuangan/penyaluran-dana' },
-    { name: 'Laporan Periodik', icon: BarChart2,       href: '/admin-keuangan/laporan' },
+    { name: 'Laporan Periodik', icon: BarChart2,       href: '/shared/laporan-periodik' },
     { name: 'Pengaturan',       icon: Settings,        href: '/admin-keuangan/setting' },
 ];
 
