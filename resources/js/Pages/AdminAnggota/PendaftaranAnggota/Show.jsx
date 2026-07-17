@@ -1,59 +1,46 @@
 import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
 import { Link } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
+
+function InfoItem({ label, value }) {
+    return (
+        <div>
+            <p className="text-sm text-gray-400 mb-1">{label}</p>
+            <p className="text-base font-medium text-gray-800">{value}</p>
+        </div>
+    );
+}
 
 // Menangkap props 'anggota' yang dikirim dari PendaftaranController
 export default function Show({ anggota }) {
     return (
         <AdminAnggotaLayout title="Detail Anggota">
-            <div className="bg-white p-6 rounded-xl shadow">
-                <h2 className="text-2xl font-bold mb-4 border-b pb-3">Detail Pendaftaran Anggota</h2>
+            {/* HEADER */}
+            <div className="flex items-center gap-3 mb-5">
+                <Link href="/admin-anggota/pendaftaran-anggota" className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+                    <ArrowLeft size={18} className="text-gray-500" />
+                </Link>
+                <div>
+                    <h1 className="text-2xl font-semibold text-gray-800">Detail Pendaftaran Anggota</h1>
+                    <p className="text-sm text-gray-400">KUD Lubuk Karya</p>
+                </div>
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-lg">
-                    <div>
-                        <p className="text-gray-500 text-sm">Nomor Induk Kependudukan (NIK)</p>
-                        <p className="font-semibold">{anggota.nik}</p>
-                    </div>
-                    
-                    <div>
-                        <p className="text-gray-500 text-sm">Nama Lengkap</p>
-                        <p className="font-semibold">{anggota.nama_lengkap}</p>
-                    </div>
-
-                    <div>
-                        <p className="text-gray-500 text-sm">Alamat</p>
-                        <p className="font-semibold">{anggota.alamat}</p>
-                    </div>
-
-                    <div>
-                        <p className="text-gray-500 text-sm">No Telepon</p>
-                        <p className="font-semibold">{anggota.no_telepon || '-'}</p>
-                    </div>
-
-                    <div>
-                        <p className="text-gray-500 text-sm">Tanggal Daftar</p>
-                        <p className="font-semibold">{anggota.tanggal_daftar}</p>
-                    </div>
-
-                    <div>
-                        <p className="text-gray-500 text-sm">Nomor Surat Permohonan</p>
-                        <p className="font-semibold">{anggota.no_surat_permohonan}</p>
-                    </div>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <InfoItem label="Nomor Induk Kependudukan (NIK)" value={anggota.nik} />
+                    <InfoItem label="Nama Lengkap" value={anggota.nama_lengkap} />
+                    <InfoItem label="Alamat" value={anggota.alamat} />
+                    <InfoItem label="No Telepon" value={anggota.no_telepon || '-'} />
+                    <InfoItem label="Tanggal Daftar" value={anggota.tanggal_daftar} />
+                    <InfoItem label="Nomor Surat Permohonan" value={anggota.no_surat_permohonan} />
 
                     <div className="md:col-span-2">
-                        <p className="text-gray-500 text-sm">Status Keanggotaan</p>
-                        <span className="inline-block mt-1 bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
+                        <p className="text-sm text-gray-400 mb-1.5">Status Keanggotaan</p>
+                        <span className="inline-block bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-semibold">
                             {anggota.status_keanggotaan}
                         </span>
                     </div>
-                </div>
-
-                <div className="mt-8">
-                    <Link
-                        href="/admin-anggota/pendaftaran-anggota"
-                        className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded transition"
-                    >
-                        ← Kembali
-                    </Link>
                 </div>
             </div>
         </AdminAnggotaLayout>

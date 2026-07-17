@@ -1,15 +1,16 @@
 import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
 import { useForm, Link } from '@inertiajs/react';
 import InputField from '@/Components/anggota/InputField'; // ===== PENERAPAN MATERI: import Reusable Component =====
+import { ArrowLeft, Save } from 'lucide-react';
 
 // ===== PENERAPAN MATERI: Component Parent-Child (Pertemuan 2) — tetap dipertahankan =====
 function InfoNikReadonly({ nik }) {
     return (
         <div>
-            <label className="block mb-1 font-semibold text-gray-600">NIK (Nomor Induk Kependudukan)</label>
+            <label className="block text-base font-medium text-gray-600 mb-1.5">NIK (Nomor Induk Kependudukan)</label>
             <input
                 type="text"
-                className="border p-2 w-full rounded bg-gray-100 text-gray-500 cursor-not-allowed"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 text-base cursor-not-allowed"
                 value={nik}
                 disabled
             />
@@ -33,16 +34,25 @@ export default function Edit({ anggota }) {
 
     return (
         <AdminAnggotaLayout title="Edit Data Anggota">
-            <form onSubmit={submit} className="bg-white p-6 rounded-xl shadow space-y-4">
-                <h2 className="text-xl font-bold mb-4 border-b pb-2">Edit Data & Status Anggota</h2>
+            {/* HEADER */}
+            <div className="flex items-center gap-3 mb-5">
+                <Link href="/admin-anggota/data-anggota" className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+                    <ArrowLeft size={18} className="text-gray-500" />
+                </Link>
+                <div>
+                    <h1 className="text-2xl font-semibold text-gray-800">Edit Data &amp; Status Anggota</h1>
+                    <p className="text-sm text-gray-400">KUD Lubuk Karya</p>
+                </div>
+            </div>
 
+            <form onSubmit={submit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                     <InfoNikReadonly nik={anggota.nik} />
 
                     <div>
-                        <label className="block mb-1 font-semibold">Status Keanggotaan</label>
+                        <label className="block text-base font-medium text-gray-600 mb-1.5">Status Keanggotaan</label>
                         <select
-                            className="border p-2 w-full rounded focus:ring-green-500 focus:border-green-500"
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
                             value={data.status_keanggotaan}
                             onChange={e => setData('status_keanggotaan', e.target.value)}
                         >
@@ -65,9 +75,9 @@ export default function Edit({ anggota }) {
                     {/* ================================================================ */}
 
                     <div className="md:col-span-2">
-                        <label className="block mb-1 font-semibold">Alamat</label>
+                        <label className="block text-base font-medium text-gray-600 mb-1.5">Alamat</label>
                         <textarea
-                            className="border p-2 w-full rounded focus:ring-green-500 focus:border-green-500"
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
                             rows="3"
                             value={data.alamat}
                             onChange={e => setData('alamat', e.target.value)}
@@ -87,17 +97,18 @@ export default function Edit({ anggota }) {
                     {/* ================================================================ */}
                 </div>
 
-                <div className="flex space-x-3 pt-6">
-                    <button 
-                        disabled={processing} 
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition"
+                <div className="flex gap-3 pt-4 border-t border-gray-100">
+                    <button
+                        disabled={processing}
+                        className="inline-flex items-center gap-2 bg-[#1B8A3A] hover:bg-[#157030] text-white px-5 py-2.5 rounded-xl text-base font-semibold transition disabled:opacity-70"
                     >
+                        <Save size={18} />
                         Simpan Perubahan
                     </button>
-                    
-                    <Link 
-                        href="/admin-anggota/data-anggota" 
-                        className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-2 rounded-lg flex items-center font-medium transition"
+
+                    <Link
+                        href="/admin-anggota/data-anggota"
+                        className="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-base font-semibold transition"
                     >
                         Batal
                     </Link>

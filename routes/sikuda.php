@@ -95,9 +95,8 @@ Route::middleware(['sikuda.auth', 'sikuda.role:admin_anggota'])
         Route::delete('/data-anggota/{id}', [DataAnggotaController::class, 'destroy'])->name('data-anggota.destroy');
 
         // PENGATURAN
-        Route::get('/pengaturan', [AnggotaPengaturan::class, 'index'])->name('pengaturan.index');
-        Route::put('/pengaturan/profil', [AnggotaPengaturan::class, 'updateProfil'])->name('pengaturan.profil');
-        Route::put('/pengaturan/password', [AnggotaPengaturan::class, 'updatePassword'])->name('pengaturan.password');
+        Route::get('/pengaturan', [AnggotaPengaturan::class, 'index'])->name('pengaturan');
+        Route::post('/pengaturan/update', [AnggotaPengaturan::class, 'update'])->name('pengaturan.update');
 
     });
 

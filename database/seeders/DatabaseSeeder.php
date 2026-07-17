@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PenggunaSeeder::class,
             AnggotaSeeder::class,
+            AnggotaTambahanSeeder::class, // data dummy tambahan (30 menunggu verifikasi + 40 aktif/pasif/keluar)
             BarangSeeder::class,
             HargaTbsSeeder::class,        // ← BARU, sebelum penjualan TBS
             SimpananSeeder::class,

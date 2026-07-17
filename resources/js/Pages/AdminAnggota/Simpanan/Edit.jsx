@@ -1,5 +1,7 @@
 import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
 import { useForm, Link } from '@inertiajs/react';
+import { useEffect } from 'react';
+import { ArrowLeft, Save } from 'lucide-react';
 
 export default function Edit({ simpanan }) {
     const { data, setData, put, processing, errors } = useForm({
@@ -9,28 +11,55 @@ export default function Edit({ simpanan }) {
         keterangan: simpanan.keterangan || '',
     });
 
+    // ===== PENERAPAN MATERI: useEffect (Pertemuan 11) =====
+    // Jenis: Dependency Array Kosong []
+    // Fungsi: dijalankan sekali saat form edit simpanan pertama kali dibuka
+    // Mengubah judul tab browser sesuai nama anggota yang sedang diedit
+    useEffect(() => {
+        if (simpanan?.anggota) {
+            document.title = `Edit Simpanan — ${simpanan.anggota.nama_lengkap}`;
+        }
+        return () => {
+            document.title = 'SIKUDA';
+        };
+    }, []);
+    // ===== AKHIR PENERAPAN useEffect =====
+
     function submit(e) {
         e.preventDefault();
         put(`/admin-anggota/simpanan/${simpanan.id_simpanan}`);
     }
 
+    const inputCls = "w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]";
+    const labelCls = "block text-base font-medium text-gray-600 mb-1.5";
+
     return (
         <AdminAnggotaLayout title="Edit Transaksi Simpanan">
-            <div className="bg-white p-6 rounded-xl shadow max-w-2xl mx-auto">
-                <h2 className="text-xl font-bold mb-4 border-b pb-2">Koreksi Data Transaksi</h2>
+            {/* HEADER */}
+            <div className="flex items-center gap-3 mb-5">
+                <Link href={`/admin-anggota/simpanan/${simpanan.id_anggota}`} className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+                    <ArrowLeft size={18} className="text-gray-500" />
+                </Link>
+                <div>
+                    <h1 className="text-2xl font-semibold text-gray-800">Koreksi Data Transaksi</h1>
+                    <p className="text-sm text-gray-400">KUD Lubuk Karya</p>
+                </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 max-w-2xl mx-auto">
                 <form onSubmit={submit} className="space-y-4">
-                    
-                    <div className="bg-gray-100 p-3 rounded mb-4">
-                        <p className="text-sm text-gray-600">Anggota: <span className="font-bold text-gray-800">{simpanan.anggota.nama_lengkap}</span></p>
+
+                    <div className="bg-gray-50 border border-gray-100 p-3 rounded-xl">
+                        <p className="text-base text-gray-600">Anggota: <span className="font-semibold text-gray-800">{simpanan.anggota.nama_lengkap}</span></p>
                     </div>
 
                     <div>
-                        <label className="block font-semibold mb-1">Jenis Transaksi</label>
-                        <select 
-                            className="border p-2 w-full rounded bg-gray-100" 
-                            value={data.jenis_simpanan} 
+                        <label className={labelCls}>Jenis Transaksi</label>
+                        <select
+                            className={`${inputCls} bg-gray-50 text-gray-500`}
+                            value={data.jenis_simpanan}
                             onChange={e => setData('jenis_simpanan', e.target.value)}
-                            disabled={true} // KUNCI agar tidak bisa diubah jenis transaksinya
+                            disabled={true}
                         >
                             <option value="wajib">Simpanan Wajib</option>
                             <option value="pokok">Simpanan Pokok</option>
@@ -39,24 +68,29 @@ export default function Edit({ simpanan }) {
                     </div>
 
                     <div>
-                        <label className="block font-semibold mb-1">Jumlah (Rp)</label>
-                        <input type="number" className="border p-2 w-full rounded" value={data.jumlah} onChange={e => setData('jumlah', e.target.value)} />
-                        {errors.jumlah && <div className="text-red-500 text-sm">{errors.jumlah}</div>}
+                        <label className={labelCls}>Jumlah (Rp)</label>
+                        <input type="number" className={inputCls} value={data.jumlah} onChange={e => setData('jumlah', e.target.value)} />
+                        {errors.jumlah && <div className="text-red-500 text-sm mt-1">{errors.jumlah}</div>}
                     </div>
 
                     <div>
-                        <label className="block font-semibold mb-1">Tanggal Transaksi</label>
-                        <input type="date" className="border p-2 w-full rounded" value={data.tanggal_transaksi} onChange={e => setData('tanggal_transaksi', e.target.value)} />
+                        <label className={labelCls}>Tanggal Transaksi</label>
+                        <input type="date" className={inputCls} value={data.tanggal_transaksi} onChange={e => setData('tanggal_transaksi', e.target.value)} />
                     </div>
 
                     <div>
-                        <label className="block font-semibold mb-1">Keterangan</label>
-                        <textarea className="border p-2 w-full rounded" value={data.keterangan} onChange={e => setData('keterangan', e.target.value)} />
+                        <label className={labelCls}>Keterangan</label>
+                        <textarea rows="3" className={inputCls} value={data.keterangan} onChange={e => setData('keterangan', e.target.value)} />
                     </div>
 
-                    <div className="pt-4 flex space-x-2">
-                        <button disabled={processing} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">Update</button>
-                        <Link href={`/admin-anggota/simpanan/${simpanan.id_anggota}`} className="bg-gray-200 px-5 py-2 rounded-lg flex items-center">Batal</Link>
+                    <div className="pt-4 flex gap-3 border-t border-gray-100">
+                        <button disabled={processing} className="inline-flex items-center gap-2 bg-[#1B8A3A] hover:bg-[#157030] text-white px-5 py-2.5 rounded-xl text-base font-semibold transition disabled:opacity-70">
+                            <Save size={18} />
+                            Update
+                        </button>
+                        <Link href={`/admin-anggota/simpanan/${simpanan.id_anggota}`} className="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-base font-semibold transition">
+                            Batal
+                        </Link>
                     </div>
                 </form>
             </div>

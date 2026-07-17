@@ -28,18 +28,33 @@ class DashboardController extends Controller
                                         ->count(),
         ];
 
-        // ===== Grafik 12 bulan terakhir =====
-        $grafikData = [];
+        // ===== PENERAPAN MATERI: Grafik Pertumbuhan Anggota per Status (12 bulan terakhir) =====
+        // Setiap titik bulan menghitung, dari anggota yang mendaftar pada bulan itu,
+        // berapa yang statusnya sekarang aktif / pasif / keluar.
+        $grafikPertumbuhan = [];
         for ($i = 11; $i >= 0; $i--) {
             $bulan = now()->subMonths($i);
-            $grafikData[] = [
+
+            $grafikPertumbuhan[] = [
                 'bulan' => $bulan->format('M y'),
-                'total' => DB::table('tb_anggota')
+                'aktif' => DB::table('tb_anggota')
                             ->whereMonth('tanggal_daftar', $bulan->month)
                             ->whereYear('tanggal_daftar', $bulan->year)
+                            ->where('status_keanggotaan', 'aktif')
+                            ->count(),
+                'pasif' => DB::table('tb_anggota')
+                            ->whereMonth('tanggal_daftar', $bulan->month)
+                            ->whereYear('tanggal_daftar', $bulan->year)
+                            ->where('status_keanggotaan', 'pasif')
+                            ->count(),
+                'keluar' => DB::table('tb_anggota')
+                            ->whereMonth('tanggal_daftar', $bulan->month)
+                            ->whereYear('tanggal_daftar', $bulan->year)
+                            ->where('status_keanggotaan', 'keluar')
                             ->count(),
             ];
         }
+        // ===== AKHIR PENERAPAN =====
 
         // ===== Aktivitas terbaru dari tb_anggota =====
         $aktivitas = DB::table('tb_anggota')
@@ -75,9 +90,9 @@ class DashboardController extends Controller
             });
 
         return Inertia::render('AdminAnggota/Dashboard', [
-            'stats'      => $stats,
-            'grafikData' => $grafikData,
-            'aktivitas'  => $aktivitas,
+            'stats'             => $stats,
+            'grafikPertumbuhan' => $grafikPertumbuhan,
+            'aktivitas'         => $aktivitas,
         ]);
     }
 }

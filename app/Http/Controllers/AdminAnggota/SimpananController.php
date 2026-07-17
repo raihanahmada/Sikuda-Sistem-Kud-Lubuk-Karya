@@ -11,34 +11,59 @@ use Illuminate\Support\Facades\Auth;
 
 class SimpananController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $anggota = Anggota::whereIn('status_keanggotaan', ['aktif', 'pasif'])
-            ->with('simpanan')
-            ->get()
-            ->map(function ($a) {
+        // ===== PENERAPAN MATERI: useEffect Search Server-Side (Pertemuan 11) =====
+        // Query anggota dengan filter search nama sebelum map()
+        $query = Anggota::whereIn('status_keanggotaan', ['aktif', 'pasif']);
+
+        if ($request->filled('search')) {
+            $query->where('nama_lengkap', 'like', "%{$request->search}%");
+        }
+        // ===== AKHIR PENERAPAN =====
+
+        // ===== PENERAPAN MATERI: Pagination Server-Side (pola sama seperti Admin Keuangan, 10 data/halaman) =====
+        $anggota = $query->with(['simpanan' => function ($q) {
+                $q->orderBy('tanggal_transaksi', 'desc')->orderBy('dibuat_pada', 'desc');
+            }])
+            ->orderBy('nama_lengkap')
+            ->paginate(10)
+            ->withQueryString()
+            ->through(function ($a) {
                 $pokok = $a->simpanan->where('jenis_simpanan', 'pokok')->sum('jumlah');
                 $wajib = $a->simpanan->where('jenis_simpanan', 'wajib')->sum('jumlah');
                 $pengambilan = $a->simpanan->where('jenis_simpanan', 'pengambilan')->sum('jumlah');
                 return [
                     'id_anggota' => $a->id_anggota,
+                    'nik' => $a->nik,
                     'nama_lengkap' => $a->nama_lengkap,
                     'pokok' => $pokok,
                     'wajib' => $wajib,
+                    'pengambilan' => $pengambilan,
                     'saldo' => ($pokok + $wajib) - $pengambilan,
+                    'riwayat' => $a->simpanan->values(),
                 ];
             });
+        // ===== AKHIR PENERAPAN =====
 
-        return Inertia::render('AdminAnggota/Simpanan/Index', ['rekapSimpanan' => $anggota]);
+        // Daftar anggota untuk dropdown "Tambah Simpanan" — sama seperti method create() sebelumnya,
+        // dipindah ke sini supaya sudah tersedia begitu popup Tambah dibuka (tanpa perlu request baru)
+        $daftarAnggota = Anggota::whereIn('status_keanggotaan', ['aktif', 'pasif'])
+            ->select('id_anggota', 'nama_lengkap', 'nik')
+            ->get();
+
+        return Inertia::render('AdminAnggota/Simpanan/Index', [
+            'rekapSimpanan' => $anggota,
+            'daftarAnggota' => $daftarAnggota,
+            'filters' => $request->only(['search']),
+        ]);
     }
 
     public function create()
     {
-        // Kirim daftar anggota aktif/pasif ke form untuk dipilih di dropdown
         $anggota = Anggota::whereIn('status_keanggotaan', ['aktif', 'pasif'])
             ->select('id_anggota', 'nama_lengkap', 'nik')
             ->get();
-            
         return Inertia::render('AdminAnggota/Simpanan/Create', ['daftarAnggota' => $anggota]);
     }
 
@@ -51,27 +76,23 @@ class SimpananController extends Controller
             'tanggal_transaksi' => 'required|date',
             'keterangan' => 'nullable|string',
         ]);
-
         $validated['id_pengguna'] = Auth::id() ?? 1;
 
-        // Validasi khusus pengambilan: cek apakah saldo cukup (Sesuai SKPL UC05)
         if ($validated['jenis_simpanan'] === 'pengambilan') {
             $simpanan = Simpanan::where('id_anggota', $validated['id_anggota'])->get();
-            $saldo = ($simpanan->whereIn('jenis_simpanan', ['pokok', 'wajib'])->sum('jumlah')) 
+            $saldo = ($simpanan->whereIn('jenis_simpanan', ['pokok', 'wajib'])->sum('jumlah'))
                      - $simpanan->where('jenis_simpanan', 'pengambilan')->sum('jumlah');
-            
             if ($validated['jumlah'] > $saldo) {
                 return back()->withErrors(['jumlah' => 'Saldo tidak mencukupi untuk pengambilan ini.']);
             }
         }
 
         Simpanan::create($validated);
-        return redirect()->route('admin-anggota.simpanan.index')->with('success', 'Transaksi berhasil disimpan.');
+        return back()->with('sukses', 'Transaksi berhasil disimpan.');
     }
 
     public function show($id)
     {
-        // Tarik data anggota beserta riwayat transaksinya
         $anggota = Anggota::with(['simpanan' => function($q) {
             $q->orderBy('tanggal_transaksi', 'desc')->orderBy('dibuat_pada', 'desc');
         }])->findOrFail($id);
@@ -94,7 +115,6 @@ class SimpananController extends Controller
 
     public function edit($id)
     {
-        // Edit spesifik per TRANSAKSI, bukan per anggota
         $simpanan = Simpanan::with('anggota')->findOrFail($id);
         return Inertia::render('AdminAnggota/Simpanan/Edit', ['simpanan' => $simpanan]);
     }
@@ -107,12 +127,8 @@ class SimpananController extends Controller
             'tanggal_transaksi' => 'required|date',
             'keterangan' => 'nullable|string',
         ]);
-
         $simpanan = Simpanan::findOrFail($id);
         $simpanan->update($validated);
-
-        // Redirect balik ke halaman Detail Anggota tersebut
-        return redirect()->route('admin-anggota.simpanan.show', $simpanan->id_anggota)
-                         ->with('success', 'Transaksi berhasil diupdate.');
+        return back()->with('sukses', 'Transaksi berhasil diupdate.');
     }
 }

@@ -1,23 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Head } from '@inertiajs/react';
 import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
 import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid,
+    AreaChart, Area, XAxis, YAxis, CartesianGrid,
     Tooltip, ResponsiveContainer
 } from 'recharts';
+import { Users, AlertCircle } from 'lucide-react';
 
 // ===== PENERAPAN MATERI: Reusable Component Card — Dashboard (Pertemuan 5) =====
-function StatCard({ title, value, footer, color }) {
+function StatCard({ title, value, footer, bg, children }) {
     return (
-        <div className={`${color} text-white p-6 rounded-2xl shadow-sm relative overflow-hidden flex flex-col justify-between h-40`}>
+        <div className={`h-40 flex flex-col justify-between rounded-2xl p-5 shadow-md hover:shadow-lg transition text-white ${bg}`}>
             <div>
-                <p className="text-xs font-semibold uppercase tracking-wider opacity-90">
-                    {title}
-                </p>
-                <h3 className="text-4xl font-extrabold mt-1">{value}</h3>
+                <p className="text-sm text-white/80 mb-1">{title}</p>
+                <h3 className="text-4xl font-bold text-white">{value}</h3>
             </div>
-            <span className="text-xs font-semibold opacity-80 z-10">{footer}</span>
-            <div className="absolute right-[-10px] bottom-[-10px] w-28 h-28 bg-white/10 rounded-full" />
+            {children || <span className="text-sm text-white/80">{footer}</span>}
         </div>
     );
 }
@@ -31,11 +29,9 @@ export default function Dashboard({
         anggota_baru: 0,
         menunggu_verifikasi: 0,
     },
-    grafikData = [],
+    grafikPertumbuhan = [],
     aktivitas = [],
 }) {
-    const [activeTab, setActiveTab] = useState('Bulanan');
-
     // ===== PENERAPAN MATERI: useEffect (Pertemuan 11) =====
     // Jenis: Dengan Dependency Array Kosong []
     // Artinya: hanya dijalankan 1x saat komponen pertama kali dimuat (mount)
@@ -59,122 +55,153 @@ export default function Dashboard({
     }) + ' (Waktu Lokal)';
 
     const warnaAktivitas = (jenis) => {
-        if (jenis === 'Verifikasi') return 'bg-emerald-50';
-        if (jenis === 'Pendaftaran') return 'bg-blue-50';
-        return 'bg-red-50';
+        if (jenis === 'Verifikasi') return 'bg-emerald-50/60 border-emerald-100';
+        if (jenis === 'Pendaftaran') return 'bg-blue-50/60 border-blue-100';
+        return 'bg-red-50/60 border-red-100';
     };
+
+    // ── Komposisi status anggota (persentase, untuk mini bar chart) ────────
+    const { aktifPercent, pasifPercent, lainnyaPercent } = useMemo(() => {
+        const total   = stats.total_anggota || 0;
+        const aktif   = stats.aktif || 0;
+        const pasif   = stats.pasif || 0;
+        const lainnya = Math.max(total - aktif - pasif, 0);
+        return {
+            aktifPercent:   total > 0 ? (aktif   / total) * 100 : 0,
+            pasifPercent:   total > 0 ? (pasif   / total) * 100 : 0,
+            lainnyaPercent: total > 0 ? (lainnya / total) * 100 : 0,
+        };
+    }, [stats]);
+
+    const barAnggota = [
+        { pct: aktifPercent,   color: '#FFFFFF',            label: 'Aktif'   },
+        { pct: pasifPercent,   color: '#FDE68A',            label: 'Pasif'   },
+        { pct: lainnyaPercent, color: 'rgba(255,255,255,0.45)', label: 'Lainnya' },
+    ];
 
     return (
         <AdminAnggotaLayout title="Dashboard">
             <Head title="Dashboard Admin Anggota - SIKUDA" />
 
-            <div className="space-y-6">
+            <div className="space-y-4">
 
                 {/* KARTU STATISTIK */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-[#FFB800] text-white p-6 rounded-2xl shadow-sm relative overflow-hidden flex flex-col justify-between h-40">
-                        <div>
-                            <p className="text-xs font-semibold uppercase tracking-wider opacity-90">Total Anggota</p>
-                            <h3 className="text-4xl font-extrabold mt-1">{stats.total_anggota}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <StatCard
+                        title="Total Anggota"
+                        value={stats.total_anggota}
+                        bg="bg-gradient-to-br from-[#1B8A3A] to-[#146830]"
+                    >
+                        <div className="flex items-end gap-2 h-10 mt-1">
+                            {barAnggota.map(({ pct, color, label }) => (
+                                <div key={label} className="flex flex-col items-center gap-1 flex-1">
+                                    <div
+                                        className="w-full rounded-t transition-all duration-500"
+                                        style={{ height: pct > 0 ? `${pct}%` : undefined, minHeight: pct > 0 ? 8 : 4, background: color, opacity: pct > 0 ? 1 : 0.25 }}
+                                    />
+                                    <span className="text-[10px] text-white/80">{label}</span>
+                                </div>
+                            ))}
                         </div>
-                        <div className="flex gap-4 text-xs font-semibold border-t border-white/20 pt-3 z-10">
-                            <span>Aktif : <strong className="text-sm ml-1">{stats.aktif}</strong></span>
-                            <span>Pasif : <strong className="text-sm ml-1">{stats.pasif}</strong></span>
-                        </div>
-                        <div className="absolute right-[-10px] bottom-[-10px] w-28 h-28 bg-white/10 rounded-full" />
-                    </div>
-
-                    {/* ===== PENERAPAN MATERI: Parent memanggil StatCard (Pertemuan 5) ===== */}
+                    </StatCard>
                     <StatCard
                         title="Anggota Baru (Bulan Ini)"
                         value={stats.anggota_baru}
                         footer={new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
-                        color="bg-[#1E75FF]"
+                        bg="bg-gradient-to-br from-blue-500 to-blue-700"
                     />
                     <StatCard
                         title="Status Menunggu Verifikasi"
                         value={stats.menunggu_verifikasi}
                         footer="Permohonan Baru"
-                        color="bg-[#FF3B30]"
+                        bg="bg-gradient-to-br from-amber-500 to-amber-600"
                     />
-                    {/* ================================================================ */}
                 </div>
 
-                {/* QUICK ACTION */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <button className="flex items-center justify-center gap-3 bg-white hover:bg-gray-50 border border-gray-100 px-6 py-4 rounded-xl shadow-sm text-sm font-semibold text-gray-700">
-                        👤➕ Input Calon Anggota
-                    </button>
-                    <button className="flex items-center justify-center gap-3 bg-white hover:bg-gray-50 border border-gray-100 px-6 py-4 rounded-xl shadow-sm text-sm font-semibold text-gray-700">
-                        📤 Verifikasi Berkas
-                    </button>
-                    <button className="flex items-center justify-center gap-3 bg-white hover:bg-gray-50 border border-gray-100 px-6 py-4 rounded-xl shadow-sm text-sm font-semibold text-gray-700">
-                        🖨️ Cetak Laporan Anggota
-                    </button>
-                </div>
+                {/* ===== PENERAPAN MATERI: Grafik gaya sama seperti Grafik Arus Kas di Pemilik/Dashboard.jsx (AreaChart + gradient) ===== */}
+                <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <p className="text-sm font-semibold text-gray-700">Grafik Pertumbuhan Anggota</p>
 
-                {/* AKTIVITAS & GRAFIK */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                    <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                        <h4 className="text-emerald-600 font-bold text-sm mb-4">Aktivitas Keanggotaan</h4>
-                        <div className="space-y-3">
-                            {aktivitas.length > 0 ? (
-                                aktivitas.map((item, index) => (
-                                    <div key={index} className={`p-3 ${warnaAktivitas(item.jenis)} rounded-xl`}>
-                                        <p className="text-xs text-gray-600">
-                                            <strong>{item.waktu} — {item.jenis}:</strong>{' '}
-                                            {item.jenis === 'Verifikasi' && `${item.nama} diterima sebagai anggota aktif.`}
-                                            {item.jenis === 'Pendaftaran' && `${item.nama} masuk antrian verifikasi.`}
-                                            {item.jenis === 'Update' && `Status ${item.nama} diubah menjadi ${item.status}.`}
-                                        </p>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-xs text-gray-400 text-center py-4">Belum ada aktivitas.</p>
-                            )}
+                        <div className="flex items-center gap-4 text-[10px] text-gray-400">
+                            <span className="flex items-center gap-1">
+                                <span className="w-2 h-2 rounded-full bg-[#1B8A3A] inline-block" />{' '}
+                                Aktif
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <span className="w-2 h-2 rounded-full bg-[#D97706] inline-block" />{' '}
+                                Pasif
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <span className="w-2 h-2 rounded-full bg-[#DC2626] inline-block" />{' '}
+                                Keluar
+                            </span>
                         </div>
                     </div>
 
-                    <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                        <div className="flex justify-between items-center mb-6">
-                            <h4 className="font-bold text-sm text-gray-800">Grafik Pertumbuhan Anggota</h4>
-                            <div className="flex bg-gray-100 p-1 rounded-xl">
-                                {['Harian', 'Mingguan', 'Bulanan'].map((tab) => (
-                                    <button
-                                        key={tab}
-                                        onClick={() => setActiveTab(tab)}
-                                        className={`px-4 py-1 rounded-lg text-xs ${
-                                            activeTab === tab ? 'bg-white shadow text-gray-800' : 'text-gray-500'
-                                        }`}
-                                    >
-                                        {tab}
-                                    </button>
-                                ))}
+                    {grafikPertumbuhan.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-[380px] text-gray-300">
+                            <AlertCircle size={32} className="mb-2" />
+                            <p className="text-sm italic">Belum ada data pendaftaran anggota</p>
+                        </div>
+                    ) : (
+                        <ResponsiveContainer width="100%" height={380}>
+                            <AreaChart data={grafikPertumbuhan}>
+                                <defs>
+                                    <linearGradient id="gradAktif" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#1B8A3A" stopOpacity={0.25} />
+                                        <stop offset="95%" stopColor="#1B8A3A" stopOpacity={0.02} />
+                                    </linearGradient>
+                                    <linearGradient id="gradPasif" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#D97706" stopOpacity={0.2} />
+                                        <stop offset="95%" stopColor="#D97706" stopOpacity={0.02} />
+                                    </linearGradient>
+                                    <linearGradient id="gradKeluar" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#DC2626" stopOpacity={0.15} />
+                                        <stop offset="95%" stopColor="#DC2626" stopOpacity={0.02} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                <XAxis dataKey="bulan" tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
+                                <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} allowDecimals={false} axisLine={false} tickLine={false} />
+                                <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e5e7eb' }} itemStyle={{ color: '#374151' }} />
+                                <Area type="monotone" dataKey="aktif" stroke="#1B8A3A" strokeWidth={2} fill="url(#gradAktif)" name="Aktif" />
+                                <Area type="monotone" dataKey="pasif" stroke="#D97706" strokeWidth={1.5} fill="url(#gradPasif)" name="Pasif" />
+                                <Area type="monotone" dataKey="keluar" stroke="#DC2626" strokeWidth={1.5} strokeDasharray="4 3" fill="url(#gradKeluar)" name="Keluar" />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    )}
+                </div>
+                {/* ================================================================ */}
+
+                {/* AKTIVITAS KEANGGOTAAN */}
+                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                    <h4 className="text-base font-semibold text-gray-700 mb-4">Aktivitas Keanggotaan</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        {aktivitas.length > 0 ? (
+                            aktivitas.map((item, index) => (
+                                <div key={index} className={`p-3 rounded-xl border ${warnaAktivitas(item.jenis)}`}>
+                                    <p className="text-sm text-gray-600 leading-relaxed">
+                                        <strong className="text-gray-800">{item.waktu} — {item.jenis}:</strong>{' '}
+                                        {item.jenis === 'Verifikasi' && `${item.nama} diterima sebagai anggota aktif.`}
+                                        {item.jenis === 'Pendaftaran' && `${item.nama} masuk antrian verifikasi.`}
+                                        {item.jenis === 'Update' && `Status ${item.nama} diubah menjadi ${item.status}.`}
+                                    </p>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="sm:col-span-2 flex flex-col items-center justify-center py-10 text-gray-300">
+                                <Users size={28} className="mb-2" />
+                                <p className="text-sm italic">Belum ada aktivitas.</p>
                             </div>
-                        </div>
-
-                        {/* ===== PENERAPAN MATERI: Grafik recharts (Pertemuan 5) ===== */}
-                        <div className="h-52">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={grafikData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                                    <XAxis dataKey="bulan" tick={{ fontSize: 9 }} interval={0} angle={-30} textAnchor="end" height={40} />
-                                    <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
-                                    <Tooltip formatter={(value) => [`${value} anggota`, 'Pendaftar Baru']} />
-                                    <Line type="monotone" dataKey="total" stroke="#10b981" strokeWidth={2} dot={{ r: 3, fill: '#10b981' }} activeDot={{ r: 5 }} name="Anggota Baru" />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </div>
-                        {/* ================================================================ */}
+                        )}
                     </div>
-
                 </div>
 
             </div>
 
             {/* ===== PENERAPAN MATERI: Hasil useEffect — jam realtime yang terupdate setiap detik ===== */}
-            <div className="mt-8 flex flex-col items-end text-xs text-gray-400 font-semibold">
+            <div className="mt-6 flex flex-col items-end text-sm text-gray-400 font-medium">
                 <span>{formatDayDate(currentTime)}</span>
                 <span>{formatTime(currentTime)}</span>
             </div>

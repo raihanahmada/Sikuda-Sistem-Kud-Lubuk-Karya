@@ -1,71 +1,76 @@
 // File: resources/js/Components/Anggota/TableAnggota.jsx
 
 import { Link } from '@inertiajs/react';
+import { Users } from 'lucide-react';
 
 // Pindahkan StatusBadge ke sini karena hanya dipakai di dalam tabel
 function StatusBadge({ status }) {
+    const config = {
+        aktif:  { label: 'AKTIF',  bg: '#E8F5E9', color: '#1B8A3A' },
+        pasif:  { label: 'PASIF',  bg: '#FEF3C7', color: '#D97706' },
+    };
+    const s = config[status] || { label: status.toUpperCase(), bg: '#FEE2E2', color: '#DC2626' };
     return (
-        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-            status === 'aktif' ? 'bg-green-100 text-green-700' : 
-            status === 'pasif' ? 'bg-yellow-100 text-yellow-700' : 
-            'bg-red-100 text-red-700'
-        }`}>
-            {status.toUpperCase()}
+        <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{ background: s.bg, color: s.color }}>
+            {s.label}
         </span>
     );
 }
 
 export default function TableAnggota({ hasilPencarian, handleDelete }) {
     return (
-        <div className="overflow-x-auto">
-            <table className="w-full border border-gray-200">
-                <thead className="bg-gray-100">
-                    <tr>
-                        <th className="border p-3 text-left">No</th>
-                        <th className="border p-3 text-left">NIK</th>
-                        <th className="border p-3 text-left">Nama Lengkap</th>
-                        <th className="border p-3 text-left">No HP</th>
-                        <th className="border p-3 text-center">Status</th>
-                        <th className="border p-3 text-center">Aksi</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {hasilPencarian.length > 0 ? (
-                        hasilPencarian.map((item, index) => (
-                            <tr key={item.id_anggota} className="hover:bg-gray-50">
-                                <td className="border p-3">{index + 1}</td>
-                                <td className="border p-3">{item.nik}</td>
-                                <td className="border p-3 font-medium text-gray-800">{item.nama_lengkap}</td>
-                                <td className="border p-3">{item.no_telepon || '-'}</td>
-                                <td className="border p-3 text-center">
-                                    <StatusBadge status={item.status_keanggotaan} />
-                                </td>
-                                <td className="border p-3 text-center space-x-3">
-                                    <Link 
-                                        href={`/admin-anggota/data-anggota/${item.id_anggota}/edit`}
-                                        className="text-orange-500 hover:text-orange-700 font-medium"
-                                    >
-                                        Edit
-                                    </Link>
-                                    <button 
-                                        onClick={() => handleDelete(item.id_anggota)}
-                                        className="text-red-500 hover:text-red-700 font-medium"
-                                    >
-                                        Hapus
-                                    </button>
-                                </td>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            {hasilPencarian.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-gray-300">
+                    <Users size={40} className="mb-3" />
+                    <p className="text-base italic">Tidak ada data anggota ditemukan.</p>
+                </div>
+            ) : (
+                <div className="overflow-x-auto">
+                    <table className="w-full text-base">
+                        <thead>
+                            <tr className="border-b border-gray-100 bg-gray-50">
+                                <th className="text-left text-sm text-gray-500 font-semibold px-4 py-3">No</th>
+                                <th className="text-left text-sm text-gray-500 font-semibold px-4 py-3">NIK</th>
+                                <th className="text-left text-sm text-gray-500 font-semibold px-4 py-3">Nama Lengkap</th>
+                                <th className="text-left text-sm text-gray-500 font-semibold px-4 py-3">No HP</th>
+                                <th className="text-center text-sm text-gray-500 font-semibold px-4 py-3">Status</th>
+                                <th className="text-center text-sm text-gray-500 font-semibold px-4 py-3">Aksi</th>
                             </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="6" className="border p-6 text-center text-gray-500">
-                                Tidak ada data anggota ditemukan.
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+                        </thead>
+
+                        <tbody>
+                            {hasilPencarian.map((item, index) => (
+                                <tr key={item.id_anggota} className="border-b border-gray-50 hover:bg-gray-50 transition">
+                                    <td className="px-4 py-3 text-gray-500">{index + 1}</td>
+                                    <td className="px-4 py-3 text-gray-600">{item.nik}</td>
+                                    <td className="px-4 py-3 font-medium text-gray-800">{item.nama_lengkap}</td>
+                                    <td className="px-4 py-3 text-gray-500">{item.no_telepon || '-'}</td>
+                                    <td className="px-4 py-3 text-center">
+                                        <StatusBadge status={item.status_keanggotaan} />
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Link
+                                                href={`/admin-anggota/data-anggota/${item.id_anggota}/edit`}
+                                                className="px-3.5 py-1.5 rounded-lg text-sm font-semibold text-amber-600 bg-amber-50 border border-amber-100 hover:bg-amber-100 transition"
+                                            >
+                                                Edit
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDelete(item.id_anggota)}
+                                                className="px-3.5 py-1.5 rounded-lg text-sm font-semibold text-red-600 bg-red-50 border border-red-100 hover:bg-red-100 transition"
+                                            >
+                                                Hapus
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
     );
 }

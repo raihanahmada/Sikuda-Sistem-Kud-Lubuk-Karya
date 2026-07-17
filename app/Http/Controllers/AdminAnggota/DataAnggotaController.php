@@ -9,61 +9,63 @@ use Inertia\Inertia;
 
 class DataAnggotaController extends Controller
 {
-    // Menampilkan daftar anggota (Aktif, Pasif, Keluar)
     public function index(Request $request)
     {
-        // Sesuai SKPL UC06: Hanya menampilkan Aktif, Pasif, dan Keluar
         $query = Anggota::whereIn('status_keanggotaan', ['aktif', 'pasif', 'keluar']);
 
-        // Sesuai SKPL UC06 Sub Flow S.2: Filter Berdasarkan Status
+        // Filter status (server-side)
         if ($request->filled('status')) {
             $query->where('status_keanggotaan', $request->status);
         }
 
-        $dataAnggota = $query->latest()->get();
+        // ===== PENERAPAN MATERI: useEffect Search Server-Side (Pertemuan 11) =====
+        // Controller menerima parameter 'search' dari React (via router.get)
+        // dan memfilter data di database langsung (bukan di React)
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('nama_lengkap', 'like', "%{$request->search}%")
+                  ->orWhere('nik', 'like', "%{$request->search}%");
+            });
+        }
+        // ===== AKHIR PENERAPAN =====
+
+        // ===== PENERAPAN MATERI: Pagination Server-Side (pola sama seperti Admin Keuangan, 10 data/halaman) =====
+        // Anggota yang paling baru mendaftar tampil paling atas
+        $dataAnggota = $query->orderByDesc('tanggal_daftar')->orderByDesc('id_anggota')->paginate(10)->withQueryString();
+        // ===== AKHIR PENERAPAN =====
 
         return Inertia::render('AdminAnggota/DataAnggota/Index', [
-            'dataAnggota' => $dataAnggota
+            'dataAnggota' => $dataAnggota,
+            'filters' => $request->only(['status', 'search']),
         ]);
     }
 
-    // Menghapus data anggota
     public function destroy($id)
     {
         $anggota = Anggota::findOrFail($id);
-        
-        // Sesuai SKPL UC06 Alt 3: Gagal hapus jika masih ada transaksi aktif
         if ($anggota->simpanan()->count() > 0 || $anggota->penjualanTbs()->count() > 0 || $anggota->pembelianBarang()->count() > 0) {
-            return redirect()->back()->with('error', 'Data tidak dapat dihapus karena masih memiliki transaksi aktif.');
+            return back()->with('error', 'Data tidak dapat dihapus karena masih memiliki transaksi aktif.');
         }
-
         $anggota->delete();
-        return redirect()->route('admin-anggota.data-anggota.index')->with('success', 'Data anggota berhasil dihapus.');
+        return back()->with('sukses', 'Data anggota berhasil dihapus.');
     }
-    // Menampilkan halaman Edit Data Anggota
+
     public function edit($id)
     {
         $anggota = Anggota::findOrFail($id);
-        
-        return Inertia::render('AdminAnggota/DataAnggota/Edit', [
-            'anggota' => $anggota
-        ]);
+        return Inertia::render('AdminAnggota/DataAnggota/Edit', ['anggota' => $anggota]);
     }
 
-    // Memproses update data dan status anggota ke database
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:100',
             'alamat' => 'required|string',
             'no_telepon' => 'nullable|string|max:15',
-            'status_keanggotaan' => 'required|in:aktif,pasif,keluar' // Sesuai aturan ENUM di DPPL
+            'status_keanggotaan' => 'required|in:aktif,pasif,keluar'
         ]);
-
         $anggota = Anggota::findOrFail($id);
         $anggota->update($validated);
-
-        return redirect()->route('admin-anggota.data-anggota.index')
-                         ->with('success', 'Data anggota berhasil diperbarui.');
+        return back()->with('sukses', 'Data anggota berhasil diperbarui.');
     }
 }

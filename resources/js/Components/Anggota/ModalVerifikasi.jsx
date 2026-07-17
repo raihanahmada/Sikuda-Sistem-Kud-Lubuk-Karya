@@ -1,10 +1,9 @@
-import { Head, Link, router, useForm } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
-import AdminAnggotaLayout from '@/Layouts/AdminAnggotaLayout';
-import { ArrowLeft, CheckCircle2, XCircle, FileText } from 'lucide-react';
+import { useState } from 'react';
+import { router, useForm } from '@inertiajs/react';
+import ModalShell from './ModalShell';
+import { CheckCircle2, XCircle, FileText, ShieldCheck } from 'lucide-react';
 
 // ===== PENERAPAN MATERI: Component Parent-Child (Pertemuan 2) =====
-// DokumenPreview adalah child component yang menerima props label dan url
 function DokumenPreview({ label, url }) {
     if (!url) {
         return (
@@ -16,22 +15,19 @@ function DokumenPreview({ label, url }) {
             </div>
         );
     }
-
     const isPdf = url.toLowerCase().endsWith('.pdf');
-
     return (
         <div>
             <p className="text-sm text-gray-400 mb-2">{label}</p>
             {isPdf ? (
                 <a href={url} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full h-32 border border-gray-200 rounded-xl bg-gray-50 text-[#1B8A3A] hover:bg-gray-100 font-medium text-base transition"
-                >
+                    className="flex items-center justify-center gap-2 w-full h-32 border border-emerald-100 rounded-xl bg-emerald-50/40 text-[#1B8A3A] hover:bg-emerald-50 font-medium text-base transition">
                     <FileText size={18} />
                     Lihat PDF
                 </a>
             ) : (
                 <a href={url} target="_blank" rel="noopener noreferrer">
-                    <img src={url} alt={label} className="w-full h-32 object-cover rounded-xl border border-gray-200 hover:opacity-80 transition" />
+                    <img src={url} alt={label} className="w-full h-32 object-cover rounded-xl border border-emerald-100 hover:opacity-80 transition" />
                 </a>
             )}
         </div>
@@ -39,73 +35,40 @@ function DokumenPreview({ label, url }) {
 }
 // ===== AKHIR CHILD COMPONENT =====
 
-export default function Show({ anggota }) {
+export default function ModalVerifikasi({ anggota, onTutup }) {
     const [tampilFormTolak, setTampilFormTolak] = useState(false);
-
-    const { data, setData, put, processing, errors } = useForm({
-        alasan_penolakan: ''
-    });
-
-    // ===== PENERAPAN MATERI: useEffect (Pertemuan 11) =====
-    // Jenis: Dengan Dependency Array Kosong []
-    // Fungsi: menjalankan sesuatu sekali saat halaman detail pertama kali dibuka
-    // Contoh nyata: log/catat bahwa halaman detail anggota ini sedang dibuka
-    // (sesuai konsep "menjalankan sesuatu setelah komponen muncul" dari modul)
-    useEffect(() => {
-        if (anggota) {
-            document.title = `Detail Verifikasi — ${anggota.nama_lengkap}`;
-        }
-        // cleanup: kembalikan title ke semula saat halaman ditinggalkan
-        return () => {
-            document.title = 'SIKUDA';
-        };
-    }, []); // dependency array kosong = jalankan sekali saat mount
-    // ===== AKHIR PENERAPAN useEffect =====
+    const [processingTerima, setProcessingTerima] = useState(false);
+    const form = useForm({ alasan_penolakan: '' });
 
     const handleTerima = () => {
-        if (confirm('Yakin ingin MENERIMA anggota ini? Sistem akan otomatis mencatat Simpanan Pokok sesuai SKPL.')) {
-            router.put(`/admin-anggota/verifikasi/${anggota.id_anggota}/terima`);
-        }
+        if (!confirm('Yakin ingin MENERIMA anggota ini? Sistem akan otomatis mencatat Simpanan Pokok sesuai SKPL.')) return;
+        setProcessingTerima(true);
+        router.put(route('admin-anggota.verifikasi.terima', anggota.id_anggota), {}, {
+            preserveScroll: true,
+            onSuccess: onTutup,
+            onFinish: () => setProcessingTerima(false),
+        });
     };
 
     const handleTolakSubmit = (e) => {
         e.preventDefault();
-        put(`/admin-anggota/verifikasi/${anggota.id_anggota}/tolak`);
+        form.put(route('admin-anggota.verifikasi.tolak', anggota.id_anggota), {
+            preserveScroll: true,
+            onSuccess: onTutup,
+        });
     };
 
-    if (!anggota) return <div className="text-base text-gray-500">Data tidak ditemukan</div>;
-
     return (
-        <AdminAnggotaLayout title="Detail Verifikasi">
-            <Head title="Detail Verifikasi" />
-
-            {/* ===== PENERAPAN MATERI: Dynamic Route (Pertemuan 11) =====
-                URL halaman ini: /admin-anggota/verifikasi/{id_anggota}
-                id_anggota bersifat dinamis — berbeda tiap anggota yang dibuka
-                Data anggota yang ditampilkan otomatis sesuai ID di URL
-                (dikirim dari VerifikasiController::show($id) ke props 'anggota')
-            ===== AKHIR DYNAMIC ROUTE ===== */}
-            <div className="flex items-center gap-3 mb-5">
-                <Link href="/admin-anggota/verifikasi" className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
-                    <ArrowLeft size={18} className="text-gray-500" />
-                </Link>
-                <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Detail Verifikasi</h1>
-                    <p className="text-sm text-gray-400">ID Pengajuan #{anggota.id_anggota}</p>
-                </div>
-            </div>
-
+        <ModalShell title="Detail Verifikasi" subtitle={`ID Pengajuan #${anggota.id_anggota}`} icon={ShieldCheck} onTutup={onTutup} maxWidth="max-w-4xl">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-
                 {/* DATA CALON ANGGOTA */}
-                <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div className="lg:col-span-2 bg-white border border-emerald-200 shadow-sm rounded-2xl p-6">
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-semibold text-gray-800">Data Calon Anggota</h2>
+                        <h3 className="text-lg font-semibold text-gray-800">Data Calon Anggota</h3>
                         <span className="px-3 py-1 rounded-full text-sm font-semibold bg-amber-100 text-amber-700">
                             {anggota.status_keanggotaan}
                         </span>
                     </div>
-
                     <div className="grid md:grid-cols-2 gap-5">
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Nama Lengkap</label>
@@ -135,28 +98,24 @@ export default function Show({ anggota }) {
                 </div>
 
                 {/* PANEL AKSI */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-fit">
-                    <h2 className="text-lg font-semibold text-gray-800 mb-5">Aksi Verifikasi</h2>
-
+                <div className="border border-gray-100 rounded-2xl p-6 h-fit">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-5">Aksi Verifikasi</h3>
                     {!tampilFormTolak ? (
                         <div className="space-y-2.5">
-                            <button onClick={handleTerima}
-                                className="w-full flex items-center justify-center gap-2 bg-[#1B8A3A] hover:bg-[#157030] text-white py-3 rounded-xl text-base font-semibold transition"
-                            >
+                            <button onClick={handleTerima} disabled={processingTerima}
+                                className="w-full flex items-center justify-center gap-2 bg-[#1B8A3A] hover:bg-[#157030] text-white py-3 rounded-xl text-base font-semibold transition disabled:opacity-70">
                                 <CheckCircle2 size={18} />
                                 Terima Pengajuan
                             </button>
-                            <button onClick={() => setTampilFormTolak(true)}
-                                className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl text-base font-semibold transition"
-                            >
+                            <button onClick={() => setTampilFormTolak(true)} disabled={processingTerima}
+                                className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl text-base font-semibold transition disabled:opacity-70">
                                 <XCircle size={18} />
                                 Tolak Pengajuan
                             </button>
-                            <Link href="/admin-anggota/verifikasi"
-                                className="block text-center py-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-base font-medium text-gray-600 transition"
-                            >
+                            <button type="button" onClick={onTutup}
+                                className="block w-full text-center py-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-base font-medium text-gray-600 transition">
                                 Kembali
-                            </Link>
+                            </button>
                         </div>
                     ) : (
                         <form onSubmit={handleTolakSubmit} className="space-y-4">
@@ -166,21 +125,19 @@ export default function Show({ anggota }) {
                                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
                                     rows="3"
                                     placeholder="Syarat tidak lengkap..."
-                                    value={data.alasan_penolakan}
-                                    onChange={e => setData('alasan_penolakan', e.target.value)}
+                                    value={form.data.alasan_penolakan}
+                                    onChange={e => form.setData('alasan_penolakan', e.target.value)}
                                     required
                                 />
-                                {errors.alasan_penolakan && <div className="text-red-500 text-sm mt-1">{errors.alasan_penolakan}</div>}
+                                {form.errors.alasan_penolakan && <div className="text-red-500 text-sm mt-1">{form.errors.alasan_penolakan}</div>}
                             </div>
                             <div className="flex gap-2">
-                                <button type="submit" disabled={processing}
-                                    className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl text-base font-semibold transition disabled:opacity-70"
-                                >
+                                <button type="submit" disabled={form.processing}
+                                    className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl text-base font-semibold transition disabled:opacity-70">
                                     Konfirmasi Tolak
                                 </button>
                                 <button type="button" onClick={() => setTampilFormTolak(false)}
-                                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-2.5 rounded-xl text-base font-semibold transition"
-                                >
+                                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-2.5 rounded-xl text-base font-semibold transition">
                                     Batal
                                 </button>
                             </div>
@@ -190,17 +147,14 @@ export default function Show({ anggota }) {
             </div>
 
             {/* DOKUMEN PERSYARATAN */}
-            <div className="mt-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Dokumen Persyaratan</h2>
-                {/* ===== PENERAPAN MATERI: Parent memanggil Child Component DokumenPreview (Pertemuan 2) ===== */}
+            <div className="mt-4 bg-white border border-emerald-200 shadow-sm rounded-2xl p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Dokumen Persyaratan</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <DokumenPreview label="Kartu Keluarga (KK)" url={anggota.data_pendaftaran?.file_kk_url} />
                     <DokumenPreview label="KTP" url={anggota.data_pendaftaran?.file_ktp_url} />
                     <DokumenPreview label="Surat Pernyataan" url={anggota.data_pendaftaran?.file_surat_pernyataan_url} />
                 </div>
-                {/* ================================================================ */}
             </div>
-
-        </AdminAnggotaLayout>
+        </ModalShell>
     );
 }
