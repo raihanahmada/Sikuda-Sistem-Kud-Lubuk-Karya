@@ -27,7 +27,7 @@ export default function Pembelian({ pembelian, filter, daftarAnggota, daftarBara
     return (
         <KeuanganLayout title="Pembelian — Keuangan">
             <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">Manajemen Pembelian</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Manajemen Pembelian</h1>
                 <button onClick={() => setModal({ buka: true, data: null })}
                     className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800">
                     + Tambah Pembelian
@@ -35,20 +35,20 @@ export default function Pembelian({ pembelian, filter, daftarAnggota, daftarBara
             </div>
 
             {flash?.sukses && (
-                <div className="mb-4 rounded-lg bg-green-50 px-4 py-2 text-sm text-green-700">{flash.sukses}</div>
+                <div className="mb-4 rounded-lg bg-green-50 px-4 py-2 text-sm text-green-700 dark:bg-green-900/15 dark:text-green-400">{flash.sukses}</div>
             )}
 
             <div className="mb-4">
                 <input type="text" value={cari}
                     onChange={(e) => setCari(e.target.value)}
                     placeholder="Cari nama anggota…"
-                    className="w-full max-w-sm rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600" />
+                    className="w-full max-w-sm rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500" />
             </div>
 
-            <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b border-gray-100 text-left text-xs text-gray-400">
+                        <tr className="border-b border-gray-100 text-left text-xs text-gray-400 dark:border-gray-800 dark:text-gray-500">
                             <th className="pb-2 font-medium">Tanggal</th>
                             <th className="pb-2 font-medium">Anggota</th>
                             <th className="pb-2 font-medium">Barang</th>
@@ -60,21 +60,21 @@ export default function Pembelian({ pembelian, filter, daftarAnggota, daftarBara
                     </thead>
                     <tbody>
                         {pembelian.data.length === 0 ? (
-                            <tr><td colSpan={7} className="py-6 text-center text-gray-400">Belum ada transaksi pembelian</td></tr>
+                            <tr><td colSpan={7} className="py-6 text-center text-gray-400 dark:text-gray-500">Belum ada transaksi pembelian</td></tr>
                         ) : (
                             pembelian.data.map((p) => (
-                                <tr key={p.id_pembelian} className="border-b border-gray-50 last:border-0">
-                                    <td className="py-3 text-gray-500">{tanggalID(p.tanggal_pembelian)}</td>
-                                    <td className="py-3 text-gray-800">{p.nama_anggota}</td>
-                                    <td className="py-3 text-gray-600">{p.nama_barang}</td>
-                                    <td className="py-3 text-right text-gray-600">{p.jumlah} {p.satuan}</td>
-                                    <td className="py-3 text-right text-gray-600">{rupiah(p.harga_satuan)}</td>
-                                    <td className="py-3 text-right font-semibold text-gray-900">{rupiah(p.total_harga)}</td>
+                                <tr key={p.id_pembelian} className="border-b border-gray-50 last:border-0 dark:border-gray-800">
+                                    <td className="py-3 text-gray-500 dark:text-gray-400">{tanggalID(p.tanggal_pembelian)}</td>
+                                    <td className="py-3 text-gray-800 dark:text-gray-100">{p.nama_anggota}</td>
+                                    <td className="py-3 text-gray-600 dark:text-gray-300">{p.nama_barang}</td>
+                                    <td className="py-3 text-right text-gray-600 dark:text-gray-300">{p.jumlah} {p.satuan}</td>
+                                    <td className="py-3 text-right text-gray-600 dark:text-gray-300">{rupiah(p.harga_satuan)}</td>
+                                    <td className="py-3 text-right font-semibold text-gray-900 dark:text-gray-100">{rupiah(p.total_harga)}</td>
                                     <td className="py-3 text-right">
                                         <button onClick={() => setModal({ buka: true, data: p })}
-                                            className="mr-3 text-xs font-medium text-amber-600 hover:underline">Edit</button>
+                                            className="mr-3 text-xs font-medium text-amber-600 hover:underline dark:text-yellow-400">Edit</button>
                                         <button onClick={() => hapus(p.id_pembelian)}
-                                            className="text-xs font-medium text-red-600 hover:underline">Hapus</button>
+                                            className="text-xs font-medium text-red-600 hover:underline dark:text-red-400">Hapus</button>
                                     </td>
                                 </tr>
                             ))
@@ -89,7 +89,7 @@ export default function Pembelian({ pembelian, filter, daftarAnggota, daftarBara
                                 dangerouslySetInnerHTML={{ __html: l.label }}
                                 className={`rounded-md px-3 py-1 text-sm ${
                                     l.active ? 'bg-green-700 text-white'
-                                    : l.url ? 'text-gray-600 hover:bg-gray-100' : 'cursor-default text-gray-300'
+                                    : l.url ? 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800' : 'cursor-default text-gray-300 dark:text-gray-600'
                                 }`} />
                         ))}
                     </div>

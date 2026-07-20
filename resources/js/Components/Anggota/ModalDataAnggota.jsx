@@ -24,19 +24,19 @@ export default function ModalDataAnggota({ data, onTutup }) {
             <form onSubmit={simpan} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-base font-medium text-gray-600 mb-1.5">NIK (Nomor Induk Kependudukan)</label>
+                        <label className="block text-base font-medium text-gray-600 dark:text-gray-300 mb-1.5">NIK (Nomor Induk Kependudukan)</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 text-base cursor-not-allowed"
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 text-base cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
                             value={data.nik}
                             disabled
                         />
                     </div>
 
                     <div>
-                        <label className="block text-base font-medium text-gray-600 mb-1.5">Status Keanggotaan</label>
+                        <label className="block text-base font-medium text-gray-600 dark:text-gray-300 mb-1.5">Status Keanggotaan</label>
                         <select
-                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                             value={form.data.status_keanggotaan}
                             onChange={e => form.setData('status_keanggotaan', e.target.value)}
                         >
@@ -44,7 +44,7 @@ export default function ModalDataAnggota({ data, onTutup }) {
                             <option value="pasif">Pasif</option>
                             <option value="keluar">Keluar</option>
                         </select>
-                        {form.errors.status_keanggotaan && <div className="text-red-500 text-sm mt-1">{form.errors.status_keanggotaan}</div>}
+                        {form.errors.status_keanggotaan && <div className="text-red-500 dark:text-red-400 text-sm mt-1">{form.errors.status_keanggotaan}</div>}
                     </div>
 
                     <div className="md:col-span-2">
@@ -57,14 +57,14 @@ export default function ModalDataAnggota({ data, onTutup }) {
                     </div>
 
                     <div className="md:col-span-2">
-                        <label className="block text-base font-medium text-gray-600 mb-1.5">Alamat</label>
+                        <label className="block text-base font-medium text-gray-600 dark:text-gray-300 mb-1.5">Alamat</label>
                         <textarea
-                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
                             rows="3"
                             value={form.data.alamat}
                             onChange={e => form.setData('alamat', e.target.value)}
                         />
-                        {form.errors.alamat && <div className="text-red-500 text-sm mt-1">{form.errors.alamat}</div>}
+                        {form.errors.alamat && <div className="text-red-500 dark:text-red-400 text-sm mt-1">{form.errors.alamat}</div>}
                     </div>
 
                     <div className="md:col-span-2">
@@ -77,8 +77,8 @@ export default function ModalDataAnggota({ data, onTutup }) {
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
-                    <button type="button" onClick={onTutup} className="rounded-xl px-5 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-100 transition">
+                <div className="flex justify-end gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <button type="button" onClick={onTutup} className="rounded-xl px-5 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition">
                         Batal
                     </button>
                     <button type="submit" disabled={form.processing}

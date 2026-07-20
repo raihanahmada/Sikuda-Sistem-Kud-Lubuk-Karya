@@ -14,9 +14,9 @@ const STATUS_STYLE = {
 
 // Warna baris tabel disesuaikan status, supaya keaktifan anggota langsung kelihatan sekilas
 const ROW_TINT = {
-    aktif:  'bg-emerald-50/50 hover:bg-emerald-100/60 border-emerald-100',
-    pasif:  'bg-amber-50/50 hover:bg-amber-100/60 border-amber-100',
-    keluar: 'bg-red-50/50 hover:bg-red-100/60 border-red-100',
+    aktif:  'bg-emerald-50/50 hover:bg-emerald-100/60 border-emerald-100 dark:bg-emerald-900/10 dark:hover:bg-emerald-900/20 dark:border-emerald-900/30',
+    pasif:  'bg-amber-50/50 hover:bg-amber-100/60 border-amber-100 dark:bg-amber-900/10 dark:hover:bg-amber-900/20 dark:border-amber-900/30',
+    keluar: 'bg-red-50/50 hover:bg-red-100/60 border-red-100 dark:bg-red-900/10 dark:hover:bg-red-900/20 dark:border-red-900/30',
 };
 
 function StatusBadge({ status }) {
@@ -84,8 +84,8 @@ export default function Index({ dataAnggota = { data: [], links: [] }, filters =
             {/* HEADER */}
             <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-5">
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Data Anggota Koperasi</h1>
-                    <p className="text-sm text-gray-400">KUD Lubuk Karya</p>
+                    <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Data Anggota Koperasi</h1>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">KUD Lubuk Karya</p>
                 </div>
                 <Link
                     href="/admin-anggota/pendaftaran-anggota/create"
@@ -97,7 +97,7 @@ export default function Index({ dataAnggota = { data: [], links: [] }, filters =
             </div>
 
             {flash?.sukses && (
-                <div className="mb-4 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 border border-green-100">
+                <div className="mb-4 rounded-xl bg-green-50 dark:bg-green-900/15 px-4 py-3 text-sm text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900/30">
                     {flash.sukses}
                 </div>
             )}
@@ -105,19 +105,19 @@ export default function Index({ dataAnggota = { data: [], links: [] }, filters =
             {/* FILTER & SEARCH */}
             <div className="flex flex-col sm:flex-row gap-3 mb-5">
                 <div className="relative flex-1">
-                    <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                     <input
                         type="text"
                         name="searchTerm"
                         placeholder="Cari nama atau NIK..."
-                        className="w-full pl-11 pr-4 py-2.5 text-base border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
+                        className="w-full pl-11 pr-4 py-2.5 text-base border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
                         value={dataForm.searchTerm}
                         onChange={handleChange}
                     />
                 </div>
 
                 <select
-                    className="border border-gray-200 rounded-xl px-4 py-2.5 text-base bg-white focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
+                    className="border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-base bg-white dark:bg-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
                     value={statusFilter}
                     onChange={handleFilterChange}
                 >
@@ -129,9 +129,9 @@ export default function Index({ dataAnggota = { data: [], links: [] }, filters =
             </div>
 
             {/* TABEL */}
-            <div className="bg-white rounded-2xl border border-emerald-200 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-emerald-200 dark:border-emerald-900/40 shadow-sm overflow-hidden">
                 {dataAnggota.data.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-gray-300">
+                    <div className="flex flex-col items-center justify-center py-16 text-gray-300 dark:text-gray-600">
                         <Users size={40} className="mb-3" />
                         <p className="text-base italic">Tidak ada data anggota ditemukan.</p>
                     </div>
@@ -139,22 +139,22 @@ export default function Index({ dataAnggota = { data: [], links: [] }, filters =
                     <div className="overflow-x-auto">
                         <table className="w-full text-base">
                             <thead>
-                                <tr className="border-b-2 border-emerald-200 bg-emerald-100/80">
-                                    <th className="text-left text-sm text-emerald-800 font-semibold px-4 py-3">No</th>
-                                    <th className="text-left text-sm text-emerald-800 font-semibold px-4 py-3">NIK</th>
-                                    <th className="text-left text-sm text-emerald-800 font-semibold px-4 py-3">Nama Lengkap</th>
-                                    <th className="text-left text-sm text-emerald-800 font-semibold px-4 py-3">No HP</th>
-                                    <th className="text-center text-sm text-emerald-800 font-semibold px-4 py-3">Status</th>
-                                    <th className="text-center text-sm text-emerald-800 font-semibold px-4 py-3">Aksi</th>
+                                <tr className="border-b-2 border-emerald-200 dark:border-emerald-900/40 bg-emerald-100/80 dark:bg-emerald-900/20">
+                                    <th className="text-left text-sm text-emerald-800 dark:text-emerald-400 font-semibold px-4 py-3">No</th>
+                                    <th className="text-left text-sm text-emerald-800 dark:text-emerald-400 font-semibold px-4 py-3">NIK</th>
+                                    <th className="text-left text-sm text-emerald-800 dark:text-emerald-400 font-semibold px-4 py-3">Nama Lengkap</th>
+                                    <th className="text-left text-sm text-emerald-800 dark:text-emerald-400 font-semibold px-4 py-3">No HP</th>
+                                    <th className="text-center text-sm text-emerald-800 dark:text-emerald-400 font-semibold px-4 py-3">Status</th>
+                                    <th className="text-center text-sm text-emerald-800 dark:text-emerald-400 font-semibold px-4 py-3">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {dataAnggota.data.map((item, index) => (
-                                    <tr key={item.id_anggota} className={`border-b transition ${ROW_TINT[item.status_keanggotaan] || 'border-gray-50 hover:bg-gray-50'}`}>
-                                        <td className="px-4 py-3 text-gray-500">{(dataAnggota.current_page - 1) * dataAnggota.per_page + index + 1}</td>
-                                        <td className="px-4 py-3 text-gray-600">{item.nik}</td>
-                                        <td className="px-4 py-3 font-medium text-gray-800">{item.nama_lengkap}</td>
-                                        <td className="px-4 py-3 text-gray-500">{item.no_telepon || '-'}</td>
+                                    <tr key={item.id_anggota} className={`border-b transition ${ROW_TINT[item.status_keanggotaan] || 'border-gray-50 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/60'}`}>
+                                        <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{(dataAnggota.current_page - 1) * dataAnggota.per_page + index + 1}</td>
+                                        <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{item.nik}</td>
+                                        <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{item.nama_lengkap}</td>
+                                        <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{item.no_telepon || '-'}</td>
                                         <td className="px-4 py-3 text-center">
                                             <StatusBadge status={item.status_keanggotaan} />
                                         </td>
@@ -162,13 +162,13 @@ export default function Index({ dataAnggota = { data: [], links: [] }, filters =
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => setModalId(item.id_anggota)}
-                                                    className="px-3.5 py-1.5 rounded-lg text-sm font-semibold text-amber-600 bg-amber-50 border border-amber-100 hover:bg-amber-100 transition"
+                                                    className="px-3.5 py-1.5 rounded-lg text-sm font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/15 border border-amber-100 dark:border-amber-900/30 hover:bg-amber-100 dark:hover:bg-amber-900/25 transition"
                                                 >
                                                     Edit
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(item.id_anggota)}
-                                                    className="px-3.5 py-1.5 rounded-lg text-sm font-semibold text-red-600 bg-red-50 border border-red-100 hover:bg-red-100 transition"
+                                                    className="px-3.5 py-1.5 rounded-lg text-sm font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/15 border border-red-100 dark:border-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/25 transition"
                                                 >
                                                     Hapus
                                                 </button>
@@ -183,7 +183,7 @@ export default function Index({ dataAnggota = { data: [], links: [] }, filters =
 
                 {/* ===== PENERAPAN MATERI: Pagination Server-Side (pola sama seperti Admin Keuangan) ===== */}
                 {dataAnggota.last_page > 1 && (
-                    <div className="flex justify-center gap-1 border-t border-gray-100 px-4 py-4">
+                    <div className="flex justify-center gap-1 border-t border-gray-100 dark:border-gray-800 px-4 py-4">
                         {dataAnggota.links.map((l, i) => (
                             <Link
                                 key={i}
@@ -193,7 +193,7 @@ export default function Index({ dataAnggota = { data: [], links: [] }, filters =
                                 dangerouslySetInnerHTML={{ __html: l.label }}
                                 className={`rounded-md px-3 py-1 text-sm ${
                                     l.active ? 'bg-[#1B8A3A] text-white'
-                                    : l.url ? 'text-gray-600 hover:bg-gray-100' : 'cursor-default text-gray-300'
+                                    : l.url ? 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800' : 'cursor-default text-gray-300 dark:text-gray-600'
                                 }`}
                             />
                         ))}
@@ -203,7 +203,7 @@ export default function Index({ dataAnggota = { data: [], links: [] }, filters =
             </div>
 
             {/* FOOTER COUNT */}
-            <p className="text-sm text-gray-400 mt-3 text-right">
+            <p className="text-sm text-gray-400 dark:text-gray-500 mt-3 text-right">
                 Menampilkan {dataAnggota.data.length} dari {dataAnggota.total} anggota
             </p>
 

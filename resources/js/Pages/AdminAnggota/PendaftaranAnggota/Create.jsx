@@ -24,16 +24,16 @@ export default function Create() {
         <AdminAnggotaLayout title="Tambah Anggota">
             {/* HEADER */}
             <div className="flex items-center gap-3 mb-5">
-                <Link href="/admin-anggota/pendaftaran-anggota" className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
-                    <ArrowLeft size={18} className="text-gray-500" />
+                <Link href="/admin-anggota/pendaftaran-anggota" className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition dark:border-gray-800 dark:hover:bg-gray-800">
+                    <ArrowLeft size={18} className="text-gray-500 dark:text-gray-400" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Form Pendaftaran Anggota</h1>
-                    <p className="text-sm text-gray-400">KUD Lubuk Karya</p>
+                    <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Form Pendaftaran Anggota</h1>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">KUD Lubuk Karya</p>
                 </div>
             </div>
 
-            <form onSubmit={submit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+            <form onSubmit={submit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4 dark:bg-gray-900 dark:border-gray-800">
                 {/* ===== PENERAPAN MATERI: Memanggil Reusable Component InputField ===== */}
                 <InputField
                     label="NIK"
@@ -54,15 +54,15 @@ export default function Create() {
 
                 {/* Alamat tetap pakai textarea biasa, karena InputField hanya untuk <input> */}
                 <div>
-                    <label className="block text-base font-medium text-gray-600 mb-1.5">Alamat</label>
+                    <label className="block text-base font-medium text-gray-600 mb-1.5 dark:text-gray-300">Alamat</label>
                     <textarea
                         placeholder="Alamat"
                         rows="3"
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
                         value={data.alamat}
                         onChange={e => setData('alamat', e.target.value)}
                     />
-                    {errors.alamat && <div className="text-red-500 text-sm mt-1">{errors.alamat}</div>}
+                    {errors.alamat && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.alamat}</div>}
                 </div>
 
                 {/* ===== PENERAPAN MATERI: Memanggil Reusable Component InputField ===== */}
@@ -85,10 +85,10 @@ export default function Create() {
                 {/* Dokumen Persyaratan (tetap input type="file", karena InputField tidak menangani file) */}
                 <div className="grid sm:grid-cols-3 gap-4 pt-2">
                     <div>
-                        <label className="block text-base font-medium text-gray-600 mb-1.5">File Kartu Keluarga (KK)</label>
-                        <label className="flex flex-col items-center justify-center gap-1.5 border border-dashed border-gray-300 rounded-xl px-3 py-4 text-center cursor-pointer hover:bg-gray-50 hover:border-[#1B8A3A]/40 transition">
-                            <UploadCloud size={20} className="text-gray-400" />
-                            <span className="text-sm text-gray-500 truncate max-w-full">{data.file_kk ? data.file_kk.name : 'Pilih file'}</span>
+                        <label className="block text-base font-medium text-gray-600 mb-1.5 dark:text-gray-300">File Kartu Keluarga (KK)</label>
+                        <label className="flex flex-col items-center justify-center gap-1.5 border border-dashed border-gray-300 rounded-xl px-3 py-4 text-center cursor-pointer hover:bg-gray-50 hover:border-[#1B8A3A]/40 transition dark:border-gray-700 dark:hover:bg-gray-800">
+                            <UploadCloud size={20} className="text-gray-400 dark:text-gray-500" />
+                            <span className="text-sm text-gray-500 truncate max-w-full dark:text-gray-400">{data.file_kk ? data.file_kk.name : 'Pilih file'}</span>
                             <input
                                 type="file"
                                 accept="image/*,.pdf"
@@ -96,14 +96,14 @@ export default function Create() {
                                 onChange={e => setData('file_kk', e.target.files[0])}
                             />
                         </label>
-                        {errors.file_kk && <div className="text-red-500 text-sm mt-1">{errors.file_kk}</div>}
+                        {errors.file_kk && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.file_kk}</div>}
                     </div>
 
                     <div>
-                        <label className="block text-base font-medium text-gray-600 mb-1.5">File KTP</label>
-                        <label className="flex flex-col items-center justify-center gap-1.5 border border-dashed border-gray-300 rounded-xl px-3 py-4 text-center cursor-pointer hover:bg-gray-50 hover:border-[#1B8A3A]/40 transition">
-                            <UploadCloud size={20} className="text-gray-400" />
-                            <span className="text-sm text-gray-500 truncate max-w-full">{data.file_ktp ? data.file_ktp.name : 'Pilih file'}</span>
+                        <label className="block text-base font-medium text-gray-600 mb-1.5 dark:text-gray-300">File KTP</label>
+                        <label className="flex flex-col items-center justify-center gap-1.5 border border-dashed border-gray-300 rounded-xl px-3 py-4 text-center cursor-pointer hover:bg-gray-50 hover:border-[#1B8A3A]/40 transition dark:border-gray-700 dark:hover:bg-gray-800">
+                            <UploadCloud size={20} className="text-gray-400 dark:text-gray-500" />
+                            <span className="text-sm text-gray-500 truncate max-w-full dark:text-gray-400">{data.file_ktp ? data.file_ktp.name : 'Pilih file'}</span>
                             <input
                                 type="file"
                                 accept="image/*,.pdf"
@@ -111,14 +111,14 @@ export default function Create() {
                                 onChange={e => setData('file_ktp', e.target.files[0])}
                             />
                         </label>
-                        {errors.file_ktp && <div className="text-red-500 text-sm mt-1">{errors.file_ktp}</div>}
+                        {errors.file_ktp && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.file_ktp}</div>}
                     </div>
 
                     <div>
-                        <label className="block text-base font-medium text-gray-600 mb-1.5">File Surat Pernyataan</label>
-                        <label className="flex flex-col items-center justify-center gap-1.5 border border-dashed border-gray-300 rounded-xl px-3 py-4 text-center cursor-pointer hover:bg-gray-50 hover:border-[#1B8A3A]/40 transition">
-                            <UploadCloud size={20} className="text-gray-400" />
-                            <span className="text-sm text-gray-500 truncate max-w-full">{data.file_surat_pernyataan ? data.file_surat_pernyataan.name : 'Pilih file'}</span>
+                        <label className="block text-base font-medium text-gray-600 mb-1.5 dark:text-gray-300">File Surat Pernyataan</label>
+                        <label className="flex flex-col items-center justify-center gap-1.5 border border-dashed border-gray-300 rounded-xl px-3 py-4 text-center cursor-pointer hover:bg-gray-50 hover:border-[#1B8A3A]/40 transition dark:border-gray-700 dark:hover:bg-gray-800">
+                            <UploadCloud size={20} className="text-gray-400 dark:text-gray-500" />
+                            <span className="text-sm text-gray-500 truncate max-w-full dark:text-gray-400">{data.file_surat_pernyataan ? data.file_surat_pernyataan.name : 'Pilih file'}</span>
                             <input
                                 type="file"
                                 accept="image/*,.pdf"
@@ -126,21 +126,21 @@ export default function Create() {
                                 onChange={e => setData('file_surat_pernyataan', e.target.files[0])}
                             />
                         </label>
-                        {errors.file_surat_pernyataan && <div className="text-red-500 text-sm mt-1">{errors.file_surat_pernyataan}</div>}
-                        <p className="text-sm text-gray-400 mt-1">Format: JPG, PNG, atau PDF. Maks 5MB.</p>
+                        {errors.file_surat_pernyataan && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.file_surat_pernyataan}</div>}
+                        <p className="text-sm text-gray-400 mt-1 dark:text-gray-500">Format: JPG, PNG, atau PDF. Maks 5MB.</p>
                     </div>
                 </div>
 
                 {/* ===== PENERAPAN MATERI: Conditional Rendering (Pertemuan 3) ===== */}
                 {data.nik && data.nik.length !== 16 ? (
-                    <div className="flex items-center gap-2.5 bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 text-base rounded-xl">
+                    <div className="flex items-center gap-2.5 bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 text-base rounded-xl dark:bg-yellow-900/15 dark:border-yellow-900/40 dark:text-yellow-400">
                         <AlertTriangle size={18} className="shrink-0" />
                         NIK harus terdiri dari 16 digit angka.
                     </div>
                 ) : null}
                 {/* ================================================================ */}
 
-                <div className="pt-2 border-t border-gray-100">
+                <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
                     <button
                         disabled={processing}
                         className="inline-flex items-center gap-2 bg-[#1B8A3A] hover:bg-[#157030] text-white px-5 py-2.5 rounded-xl text-base font-semibold transition disabled:opacity-70 mt-4"

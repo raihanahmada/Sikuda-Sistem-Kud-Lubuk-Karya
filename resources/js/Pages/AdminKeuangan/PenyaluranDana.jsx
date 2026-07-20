@@ -29,7 +29,7 @@ export default function PenyaluranDana({ penyaluran, ringkasan, penjualanBelumSa
     return (
         <KeuanganLayout title="Penyaluran Dana — Keuangan">
             <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">Penyaluran Dana</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Penyaluran Dana</h1>
                 <button onClick={() => setModal({ buka: true, data: null })}
                     disabled={!adaPenjualan}
                     title={adaPenjualan ? '' : 'Tidak ada penjualan TBS yang belum disalurkan'}
@@ -39,7 +39,7 @@ export default function PenyaluranDana({ penyaluran, ringkasan, penjualanBelumSa
             </div>
 
             {flash?.sukses && (
-                <div className="mb-4 rounded-lg bg-green-50 px-4 py-2 text-sm text-green-700">{flash.sukses}</div>
+                <div className="mb-4 rounded-lg bg-green-50 px-4 py-2 text-sm text-green-700 dark:bg-green-900/15 dark:text-green-400">{flash.sukses}</div>
             )}
 
             {/* Ringkasan */}
@@ -55,7 +55,7 @@ export default function PenyaluranDana({ penyaluran, ringkasan, penjualanBelumSa
             </div>
 
             {!adaPenjualan && (
-                <div className="mb-4 rounded-lg bg-amber-50 px-4 py-2 text-sm text-amber-700">
+                <div className="mb-4 rounded-lg bg-amber-50 px-4 py-2 text-sm text-amber-700 dark:bg-yellow-900/15 dark:text-yellow-400">
                     Semua penjualan TBS sudah disalurkan. Catat penjualan TBS baru untuk menyalurkan dana lagi.
                 </div>
             )}
@@ -64,14 +64,14 @@ export default function PenyaluranDana({ penyaluran, ringkasan, penjualanBelumSa
             <div className="mb-4 flex items-center gap-3">
                 <input type="text" value={cari} onChange={(e) => setCari(e.target.value)}
                     placeholder="Cari nama anggota…"
-                    className="w-full max-w-xs rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-600" />
+                    className="w-full max-w-xs rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500" />
             </div>
 
             {/* Tabel */}
-            <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b border-gray-100 text-left text-xs text-gray-400">
+                        <tr className="border-b border-gray-100 text-left text-xs text-gray-400 dark:border-gray-800 dark:text-gray-500">
                             <th className="pb-2 font-medium">Tanggal</th>
                             <th className="pb-2 font-medium">Anggota</th>
                             <th className="pb-2 text-right font-medium">Total Penjualan</th>
@@ -82,20 +82,20 @@ export default function PenyaluranDana({ penyaluran, ringkasan, penjualanBelumSa
                     </thead>
                     <tbody>
                         {penyaluran.data.length === 0 ? (
-                            <tr><td colSpan={6} className="py-6 text-center text-gray-400">Belum ada penyaluran dana</td></tr>
+                            <tr><td colSpan={6} className="py-6 text-center text-gray-400 dark:text-gray-500">Belum ada penyaluran dana</td></tr>
                         ) : (
                             penyaluran.data.map((d) => (
-                                <tr key={d.id_penyaluran} className="border-b border-gray-50 last:border-0">
-                                    <td className="py-3 text-gray-500">{tanggalID(d.tanggal_penyaluran)}</td>
-                                    <td className="py-3 text-gray-800">{d.nama_anggota}</td>
-                                    <td className="py-3 text-right text-gray-600">{rupiah(d.total_penjualan)}</td>
-                                    <td className="py-3 text-right text-amber-600">−{rupiah(d.total_potongan)}</td>
-                                    <td className="py-3 text-right font-semibold text-green-600">{rupiah(d.dana_bersih)}</td>
+                                <tr key={d.id_penyaluran} className="border-b border-gray-50 last:border-0 dark:border-gray-800">
+                                    <td className="py-3 text-gray-500 dark:text-gray-400">{tanggalID(d.tanggal_penyaluran)}</td>
+                                    <td className="py-3 text-gray-800 dark:text-gray-100">{d.nama_anggota}</td>
+                                    <td className="py-3 text-right text-gray-600 dark:text-gray-300">{rupiah(d.total_penjualan)}</td>
+                                    <td className="py-3 text-right text-amber-600 dark:text-yellow-400">−{rupiah(d.total_potongan)}</td>
+                                    <td className="py-3 text-right font-semibold text-green-600 dark:text-green-400">{rupiah(d.dana_bersih)}</td>
                                     <td className="py-3 text-right">
                                         <button onClick={() => setModal({ buka: true, data: d })}
-                                            className="mr-3 text-xs font-medium text-amber-600 hover:underline">Edit</button>
+                                            className="mr-3 text-xs font-medium text-amber-600 hover:underline dark:text-yellow-400">Edit</button>
                                         <button onClick={() => hapus(d.id_penyaluran)}
-                                            className="text-xs font-medium text-red-600 hover:underline">Hapus</button>
+                                            className="text-xs font-medium text-red-600 hover:underline dark:text-red-400">Hapus</button>
                                     </td>
                                 </tr>
                             ))
@@ -110,7 +110,7 @@ export default function PenyaluranDana({ penyaluran, ringkasan, penjualanBelumSa
                                 dangerouslySetInnerHTML={{ __html: l.label }}
                                 className={`rounded-md px-3 py-1 text-sm ${
                                     l.active ? 'bg-green-700 text-white'
-                                    : l.url ? 'text-gray-600 hover:bg-gray-100' : 'cursor-default text-gray-300'
+                                    : l.url ? 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800' : 'cursor-default text-gray-300 dark:text-gray-600'
                                 }`} />
                         ))}
                     </div>

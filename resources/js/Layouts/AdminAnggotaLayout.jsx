@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
-import { 
-    LayoutDashboard, UserPlus, ShieldCheck, Users, 
+import {
+    LayoutDashboard, UserPlus, ShieldCheck, Users,
     PiggyBank, Activity, Settings, LogOut, X, AlertTriangle, Menu, Calendar
 } from "lucide-react";
 import { useEffect } from "react";
+import ThemeToggle from "@/Components/ThemeToggle";
 
 const menuItems = [
     { name: 'Dashboard',           icon: LayoutDashboard, href: '/admin-anggota/dashboard' },
@@ -40,7 +41,7 @@ export default function AdminAnggotaLayout({ children, title = 'Dashboard' }) {
     };
 
     return (
-        <div className="min-h-screen bg-[#F2F4F3]">
+        <div className="min-h-screen bg-[#F2F4F3] dark:bg-gray-950">
 
             {/* OVERLAY */}
             {isOpen && (
@@ -55,24 +56,25 @@ export default function AdminAnggotaLayout({ children, title = 'Dashboard' }) {
                 fixed top-0 left-0 h-full z-50 w-56 bg-white border-r border-gray-100
                 flex flex-col justify-between p-4
                 transition-transform duration-300 ease-in-out
+                dark:bg-gray-900 dark:border-gray-800
                 ${isOpen ? "translate-x-0" : "-translate-x-full"}
             `}>
                 <button
                     onClick={() => setIsOpen(false)}
-                    className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-gray-100 transition-colors dark:hover:bg-gray-800"
                 >
-                    <X size={16} className="text-gray-400" />
+                    <X size={16} className="text-gray-400 dark:text-gray-500" />
                 </button>
 
                 {/* Logo */}
                 <div>
-                    <div className="flex items-center gap-3 pb-4 mb-4 border-b border-gray-100">
+                    <div className="flex items-center gap-3 pb-4 mb-4 border-b border-gray-100 dark:border-gray-800">
                         <div className="w-9 h-9 rounded-full bg-[#1B8A3A] flex items-center justify-center text-white font-bold text-sm">
                             K
                         </div>
                         <div>
-                            <p className="text-sm font-semibold text-[#1B5E20]">KUD Lubuk Karya</p>
-                            <p className="text-[10px] text-gray-400">Admin Anggota</p>
+                            <p className="text-sm font-semibold text-[#1B5E20] dark:text-emerald-400">KUD Lubuk Karya</p>
+                            <p className="text-[10px] text-gray-400 dark:text-gray-500">Admin Anggota</p>
                         </div>
                     </div>
 
@@ -90,8 +92,8 @@ export default function AdminAnggotaLayout({ children, title = 'Dashboard' }) {
                                         className={`
                                             flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200
                                             ${isActive
-                                                ? "bg-[#E8F5E9] text-[#1B5E20] font-semibold"
-                                                : "text-gray-500 hover:bg-gray-50 hover:text-[#1B8A3A]"}
+                                                ? "bg-[#E8F5E9] text-[#1B5E20] font-semibold dark:bg-[#1B8A3A]/15 dark:text-emerald-400"
+                                                : "text-gray-500 hover:bg-gray-50 hover:text-[#1B8A3A] dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-emerald-400"}
                                         `}
                                     >
                                         <Icon size={17} />
@@ -104,14 +106,14 @@ export default function AdminAnggotaLayout({ children, title = 'Dashboard' }) {
                 </div>
 
                 {/* Bottom — User & Logout */}
-                <div className="border-t border-gray-100 pt-4 space-y-3">
+                <div className="border-t border-gray-100 pt-4 space-y-3 dark:border-gray-800">
                     <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-[#E8F5E9] flex items-center justify-center text-[#1B5E20] font-semibold text-sm">
+                        <div className="w-9 h-9 rounded-full bg-[#E8F5E9] flex items-center justify-center text-[#1B5E20] font-semibold text-sm dark:bg-[#1B8A3A]/15 dark:text-emerald-400">
                             A
                         </div>
                         <div>
-                            <p className="text-sm font-semibold text-gray-800">Admin Anggota</p>
-                            <p className="text-[10px] text-gray-400">Pengelola Keanggotaan</p>
+                            <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Admin Anggota</p>
+                            <p className="text-[10px] text-gray-400 dark:text-gray-500">Pengelola Keanggotaan</p>
                         </div>
                     </div>
                     <button
@@ -130,29 +132,31 @@ export default function AdminAnggotaLayout({ children, title = 'Dashboard' }) {
                 bg-white border-b border-gray-100
                 flex items-center justify-between px-5
                 transition-all duration-300 ease-in-out
+                dark:bg-gray-900 dark:border-gray-800
                 ${isOpen ? "left-56" : "left-0"}
             `}>
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => setIsOpen(true)}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-100 bg-gray-50 text-gray-400 hover:bg-gray-100 transition-colors"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-100 bg-gray-50 text-gray-400 hover:bg-gray-100 transition-colors dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
                     >
                         <Menu size={15} />
                     </button>
                     <div className="flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#1B5E20] shrink-0" />
-                        <h2 className="text-sm font-medium text-gray-900 tracking-tight whitespace-nowrap">
+                        <h2 className="text-sm font-medium text-gray-900 tracking-tight whitespace-nowrap dark:text-gray-100">
                             {title}
                         </h2>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                    <div className="flex items-center gap-1.5 px-2.5 h-8 rounded-lg border border-gray-100 bg-gray-50 text-xs text-gray-400">
+                    <div className="flex items-center gap-1.5 px-2.5 h-8 rounded-lg border border-gray-100 bg-gray-50 text-xs text-gray-400 dark:border-gray-700 dark:bg-gray-800">
                         <Calendar size={13} />
-                        <span className="font-medium text-gray-800">{date}</span>
+                        <span className="font-medium text-gray-800 dark:text-gray-300">{date}</span>
                     </div>
-                    <div className="w-px h-5 bg-gray-100 mx-1" />
+                    <div className="w-px h-5 bg-gray-100 mx-1 dark:bg-gray-700" />
+                    <ThemeToggle />
                     <div className="w-8 h-8 rounded-full bg-[#1B5E20] flex items-center justify-center text-white text-[11px] font-medium">
                         A
                     </div>
@@ -177,24 +181,24 @@ export default function AdminAnggotaLayout({ children, title = 'Dashboard' }) {
                     onClick={() => setShowLogoutConfirm(false)}
                 >
                     <div
-                        className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6"
+                        className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 dark:bg-gray-900"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex flex-col items-center text-center">
-                            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4">
+                            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4 dark:bg-red-900/15">
                                 <AlertTriangle size={24} className="text-red-500" />
                             </div>
-                            <h3 className="text-base font-semibold text-gray-900 mb-1">
+                            <h3 className="text-base font-semibold text-gray-900 mb-1 dark:text-gray-100">
                                 Yakin mau keluar?
                             </h3>
-                            <p className="text-sm text-gray-500 mb-6">
+                            <p className="text-sm text-gray-500 mb-6 dark:text-gray-400">
                                 Anda akan keluar dari sesi ini dan perlu login kembali untuk mengakses sistem.
                             </p>
                         </div>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setShowLogoutConfirm(false)}
-                                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+                                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                             >
                                 Batal
                             </button>

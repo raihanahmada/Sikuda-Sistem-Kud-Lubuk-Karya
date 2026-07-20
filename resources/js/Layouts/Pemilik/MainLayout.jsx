@@ -6,7 +6,7 @@ export default function MainLayout({ children }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F2F4F3]">
+    <div className="min-h-screen bg-[#F2F4F3] dark:bg-gray-950">
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
       <Header isOpen={isOpen} setIsOpen={setIsOpen} />
 

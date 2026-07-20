@@ -12,7 +12,7 @@ export default function AksiCepat() {
         <div className="grid grid-cols-2 gap-4">
             {aksi.map((a) => (
                 <Link key={a.label} href={a.href}
-                    className="flex items-center justify-center rounded-xl border border-gray-100 bg-white p-6 text-center text-sm font-semibold shadow-sm transition hover:border-green-200 hover:shadow">
+                    className="flex items-center justify-center rounded-xl border border-gray-100 bg-white p-6 text-center text-sm font-semibold shadow-sm transition hover:border-green-200 hover:shadow dark:border-gray-800 dark:bg-gray-900 dark:hover:border-green-800">
                     <span className={a.warna}>{a.label}</span>
                 </Link>
             ))}

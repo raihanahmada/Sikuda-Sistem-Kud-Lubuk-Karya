@@ -55,9 +55,9 @@ export default function Dashboard({
     }) + ' (Waktu Lokal)';
 
     const warnaAktivitas = (jenis) => {
-        if (jenis === 'Verifikasi') return 'bg-emerald-50/60 border-emerald-100';
-        if (jenis === 'Pendaftaran') return 'bg-blue-50/60 border-blue-100';
-        return 'bg-red-50/60 border-red-100';
+        if (jenis === 'Verifikasi') return 'bg-emerald-50/60 border-emerald-100 dark:bg-emerald-900/15 dark:border-emerald-900/30';
+        if (jenis === 'Pendaftaran') return 'bg-blue-50/60 border-blue-100 dark:bg-blue-900/15 dark:border-blue-900/30';
+        return 'bg-red-50/60 border-red-100 dark:bg-red-900/15 dark:border-red-900/30';
     };
 
     // ── Komposisi status anggota (persentase, untuk mini bar chart) ────────
@@ -119,11 +119,11 @@ export default function Dashboard({
                 </div>
 
                 {/* ===== PENERAPAN MATERI: Grafik gaya sama seperti Grafik Arus Kas di Pemilik/Dashboard.jsx (AreaChart + gradient) ===== */}
-                <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-sm">
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <p className="text-sm font-semibold text-gray-700">Grafik Pertumbuhan Anggota</p>
+                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Grafik Pertumbuhan Anggota</p>
 
-                        <div className="flex items-center gap-4 text-[10px] text-gray-400">
+                        <div className="flex items-center gap-4 text-[10px] text-gray-400 dark:text-gray-500">
                             <span className="flex items-center gap-1">
                                 <span className="w-2 h-2 rounded-full bg-[#1B8A3A] inline-block" />{' '}
                                 Aktif
@@ -140,7 +140,7 @@ export default function Dashboard({
                     </div>
 
                     {grafikPertumbuhan.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-[380px] text-gray-300">
+                        <div className="flex flex-col items-center justify-center h-[380px] text-gray-300 dark:text-gray-600">
                             <AlertCircle size={32} className="mb-2" />
                             <p className="text-sm italic">Belum ada data pendaftaran anggota</p>
                         </div>
@@ -175,14 +175,14 @@ export default function Dashboard({
                 {/* ================================================================ */}
 
                 {/* AKTIVITAS KEANGGOTAAN */}
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                    <h4 className="text-base font-semibold text-gray-700 mb-4">Aktivitas Keanggotaan</h4>
+                <div className="bg-white dark:bg-gray-900 p-5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
+                    <h4 className="text-base font-semibold text-gray-700 dark:text-gray-300 mb-4">Aktivitas Keanggotaan</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         {aktivitas.length > 0 ? (
                             aktivitas.map((item, index) => (
                                 <div key={index} className={`p-3 rounded-xl border ${warnaAktivitas(item.jenis)}`}>
-                                    <p className="text-sm text-gray-600 leading-relaxed">
-                                        <strong className="text-gray-800">{item.waktu} — {item.jenis}:</strong>{' '}
+                                    <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                                        <strong className="text-gray-800 dark:text-gray-100">{item.waktu} — {item.jenis}:</strong>{' '}
                                         {item.jenis === 'Verifikasi' && `${item.nama} diterima sebagai anggota aktif.`}
                                         {item.jenis === 'Pendaftaran' && `${item.nama} masuk antrian verifikasi.`}
                                         {item.jenis === 'Update' && `Status ${item.nama} diubah menjadi ${item.status}.`}
@@ -190,7 +190,7 @@ export default function Dashboard({
                                 </div>
                             ))
                         ) : (
-                            <div className="sm:col-span-2 flex flex-col items-center justify-center py-10 text-gray-300">
+                            <div className="sm:col-span-2 flex flex-col items-center justify-center py-10 text-gray-300 dark:text-gray-600">
                                 <Users size={28} className="mb-2" />
                                 <p className="text-sm italic">Belum ada aktivitas.</p>
                             </div>
@@ -201,7 +201,7 @@ export default function Dashboard({
             </div>
 
             {/* ===== PENERAPAN MATERI: Hasil useEffect — jam realtime yang terupdate setiap detik ===== */}
-            <div className="mt-6 flex flex-col items-end text-sm text-gray-400 font-medium">
+            <div className="mt-6 flex flex-col items-end text-sm text-gray-400 dark:text-gray-500 font-medium">
                 <span>{formatDayDate(currentTime)}</span>
                 <span>{formatTime(currentTime)}</span>
             </div>

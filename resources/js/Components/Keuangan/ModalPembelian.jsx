@@ -47,15 +47,15 @@ export default function ModalPembelian({ data, daftarAnggota, daftarBarang, onTu
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-                <h2 className="mb-4 text-lg font-bold text-gray-900">
+            <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900">
+                <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-gray-100">
                     {edit ? 'Edit Pembelian' : 'Tambah Pembelian'}
                 </h2>
 
                 <form onSubmit={simpan} className="space-y-4">
                     {/* Anggota */}
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">Anggota</label>
+                        <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Anggota</label>
                         <SearchableSelect
                             options={daftarAnggota.map((a) => ({ value: a.id_anggota, label: a.nama_lengkap }))}
                             value={form.data.id_anggota}
@@ -63,16 +63,16 @@ export default function ModalPembelian({ data, daftarAnggota, daftarBarang, onTu
                             placeholder="— Pilih anggota —"
                             error={Boolean(form.errors.id_anggota)}
                         />
-                        {form.errors.id_anggota && <p className="mt-1 text-xs text-red-600">{form.errors.id_anggota}</p>}
+                        {form.errors.id_anggota && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{form.errors.id_anggota}</p>}
                     </div>
 
                     {/* Barang */}
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">Barang</label>
+                        <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Barang</label>
                         <select value={form.data.id_barang}
                             onChange={(e) => form.setData('id_barang', e.target.value)}
-                            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 ${
-                                form.errors.id_barang ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:bg-gray-800 dark:text-gray-100 ${
+                                form.errors.id_barang ? 'border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-900/15' : 'border-gray-300 dark:border-gray-700'
                             }`}>
                             <option value="">— Pilih barang —</option>
                             {daftarBarang.map((b) => (
@@ -81,65 +81,65 @@ export default function ModalPembelian({ data, daftarAnggota, daftarBarang, onTu
                                 </option>
                             ))}
                         </select>
-                        {form.errors.id_barang && <p className="mt-1 text-xs text-red-600">{form.errors.id_barang}</p>}
+                        {form.errors.id_barang && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{form.errors.id_barang}</p>}
                     </div>
 
                     {/* Jumlah */}
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                        <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Jumlah {barangDipilih ? `(${barangDipilih.satuan_default})` : ''}
                         </label>
                         <input type="number" step="0.01" min="0.01" value={form.data.jumlah}
                             onChange={(e) => form.setData('jumlah', e.target.value)}
                             placeholder="0"
-                            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 ${
-                                form.errors.jumlah ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 ${
+                                form.errors.jumlah ? 'border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-900/15' : 'border-gray-300 dark:border-gray-700'
                             }`} />
-                        {form.errors.jumlah && <p className="mt-1 text-xs text-red-600">{form.errors.jumlah}</p>}
+                        {form.errors.jumlah && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{form.errors.jumlah}</p>}
                     </div>
 
                     {/* Preview total + info stok */}
-                    <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm">
+                    <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm dark:bg-gray-800">
                         <div className="flex justify-between">
-                            <span className="text-gray-500">Total Harga:</span>
-                            <span className="font-semibold text-gray-900">{rupiah(totalPreview)}</span>
+                            <span className="text-gray-500 dark:text-gray-400">Total Harga:</span>
+                            <span className="font-semibold text-gray-900 dark:text-gray-100">{rupiah(totalPreview)}</span>
                         </div>
                         {barangDipilih && (
                             <div className="mt-1 flex justify-between">
-                                <span className="text-gray-500">Sisa stok:</span>
-                                <span className={stokKurang ? 'font-semibold text-red-600' : 'text-gray-700'}>
+                                <span className="text-gray-500 dark:text-gray-400">Sisa stok:</span>
+                                <span className={stokKurang ? 'font-semibold text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}>
                                     {stokEfektif} {barangDipilih.satuan_default}
                                 </span>
                             </div>
                         )}
                         {stokKurang && (
-                            <p className="mt-1 text-xs text-red-600">Jumlah melebihi stok tersedia.</p>
+                            <p className="mt-1 text-xs text-red-600 dark:text-red-400">Jumlah melebihi stok tersedia.</p>
                         )}
-                        <p className="mt-0.5 text-[11px] text-gray-400">Total dihitung otomatis dari harga katalog × jumlah</p>
+                        <p className="mt-0.5 text-[11px] text-gray-400 dark:text-gray-500">Total dihitung otomatis dari harga katalog × jumlah</p>
                     </div>
 
                     {/* Tanggal */}
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">Tanggal Pembelian</label>
+                        <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal Pembelian</label>
                         <input type="date" value={form.data.tanggal_pembelian}
                             onChange={(e) => form.setData('tanggal_pembelian', e.target.value)}
-                            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 ${
-                                form.errors.tanggal_pembelian ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 ${
+                                form.errors.tanggal_pembelian ? 'border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-900/15' : 'border-gray-300 dark:border-gray-700'
                             }`} />
-                        {form.errors.tanggal_pembelian && <p className="mt-1 text-xs text-red-600">{form.errors.tanggal_pembelian}</p>}
+                        {form.errors.tanggal_pembelian && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{form.errors.tanggal_pembelian}</p>}
                     </div>
 
                     {/* Keterangan */}
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">Keterangan (opsional)</label>
+                        <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Keterangan (opsional)</label>
                         <textarea rows={2} value={form.data.keterangan}
                             onChange={(e) => form.setData('keterangan', e.target.value)}
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600" />
+                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500" />
                     </div>
 
                     <div className="flex justify-end gap-2 pt-2">
                         <button type="button" onClick={onTutup}
-                            className="rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100">Batal</button>
+                            className="rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">Batal</button>
                         <button type="submit" disabled={form.processing || stokKurang}
                             className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60">
                             {form.processing ? 'Menyimpan…' : 'Simpan'}

@@ -60,12 +60,12 @@ function hitungRingkasan(data) {
 const Pagination = memo(function Pagination({ current, total, onChange }) {
     const pages = Array.from({ length: total }, (_, i) => i + 1);
     return (
-        <div className="flex items-center justify-end gap-1.5 mt-4 text-sm text-gray-500">
-            <button onClick={() => onChange(Math.max(1, current - 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md">‹</button>
+        <div className="flex items-center justify-end gap-1.5 mt-4 text-sm text-gray-500 dark:text-gray-400">
+            <button onClick={() => onChange(Math.max(1, current - 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md dark:hover:bg-gray-800">‹</button>
             {pages.map((p) => (
-                <button key={p} onClick={() => onChange(p)} className={`w-8 h-8 rounded-md ${p === current ? "border border-emerald-500 text-emerald-600 bg-emerald-50" : "hover:bg-gray-100"}`}>{p}</button>
+                <button key={p} onClick={() => onChange(p)} className={`w-8 h-8 rounded-md ${p === current ? "border border-emerald-500 text-emerald-600 bg-emerald-50 dark:border-emerald-600 dark:text-emerald-400 dark:bg-emerald-900/20" : "hover:bg-gray-100 dark:hover:bg-gray-800"}`}>{p}</button>
             ))}
-            <button onClick={() => onChange(Math.min(total, current + 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md">›</button>
+            <button onClick={() => onChange(Math.min(total, current + 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md dark:hover:bg-gray-800">›</button>
         </div>
     );
 });
@@ -74,13 +74,13 @@ const Pagination = memo(function Pagination({ current, total, onChange }) {
 
 const TogglePeriode = memo(function TogglePeriode({ jenisPeriode, onPilihBulan, onPilihTahun }) {
     return (
-        <div className="inline-flex items-center bg-gray-100 rounded-lg p-1 text-sm font-medium">
-            <button onClick={onPilihBulan} className={`flex items-center gap-1 px-4 py-1.5 rounded-md transition-colors ${jenisPeriode === "bulan" ? "bg-white text-[#1B8A3A] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+        <div className="inline-flex items-center bg-gray-100 rounded-lg p-1 text-sm font-medium dark:bg-gray-800">
+            <button onClick={onPilihBulan} className={`flex items-center gap-1 px-4 py-1.5 rounded-md transition-colors ${jenisPeriode === "bulan" ? "bg-white text-[#1B8A3A] shadow-sm dark:bg-gray-900" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"}`}>
                 <Calendar size={13} />
                 Per Bulan
                 <ChevronDown size={12} />
             </button>
-            <button onClick={onPilihTahun} className={`px-5 py-1.5 rounded-md transition-colors ${jenisPeriode === "tahun" ? "bg-white text-[#1B8A3A] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+            <button onClick={onPilihTahun} className={`px-5 py-1.5 rounded-md transition-colors ${jenisPeriode === "tahun" ? "bg-white text-[#1B8A3A] shadow-sm dark:bg-gray-900" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"}`}>
                 Per Tahun
             </button>
         </div>
@@ -91,7 +91,7 @@ const TogglePeriode = memo(function TogglePeriode({ jenisPeriode, onPilihBulan, 
 
 const ShortcutBtn = memo(function ShortcutBtn({ label, isYear, onClick }) {
     return (
-        <button onClick={onClick} className={`px-3 py-1.5 text-xs border rounded-lg transition ${isYear ? "border-gray-200 text-gray-500 hover:border-blue-400 hover:text-blue-500" : "border-gray-200 hover:border-emerald-500 hover:text-emerald-600"}`}>
+        <button onClick={onClick} className={`px-3 py-1.5 text-xs border rounded-lg transition ${isYear ? "border-gray-200 text-gray-500 hover:border-blue-400 hover:text-blue-500 dark:border-gray-700 dark:text-gray-400 dark:hover:border-blue-500 dark:hover:text-blue-400" : "border-gray-200 hover:border-emerald-500 hover:text-emerald-600 dark:border-gray-700 dark:text-gray-400 dark:hover:border-emerald-600 dark:hover:text-emerald-400"}`}>
             {label}
         </button>
     );
@@ -107,24 +107,24 @@ function PopupPilihBulan({ tahunTersedia, tahun, bulan, onApplyBulan, onApplyRen
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 dark:bg-gray-900" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-2 mb-4">
                     <Calendar size={16} className="text-[#1B8A3A]" />
-                    <h3 className="text-sm font-semibold text-gray-800">Pilih Periode Bulanan</h3>
+                    <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">Pilih Periode Bulanan</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 mb-4">
                     <div>
-                        <label className="text-[11px] text-gray-500 mb-1 block">Bulan</label>
-                        <select value={localBulan} onChange={(e) => setLocalBulan(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]">
+                        <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Bulan</label>
+                        <select value={localBulan} onChange={(e) => setLocalBulan(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                             {NAMA_BULAN.map((nama, idx) => (
                                 <option key={nama} value={idx + 1}>{nama}</option>
                             ))}
                         </select>
                     </div>
                     <div>
-                        <label className="text-[11px] text-gray-500 mb-1 block">Tahun</label>
-                        <select value={localTahun} onChange={(e) => setLocalTahun(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]">
+                        <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Tahun</label>
+                        <select value={localTahun} onChange={(e) => setLocalTahun(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                             {(tahunTersedia || []).map((th) => (
                                 <option key={th} value={th}>{th}</option>
                             ))}
@@ -132,22 +132,22 @@ function PopupPilihBulan({ tahunTersedia, tahun, bulan, onApplyBulan, onApplyRen
                     </div>
                 </div>
 
-                <div className="border-t border-gray-100 pt-3 mb-4">
-                    <p className="text-[11px] text-gray-500 mb-2">Atau pilih rentang tanggal kustom (opsional)</p>
+                <div className="border-t border-gray-100 pt-3 mb-4 dark:border-gray-800">
+                    <p className="text-[11px] text-gray-500 mb-2 dark:text-gray-400">Atau pilih rentang tanggal kustom (opsional)</p>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="text-[11px] text-gray-500 mb-1 block">Dari tanggal</label>
-                            <input type="date" value={localMulai} onChange={(e) => setLocalMulai(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]" />
+                            <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Dari tanggal</label>
+                            <input type="date" value={localMulai} onChange={(e) => setLocalMulai(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" />
                         </div>
                         <div>
-                            <label className="text-[11px] text-gray-500 mb-1 block">Sampai tanggal</label>
-                            <input type="date" value={localAkhir} onChange={(e) => setLocalAkhir(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]" />
+                            <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Sampai tanggal</label>
+                            <input type="date" value={localAkhir} onChange={(e) => setLocalAkhir(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" />
                         </div>
                     </div>
                 </div>
 
                 <div className="flex gap-3">
-                    <button onClick={onClose} className="flex-1 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl py-2.5 transition-colors">
+                    <button onClick={onClose} className="flex-1 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl py-2.5 transition-colors dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700">
                         Batal
                     </button>
                     <button
@@ -508,9 +508,9 @@ export default function LaporanPeriodik() {
             {/* HEADER */}
             <div className="flex items-center justify-between mb-2">
                 <div>
-                    <h1 className="text-xl font-semibold text-gray-800">Laporan Periodik Koperasi</h1>
+                    <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Laporan Periodik Koperasi</h1>
                     {filterAktif?.labelPeriode && (
-                        <span className="inline-block mt-1.5 px-3 py-1.5 rounded-lg bg-white border border-gray-100 shadow-sm text-sm font-medium text-emerald-700">
+                        <span className="inline-block mt-1.5 px-3 py-1.5 rounded-lg bg-white border border-gray-100 shadow-sm text-sm font-medium text-emerald-700 dark:bg-gray-900 dark:border-gray-800 dark:text-emerald-400">
                             Periode: {filterAktif.labelPeriode}
                         </span>
                     )}
@@ -518,15 +518,15 @@ export default function LaporanPeriodik() {
             </div>
 
             {/* CONTROL PANEL */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h2 className="font-semibold text-gray-800 mb-4">Report Control Panel</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 dark:bg-gray-900 dark:border-gray-800">
+                <h2 className="font-semibold text-gray-800 mb-4 dark:text-gray-100">Report Control Panel</h2>
 
                 <div className="flex flex-wrap items-center gap-4 mb-5">
                     <div>
-                        <label className="block text-sm text-gray-500 mb-2">Jenis Periode</label>
+                        <label className="block text-sm text-gray-500 mb-2 dark:text-gray-400">Jenis Periode</label>
                         <TogglePeriode jenisPeriode={modePeriode} onPilihBulan={bukaPopupBulan} onPilihTahun={pilihPerTahun} />
                     </div>
-                    <span className="text-sm text-gray-400 mt-6">
+                    <span className="text-sm text-gray-400 mt-6 dark:text-gray-500">
                         {filterAktif?.labelPeriode
                             ? filterAktif.labelPeriode
                             : modePeriode === "tahun"
@@ -534,32 +534,23 @@ export default function LaporanPeriodik() {
                               : `${NAMA_BULAN[bulanDipilih - 1]} ${tahunDipilih}`}
                     </span>
                 </div>
-
-                <div className="max-w-sm">
-                    <label className="block text-sm text-gray-500 mb-1.5">Jenis Laporan</label>
-                    <select value={jenis} onChange={(e) => { setJenis(e.target.value); setPage(1); }} className="w-full border border-emerald-500 rounded-lg px-3 py-2 text-sm">
-                        {jenisLaporan.map((j) => (
-                            <option key={j}>{j}</option>
-                        ))}
-                    </select>
-                </div>
             </div>
 
             {/* SUMMARY CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 {[
-                    { label: "Total Pemasukan", value: summary.totalMasuk, emoji: "💰", bg: "bg-emerald-100", color: "text-emerald-700" },
-                    { label: "Total Pengeluaran", value: summary.totalKeluar, emoji: "💳", bg: "bg-red-100", color: "text-red-600" },
-                    { label: "Laba Bersih", value: summary.labaBersih, emoji: "📈", bg: "bg-emerald-100", color: "text-emerald-700" },
+                    { label: "Total Pemasukan", value: summary.totalMasuk, emoji: "💰", bg: "bg-emerald-100 dark:bg-emerald-900/20", color: "text-emerald-700 dark:text-emerald-400" },
+                    { label: "Total Pengeluaran", value: summary.totalKeluar, emoji: "💳", bg: "bg-red-100 dark:bg-red-900/20", color: "text-red-600 dark:text-red-400" },
+                    { label: "Laba Bersih", value: summary.labaBersih, emoji: "📈", bg: "bg-emerald-100 dark:bg-emerald-900/20", color: "text-emerald-700 dark:text-emerald-400" },
                 ].map(({ label, value, emoji, bg, color }) => (
-                    <div key={label} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                    <div key={label} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 dark:bg-gray-900 dark:border-gray-800">
                         <div className="flex items-center gap-3">
                             <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center`}>{emoji}</div>
                             <div>
-                                <p className="text-xs text-gray-500">{label}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
                                 <p className={`text-lg font-bold ${color}`}>
                                     {Number(value || 0) < 0 ? (
-                                        <span className="text-red-500">- Rp {formatRp(Math.abs(value))}</span>
+                                        <span className="text-red-500 dark:text-red-400">- Rp {formatRp(Math.abs(value))}</span>
                                     ) : (
                                         `Rp ${formatRp(value)}`
                                     )}
@@ -571,9 +562,9 @@ export default function LaporanPeriodik() {
             </div>
 
             {/* TABLE */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-4">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-4 dark:bg-gray-900 dark:border-gray-800">
                 <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                    <h2 className="font-semibold text-gray-800">
+                    <h2 className="font-semibold text-gray-800 dark:text-gray-100">
                         Rincian Transaksi ({filteredData.length} transaksi)
                     </h2>
 
@@ -584,8 +575,8 @@ export default function LaporanPeriodik() {
                                 onClick={() => setShowFilterJenisDropdown((v) => !v)}
                                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border transition ${
                                     jenis !== "Semua"
-                                        ? "border-[#1B8A3A] text-[#1B8A3A] bg-emerald-50"
-                                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                                        ? "border-[#1B8A3A] text-[#1B8A3A] bg-emerald-50 dark:bg-emerald-900/20"
+                                        : "border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                                 }`}>
                                 <Filter size={14} />
                                 {jenis === "Semua" ? "Filter Jenis" : jenis}
@@ -595,7 +586,7 @@ export default function LaporanPeriodik() {
                             {showFilterJenisDropdown && (
                                 <>
                                     <div className="fixed inset-0 z-40" onClick={() => setShowFilterJenisDropdown(false)} />
-                                    <div className="absolute left-0 top-full mt-2 z-50 bg-white rounded-xl shadow-lg border border-gray-100 p-2 w-56">
+                                    <div className="absolute left-0 top-full mt-2 z-50 bg-white rounded-xl shadow-lg border border-gray-100 p-2 w-56 dark:bg-gray-900 dark:border-gray-800">
                                         {jenisLaporan.map((j) => (
                                             <button
                                                 key={j}
@@ -606,8 +597,8 @@ export default function LaporanPeriodik() {
                                                 }}
                                                 className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${
                                                     jenis === j
-                                                        ? "bg-emerald-50 text-[#1B8A3A] font-medium"
-                                                        : "text-gray-600 hover:bg-gray-50"
+                                                        ? "bg-emerald-50 text-[#1B8A3A] font-medium dark:bg-emerald-900/20"
+                                                        : "text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
                                                 }`}>
                                                 {j}
                                             </button>
@@ -629,12 +620,12 @@ export default function LaporanPeriodik() {
                             {showExportDropdown && (
                                 <>
                                     <div className="fixed inset-0 z-40" onClick={() => setShowExportDropdown(false)} />
-                                    <div className="absolute right-0 top-full mt-2 z-50 bg-white rounded-xl shadow-lg border border-gray-100 p-2 flex gap-1.5">
+                                    <div className="absolute right-0 top-full mt-2 z-50 bg-white rounded-xl shadow-lg border border-gray-100 p-2 flex gap-1.5 dark:bg-gray-900 dark:border-gray-800">
                                         {[
-                                            { label: "CSV", type: "csv", cls: "bg-gray-100" },
-                                            { label: "Excel", type: "excel", cls: "bg-green-100" },
-                                            { label: "PDF", type: "pdf", cls: "bg-red-100" },
-                                            { label: "DOCX", type: "docx", cls: "bg-blue-100" },
+                                            { label: "CSV", type: "csv", cls: "bg-gray-100 dark:bg-gray-800 dark:text-gray-200" },
+                                            { label: "Excel", type: "excel", cls: "bg-green-100 dark:bg-green-900/20 dark:text-green-400" },
+                                            { label: "PDF", type: "pdf", cls: "bg-red-100 dark:bg-red-900/20 dark:text-red-400" },
+                                            { label: "DOCX", type: "docx", cls: "bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400" },
                                         ].map(({ label, type, cls }) => (
                                             <button key={type} onClick={() => openExport(type)} className={`px-3 py-1.5 ${cls} rounded-lg text-xs font-medium hover:opacity-80 transition`}>
                                                 {label}
@@ -648,14 +639,14 @@ export default function LaporanPeriodik() {
                 </div>
 
                 {filteredData.length === 0 ? (
-                    <div className="text-center py-12 text-gray-300 italic text-sm">
+                    <div className="text-center py-12 text-gray-300 italic text-sm dark:text-gray-600">
                         Belum ada data transaksi pada periode ini
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="bg-gray-50 text-gray-500 text-xs uppercase">
+                                <tr className="bg-gray-50 text-gray-500 text-xs uppercase dark:bg-gray-800 dark:text-gray-400">
                                     <th className="py-3 px-4 text-left">Tanggal</th>
                                     <th className="py-3 px-4 text-left">Jenis</th>
                                     <th className="py-3 px-4 text-left">Deskripsi</th>
@@ -663,18 +654,18 @@ export default function LaporanPeriodik() {
                                     <th className="py-3 px-4 text-left">Unit</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                 {paginated.map((row, i) => (
-                                    <tr key={i} className="hover:bg-gray-50">
-                                        <td className="py-3 px-4 text-[11px] text-gray-500">{formatTanggalSingkat(row.tanggal)}</td>
-                                        <td className="py-3 px-4 text-[11px] text-gray-600">{row.jenis}</td>
-                                        <td className="py-3 px-4 text-[11px] text-gray-600">{row.deskripsi}</td>
+                                    <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                        <td className="py-3 px-4 text-[11px] text-gray-500 dark:text-gray-400">{formatTanggalSingkat(row.tanggal)}</td>
+                                        <td className="py-3 px-4 text-[11px] text-gray-600 dark:text-gray-300">{row.jenis}</td>
+                                        <td className="py-3 px-4 text-[11px] text-gray-600 dark:text-gray-300">{row.deskripsi}</td>
                                         <td className="py-3 px-4 text-right font-medium">
-                                            <span className={row.tipe === "masuk" ? "text-emerald-600" : "text-red-500"}>
+                                            <span className={row.tipe === "masuk" ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}>
                                                 {row.tipe === "masuk" ? "+" : "-"} Rp {formatRp(row.jumlah)}
                                             </span>
                                         </td>
-                                        <td className="py-3 px-4 text-[11px] text-gray-500">{row.unit}</td>
+                                        <td className="py-3 px-4 text-[11px] text-gray-500 dark:text-gray-400">{row.unit}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -702,12 +693,12 @@ export default function LaporanPeriodik() {
             {/* EXPORT MODAL — gaya sama persis seperti Kas & Simpanan (shortcut + tahun sebelumnya + input manual) */}
             {exportModal.open && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
-                        <h3 className="font-semibold text-gray-800 mb-1">Export {exportModal.type?.toUpperCase()}</h3>
-                        <p className="text-xs text-gray-400 mb-4">Pilih rentang tanggal yang ingin diekspor</p>
+                    <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4 dark:bg-gray-900">
+                        <h3 className="font-semibold text-gray-800 mb-1 dark:text-gray-100">Export {exportModal.type?.toUpperCase()}</h3>
+                        <p className="text-xs text-gray-400 mb-4 dark:text-gray-500">Pilih rentang tanggal yang ingin diekspor</p>
 
                         {/* Shortcut umum */}
-                        <p className="text-[10px] text-gray-400 uppercase font-medium mb-1.5 tracking-wide">Periode</p>
+                        <p className="text-[10px] text-gray-400 uppercase font-medium mb-1.5 tracking-wide dark:text-gray-500">Periode</p>
                         <div className="flex flex-wrap gap-2 mb-3">
                             {["Bulan Ini", "3 Bulan", "6 Bulan", "Tahun Ini", "Semua Data"].map((label) => (
                                 <ShortcutBtn key={label} label={label} isYear={false} onClick={() => { const [s, e] = getShortcut(label); setExportStart(s); setExportEnd(e); }} />
@@ -715,7 +706,7 @@ export default function LaporanPeriodik() {
                         </div>
 
                         {/* Shortcut tahun sebelumnya */}
-                        <p className="text-[10px] text-gray-400 uppercase font-medium mb-1.5 tracking-wide">Tahun Sebelumnya</p>
+                        <p className="text-[10px] text-gray-400 uppercase font-medium mb-1.5 tracking-wide dark:text-gray-500">Tahun Sebelumnya</p>
                         <div className="flex flex-wrap gap-2 mb-4">
                             {tahunSebelumnya.map((year) => (
                                 <ShortcutBtn key={year} label={String(year)} isYear={true} onClick={() => { const [s, e] = getShortcut(String(year)); setExportStart(s); setExportEnd(e); }} />
@@ -725,27 +716,27 @@ export default function LaporanPeriodik() {
                         {/* Input manual */}
                         <div className="flex gap-3 mb-3">
                             <div className="flex-1">
-                                <label className="block text-xs text-gray-500 mb-1">Dari</label>
-                                <input type="date" value={exportStart} onChange={(e) => setExportStart(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" />
+                                <label className="block text-xs text-gray-500 mb-1 dark:text-gray-400">Dari</label>
+                                <input type="date" value={exportStart} onChange={(e) => setExportStart(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" />
                             </div>
                             <div className="flex-1">
-                                <label className="block text-xs text-gray-500 mb-1">Sampai</label>
-                                <input type="date" value={exportEnd} onChange={(e) => setExportEnd(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" />
+                                <label className="block text-xs text-gray-500 mb-1 dark:text-gray-400">Sampai</label>
+                                <input type="date" value={exportEnd} onChange={(e) => setExportEnd(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" />
                             </div>
                         </div>
 
-                        <p className="text-xs text-gray-400 mb-5">
+                        <p className="text-xs text-gray-400 mb-5 dark:text-gray-500">
                             {exportPreviewCount === null
-                                ? <span className="text-gray-400 italic">Menghitung...</span>
-                                : <><span className="font-medium text-emerald-600">{exportPreviewCount}</span> transaksi akan diekspor</>
+                                ? <span className="text-gray-400 italic dark:text-gray-500">Menghitung...</span>
+                                : <><span className="font-medium text-emerald-600 dark:text-emerald-400">{exportPreviewCount}</span> transaksi akan diekspor</>
                             }
                         </p>
-                        <p className="text-[10px] text-amber-500 mb-5 -mt-3">
+                        <p className="text-[10px] text-amber-500 mb-5 -mt-3 dark:text-amber-400">
                             * Data diambil langsung dari server sesuai rentang tanggal &amp; filter jenis yang dipilih
                         </p>
 
                         <div className="flex justify-end gap-2">
-                            <button onClick={() => setExportModal({ open: false, type: null })} disabled={exportLoading} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50">
+                            <button onClick={() => setExportModal({ open: false, type: null })} disabled={exportLoading} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800">
                                 Batal
                             </button>
                             <button onClick={handleExportConfirm} disabled={exportLoading || exportPreviewCount === 0} className="px-4 py-2 text-sm bg-[#1B8A3A] text-white rounded-lg hover:bg-[#156e2e] disabled:opacity-50 flex items-center gap-2">
@@ -769,23 +760,23 @@ export default function LaporanPeriodik() {
             {/* PREVIEW DOKUMEN — khusus PDF & DOCX, tampil sebelum file benar-benar dicetak/diunduh */}
             {previewDoc.open && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col dark:bg-gray-900">
                         {/* Header dokumen */}
                         <div className="p-6 pb-0">
                             <div className="flex items-center justify-between mb-1">
-                                <h3 className="font-semibold text-gray-800">Preview Dokumen — {previewDoc.type?.toUpperCase()}</h3>
-                                <span className="text-[10px] px-2 py-1 rounded-full bg-gray-100 text-gray-500">{previewDoc.data.length} transaksi</span>
+                                <h3 className="font-semibold text-gray-800 dark:text-gray-100">Preview Dokumen — {previewDoc.type?.toUpperCase()}</h3>
+                                <span className="text-[10px] px-2 py-1 rounded-full bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">{previewDoc.data.length} transaksi</span>
                             </div>
-                            <p className="text-xs text-gray-400 mb-4">Laporan Periodik Koperasi &middot; Periode: {previewDoc.periodeLabel}</p>
+                            <p className="text-xs text-gray-400 mb-4 dark:text-gray-500">Laporan Periodik Koperasi &middot; Periode: {previewDoc.periodeLabel}</p>
                         </div>
 
                         <div className="px-6 overflow-y-auto flex-1">
                             {/* Ringkasan */}
                             <div className="grid grid-cols-3 gap-3 mb-4">
                                 {previewDoc.ringkasan && [
-                                    { label: "Pemasukan", value: previewDoc.ringkasan.totalMasuk, color: "text-emerald-700 bg-emerald-50" },
-                                    { label: "Pengeluaran", value: previewDoc.ringkasan.totalKeluar, color: "text-red-600 bg-red-50" },
-                                    { label: "Laba Bersih", value: previewDoc.ringkasan.labaBersih, color: "text-emerald-700 bg-emerald-50" },
+                                    { label: "Pemasukan", value: previewDoc.ringkasan.totalMasuk, color: "text-emerald-700 bg-emerald-50 dark:bg-emerald-900/15 dark:text-emerald-400" },
+                                    { label: "Pengeluaran", value: previewDoc.ringkasan.totalKeluar, color: "text-red-600 bg-red-50 dark:bg-red-900/15 dark:text-red-400" },
+                                    { label: "Laba Bersih", value: previewDoc.ringkasan.labaBersih, color: "text-emerald-700 bg-emerald-50 dark:bg-emerald-900/15 dark:text-emerald-400" },
                                 ].map(({ label, value, color }) => (
                                     <div key={label} className={`rounded-xl p-3 ${color}`}>
                                         <p className="text-[10px] opacity-70">{label}</p>
@@ -795,24 +786,24 @@ export default function LaporanPeriodik() {
                             </div>
 
                             {/* Rincian per jenis */}
-                            <p className="text-[10px] text-gray-400 uppercase font-medium mb-1.5 tracking-wide">Rincian per Jenis</p>
-                            <div className="overflow-x-auto mb-4 border border-gray-100 rounded-lg">
+                            <p className="text-[10px] text-gray-400 uppercase font-medium mb-1.5 tracking-wide dark:text-gray-500">Rincian per Jenis</p>
+                            <div className="overflow-x-auto mb-4 border border-gray-100 rounded-lg dark:border-gray-800">
                                 <table className="w-full text-xs">
                                     <thead>
-                                        <tr className="bg-gray-50 text-gray-500 text-[10px] uppercase">
+                                        <tr className="bg-gray-50 text-gray-500 text-[10px] uppercase dark:bg-gray-800 dark:text-gray-400">
                                             <th className="py-2 px-3 text-left">Jenis</th>
                                             <th className="py-2 px-3 text-right">Jml</th>
                                             <th className="py-2 px-3 text-right">Total Masuk</th>
                                             <th className="py-2 px-3 text-right">Total Keluar</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                         {previewDoc.ringkasan?.breakdown.map((b) => (
                                             <tr key={b.jenis}>
-                                                <td className="py-2 px-3 text-gray-600">{b.jenis}</td>
-                                                <td className="py-2 px-3 text-right text-gray-500">{b.jumlahTransaksi}</td>
-                                                <td className="py-2 px-3 text-right text-emerald-600">Rp {formatRp(b.totalMasuk)}</td>
-                                                <td className="py-2 px-3 text-right text-red-500">Rp {formatRp(b.totalKeluar)}</td>
+                                                <td className="py-2 px-3 text-gray-600 dark:text-gray-300">{b.jenis}</td>
+                                                <td className="py-2 px-3 text-right text-gray-500 dark:text-gray-400">{b.jumlahTransaksi}</td>
+                                                <td className="py-2 px-3 text-right text-emerald-600 dark:text-emerald-400">Rp {formatRp(b.totalMasuk)}</td>
+                                                <td className="py-2 px-3 text-right text-red-500 dark:text-red-400">Rp {formatRp(b.totalKeluar)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -820,25 +811,25 @@ export default function LaporanPeriodik() {
                             </div>
 
                             {/* Detail transaksi */}
-                            <p className="text-[10px] text-gray-400 uppercase font-medium mb-1.5 tracking-wide">Detail Transaksi</p>
-                            <div className="overflow-x-auto mb-4 border border-gray-100 rounded-lg">
+                            <p className="text-[10px] text-gray-400 uppercase font-medium mb-1.5 tracking-wide dark:text-gray-500">Detail Transaksi</p>
+                            <div className="overflow-x-auto mb-4 border border-gray-100 rounded-lg dark:border-gray-800">
                                 <table className="w-full text-xs">
                                     <thead>
-                                        <tr className="bg-gray-50 text-gray-500 text-[10px] uppercase">
+                                        <tr className="bg-gray-50 text-gray-500 text-[10px] uppercase dark:bg-gray-800 dark:text-gray-400">
                                             <th className="py-2 px-3 text-left">Tanggal</th>
                                             <th className="py-2 px-3 text-left">Jenis</th>
                                             <th className="py-2 px-3 text-left">Deskripsi</th>
                                             <th className="py-2 px-3 text-right">Jumlah</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                         {previewDoc.data.map((row, i) => (
                                             <tr key={i}>
-                                                <td className="py-2 px-3 text-gray-500">{formatTanggalSingkat(row.tanggal)}</td>
-                                                <td className="py-2 px-3 text-gray-600">{row.jenis}</td>
-                                                <td className="py-2 px-3 text-gray-600">{row.deskripsi}</td>
+                                                <td className="py-2 px-3 text-gray-500 dark:text-gray-400">{formatTanggalSingkat(row.tanggal)}</td>
+                                                <td className="py-2 px-3 text-gray-600 dark:text-gray-300">{row.jenis}</td>
+                                                <td className="py-2 px-3 text-gray-600 dark:text-gray-300">{row.deskripsi}</td>
                                                 <td className="py-2 px-3 text-right font-medium">
-                                                    <span className={row.tipe === "masuk" ? "text-emerald-600" : "text-red-500"}>
+                                                    <span className={row.tipe === "masuk" ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}>
                                                         {row.tipe === "masuk" ? "+" : "-"} Rp {formatRp(row.jumlah)}
                                                     </span>
                                                 </td>
@@ -849,11 +840,11 @@ export default function LaporanPeriodik() {
                             </div>
                         </div>
 
-                        <div className="flex justify-end gap-2 p-6 pt-4 border-t border-gray-100">
+                        <div className="flex justify-end gap-2 p-6 pt-4 border-t border-gray-100 dark:border-gray-800">
                             <button
                                 onClick={() => setPreviewDoc({ open: false, type: null, data: [], ringkasan: null, periodeLabel: "" })}
                                 disabled={previewDownloading}
-                                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50">
+                                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800">
                                 Batal
                             </button>
                             <button

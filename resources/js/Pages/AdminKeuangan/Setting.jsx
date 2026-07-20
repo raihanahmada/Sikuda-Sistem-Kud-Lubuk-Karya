@@ -29,27 +29,27 @@ export default function Setting() {
 
     return (
         <KeuanganLayout title="Setting — Keuangan">
-            <h1 className="mb-6 text-2xl font-bold text-gray-900">Setting</h1>
+            <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">Setting</h1>
 
             {flash?.sukses && (
-                <div className="mb-4 rounded-lg bg-green-50 px-4 py-2 text-sm text-green-700">
+                <div className="mb-4 rounded-lg bg-green-50 px-4 py-2 text-sm text-green-700 dark:bg-green-900/15 dark:text-green-400">
                     {flash.sukses}
                 </div>
             )}
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {/* Ubah Nama */}
-                <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-                    <h2 className="mb-4 text-base font-bold text-gray-900">Ubah Nama Pengguna</h2>
+                <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                    <h2 className="mb-4 text-base font-bold text-gray-900 dark:text-gray-100">Ubah Nama Pengguna</h2>
                     <form onSubmit={simpanProfil} className="space-y-4">
                         <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700">Nama Pengguna</label>
+                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Pengguna</label>
                             <input type="text" value={profil.data.nama_pengguna}
                                 onChange={(e) => profil.setData('nama_pengguna', e.target.value)}
-                                className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 ${
-                                    profil.errors.nama_pengguna ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                                className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 ${
+                                    profil.errors.nama_pengguna ? 'border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-900/15' : 'border-gray-300 dark:border-gray-700'
                                 }`} />
-                            {profil.errors.nama_pengguna && <p className="mt-1 text-xs text-red-600">{profil.errors.nama_pengguna}</p>}
+                            {profil.errors.nama_pengguna && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{profil.errors.nama_pengguna}</p>}
                         </div>
                         <button type="submit" disabled={profil.processing}
                             className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60">
@@ -59,32 +59,32 @@ export default function Setting() {
                 </div>
 
                 {/* Ubah Password */}
-                <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-                    <h2 className="mb-4 text-base font-bold text-gray-900">Ubah Password</h2>
+                <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                    <h2 className="mb-4 text-base font-bold text-gray-900 dark:text-gray-100">Ubah Password</h2>
                     <form onSubmit={simpanPassword} className="space-y-4">
                         <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700">Password Lama</label>
+                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Password Lama</label>
                             <input type="password" value={password.data.kata_sandi_lama}
                                 onChange={(e) => password.setData('kata_sandi_lama', e.target.value)}
-                                className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 ${
-                                    password.errors.kata_sandi_lama ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                                className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 ${
+                                    password.errors.kata_sandi_lama ? 'border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-900/15' : 'border-gray-300 dark:border-gray-700'
                                 }`} />
-                            {password.errors.kata_sandi_lama && <p className="mt-1 text-xs text-red-600">{password.errors.kata_sandi_lama}</p>}
+                            {password.errors.kata_sandi_lama && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{password.errors.kata_sandi_lama}</p>}
                         </div>
                         <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700">Password Baru</label>
+                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Password Baru</label>
                             <input type="password" value={password.data.kata_sandi_baru}
                                 onChange={(e) => password.setData('kata_sandi_baru', e.target.value)}
-                                className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 ${
-                                    password.errors.kata_sandi_baru ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                                className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 ${
+                                    password.errors.kata_sandi_baru ? 'border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-900/15' : 'border-gray-300 dark:border-gray-700'
                                 }`} />
-                            {password.errors.kata_sandi_baru && <p className="mt-1 text-xs text-red-600">{password.errors.kata_sandi_baru}</p>}
+                            {password.errors.kata_sandi_baru && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{password.errors.kata_sandi_baru}</p>}
                         </div>
                         <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700">Konfirmasi Password Baru</label>
+                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Konfirmasi Password Baru</label>
                             <input type="password" value={password.data.kata_sandi_baru_confirmation}
                                 onChange={(e) => password.setData('kata_sandi_baru_confirmation', e.target.value)}
-                                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600" />
+                                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500" />
                         </div>
                         <button type="submit" disabled={password.processing}
                             className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60">

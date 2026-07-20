@@ -22,8 +22,8 @@ export default function ModalSimpanan({ daftarAnggota = [], onTutup }) {
         <ModalShell title="Input Transaksi Simpanan" subtitle="KUD Lubuk Karya" icon={PiggyBank} onTutup={onTutup} maxWidth="max-w-xl">
             <form onSubmit={simpan} className="space-y-4">
                 <SimpananFormFields data={form.data} setData={form.setData} errors={form.errors} daftarAnggota={daftarAnggota} />
-                <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
-                    <button type="button" onClick={onTutup} className="rounded-xl px-5 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-100 transition">
+                <div className="flex justify-end gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <button type="button" onClick={onTutup} className="rounded-xl px-5 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition">
                         Batal
                     </button>
                     <button type="submit" disabled={form.processing}

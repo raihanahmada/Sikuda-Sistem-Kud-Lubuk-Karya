@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import DaunAbstrak from '../Components/DaunAbstrak';
 import FotoSlider from '../Components/FotoSlider';
+import ThemeToggle from '../Components/ThemeToggle';
 import sawit1 from '../../assets/Sawit-1.jpg';
 import sawit2 from '../../assets/Sawit-2.jpg';
 import sawit3 from '../../assets/Sawit-3.jpg';
@@ -111,15 +112,15 @@ function LayananGrid({ items }) {
             {items.map(({ title, desc, icon: Icon }) => (
                 <div
                     key={title}
-                    className="w-full rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-100 hover:shadow-md sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+                    className="w-full rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-100 hover:shadow-md sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] dark:border-gray-800 dark:bg-gray-900 dark:hover:border-emerald-900"
                 >
-                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8F5E9] text-[#1B8A3A]">
+                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8F5E9] text-[#1B8A3A] dark:bg-[#1B8A3A]/15 dark:text-emerald-400">
                         <Icon size={19} />
                     </div>
-                    <h3 className="text-base font-semibold text-gray-900">
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
                         {title}
                     </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-gray-500">
+                    <p className="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
                         {desc}
                     </p>
                 </div>
@@ -133,39 +134,41 @@ export default function Welcome() {
         <>
             <Head title="Beranda" />
 
-            <div className="min-h-screen bg-white">
+            <div className="min-h-screen bg-white dark:bg-gray-950">
                 {/* ── Header ── */}
-                <header className="sticky top-0 z-20 border-b border-emerald-100/70 bg-white shadow-sm">
+                <header className="sticky top-0 z-20 border-b border-emerald-100/70 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
                     <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
                         <div className="flex items-center gap-3">
                             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#22A94F] to-[#146830] text-sm font-bold text-white shadow-md shadow-emerald-900/20">
                                 K
                             </div>
                             <div>
-                                <p className="text-sm font-bold leading-tight text-[#1B5E20]">
+                                <p className="text-sm font-bold leading-tight text-[#1B5E20] dark:text-emerald-400">
                                     KUD Lubuk Karya
                                 </p>
-                                <p className="text-[11px] leading-tight text-gray-400">
+                                <p className="text-[11px] leading-tight text-gray-400 dark:text-gray-500">
                                     Sistem Informasi Koperasi
                                 </p>
                             </div>
                         </div>
 
                         <div className="flex items-center gap-8">
-                            <nav className="hidden items-center gap-8 text-sm font-medium text-gray-600 md:flex">
+                            <nav className="hidden items-center gap-8 text-sm font-medium text-gray-600 md:flex dark:text-gray-300">
                                 <a
                                     href="#tentang"
-                                    className="relative pb-1 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-gray-200 after:transition-colors hover:text-[#1B8A3A] hover:after:bg-[#1B8A3A]"
+                                    className="relative pb-1 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-gray-200 after:transition-colors hover:text-[#1B8A3A] hover:after:bg-[#1B8A3A] dark:after:bg-gray-700"
                                 >
                                     Tentang
                                 </a>
                                 <a
                                     href="#layanan"
-                                    className="relative pb-1 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-gray-200 after:transition-colors hover:text-[#1B8A3A] hover:after:bg-[#1B8A3A]"
+                                    className="relative pb-1 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-gray-200 after:transition-colors hover:text-[#1B8A3A] hover:after:bg-[#1B8A3A] dark:after:bg-gray-700"
                                 >
                                     Layanan
                                 </a>
                             </nav>
+
+                            <ThemeToggle />
 
                             <Link
                                 href={route('sikuda.login')}
@@ -275,22 +278,22 @@ export default function Welcome() {
                 <section id="tentang" className="mx-auto max-w-6xl px-6 py-20">
                     <div className="grid gap-10 md:grid-cols-2 md:items-center">
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-900">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                                 Tentang KUD Lubuk Karya
                             </h2>
-                            <p className="mt-4 text-sm leading-relaxed text-gray-500">
+                            <p className="mt-4 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
                                 KUD Lubuk Karya adalah koperasi unit desa yang menaungi petani sawit
                                 dalam pengelolaan hasil kebun, mulai dari penjualan Tandan Buah Segar
                                 (TBS), penyediaan kebutuhan pupuk dan barang, hingga penyaluran dana
                                 hasil usaha kepada anggota.
                             </p>
-                            <p className="mt-3 text-sm leading-relaxed text-gray-500">
+                            <p className="mt-3 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
                                 Melalui SIKUDA, seluruh proses administrasi dan keuangan koperasi
                                 dikelola secara digital agar lebih cepat, akurat, dan mudah dipantau
                                 oleh pengurus maupun anggota.
                             </p>
                         </div>
-                        <div className="overflow-hidden rounded-3xl border border-emerald-100/70 shadow-xl shadow-emerald-900/10">
+                        <div className="overflow-hidden rounded-3xl border border-emerald-100/70 shadow-xl shadow-emerald-900/10 dark:border-emerald-900/40">
                             <img
                                 src={sawit5}
                                 alt="Kebun sawit anggota KUD Lubuk Karya"
@@ -301,45 +304,45 @@ export default function Welcome() {
                 </section>
 
                 {/* ── Layanan ── */}
-                <section id="layanan" className="bg-[#F2F4F3] py-20">
+                <section id="layanan" className="bg-[#F2F4F3] py-20 dark:bg-gray-900">
                     <div className="mx-auto max-w-6xl px-6">
-                        <h2 className="text-center text-2xl font-bold text-gray-900">
+                        <h2 className="text-center text-2xl font-bold text-gray-900 dark:text-gray-100">
                             Layanan SIKUDA
                         </h2>
-                        <p className="mx-auto mt-3 max-w-md text-center text-sm text-gray-500">
+                        <p className="mx-auto mt-3 max-w-md text-center text-sm text-gray-500 dark:text-gray-400">
                             Modul-modul yang tersedia bagi pengurus koperasi untuk mengelola
                             kegiatan harian KUD Lubuk Karya.
                         </p>
 
                         <div className="mt-14">
                             <div className="mb-6 flex items-center gap-3">
-                                <span className="h-px flex-1 bg-gray-200" />
-                                <span className="text-xs font-semibold uppercase tracking-widest text-[#1B8A3A]">
+                                <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+                                <span className="text-xs font-semibold uppercase tracking-widest text-[#1B8A3A] dark:text-emerald-400">
                                     Modul Admin Keuangan
                                 </span>
-                                <span className="h-px flex-1 bg-gray-200" />
+                                <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
                             </div>
                             <LayananGrid items={layananKeuangan} />
                         </div>
 
                         <div className="mt-14">
                             <div className="mb-6 flex items-center gap-3">
-                                <span className="h-px flex-1 bg-gray-200" />
-                                <span className="text-xs font-semibold uppercase tracking-widest text-[#1B8A3A]">
+                                <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+                                <span className="text-xs font-semibold uppercase tracking-widest text-[#1B8A3A] dark:text-emerald-400">
                                     Modul Admin Anggota
                                 </span>
-                                <span className="h-px flex-1 bg-gray-200" />
+                                <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
                             </div>
                             <LayananGrid items={layananAnggota} />
                         </div>
 
                         <div className="mt-14">
                             <div className="mb-6 flex items-center gap-3">
-                                <span className="h-px flex-1 bg-gray-200" />
-                                <span className="text-xs font-semibold uppercase tracking-widest text-[#1B8A3A]">
+                                <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+                                <span className="text-xs font-semibold uppercase tracking-widest text-[#1B8A3A] dark:text-emerald-400">
                                     Modul Pemilik
                                 </span>
-                                <span className="h-px flex-1 bg-gray-200" />
+                                <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
                             </div>
                             <LayananGrid items={layananPemilik} />
                         </div>
@@ -347,8 +350,8 @@ export default function Welcome() {
                 </section>
 
                 {/* ── Footer ── */}
-                <footer className="border-t border-gray-100 py-8">
-                    <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 text-sm text-gray-400 md:flex-row">
+                <footer className="border-t border-gray-100 py-8 dark:border-gray-800">
+                    <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 text-sm text-gray-400 md:flex-row dark:text-gray-500">
                         <div className="flex items-center gap-2">
                             <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br from-[#22A94F] to-[#146830] text-[10px] font-bold text-white">
                                 K

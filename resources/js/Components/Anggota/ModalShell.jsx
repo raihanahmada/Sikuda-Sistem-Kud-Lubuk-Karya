@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 export default function ModalShell({ title, subtitle, icon: Icon, onTutup, maxWidth = 'max-w-xl', children }) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
-            <div className={`w-full ${maxWidth} max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl ring-1 ring-black/5`}>
+            <div className={`w-full ${maxWidth} max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10`}>
                 <div className="sticky top-0 z-10 flex items-center justify-between gap-4 rounded-t-2xl bg-gradient-to-br from-[#22A94F] via-[#1B8A3A] to-[#0F5C26] px-6 py-5 shadow-md">
                     <div className="flex items-center gap-3 min-w-0">
                         {Icon && (
@@ -26,7 +26,7 @@ export default function ModalShell({ title, subtitle, icon: Icon, onTutup, maxWi
                         <X size={18} />
                     </button>
                 </div>
-                <div className="p-6 bg-gradient-to-b from-emerald-50/50 to-white">{children}</div>
+                <div className="p-6 bg-gradient-to-b from-emerald-50/50 to-white dark:from-gray-900 dark:to-gray-900">{children}</div>
             </div>
         </div>
     );

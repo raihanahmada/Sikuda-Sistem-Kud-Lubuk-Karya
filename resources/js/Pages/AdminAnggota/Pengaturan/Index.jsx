@@ -24,11 +24,11 @@ function Notifikasi({ notif }) {
             role="alert"
             className={`alert flex items-center shadow-sm rounded-xl py-3 border backdrop-blur-md text-base ${
                 sukses
-                    ? 'bg-emerald-50/80 text-green-900 border-emerald-200'
-                    : 'bg-rose-50/80 text-rose-700 border-rose-200'
+                    ? 'bg-emerald-50/80 text-green-900 border-emerald-200 dark:bg-emerald-900/15 dark:text-emerald-400 dark:border-emerald-800/40'
+                    : 'bg-rose-50/80 text-rose-700 border-rose-200 dark:bg-rose-900/15 dark:text-rose-400 dark:border-rose-800/40'
             }`}
         >
-            {sukses ? <CheckCircle2 size={20} className="text-green-700" /> : <AlertCircle size={20} className="text-rose-500" />}
+            {sukses ? <CheckCircle2 size={20} className="text-green-700 dark:text-emerald-400" /> : <AlertCircle size={20} className="text-rose-500 dark:text-rose-400" />}
             <span className="font-medium">{notif.message}</span>
         </div>
     );
@@ -46,10 +46,10 @@ function PasswordField({ label, placeholder, value, onChange, visible, onToggle,
                     placeholder={placeholder}
                     value={value}
                     onChange={onChange}
-                    className={`input input-bordered w-full pr-10 rounded-xl text-base transition-all duration-300 focus:outline-none focus:ring-4 ${
+                    className={`input input-bordered w-full pr-10 rounded-xl text-base transition-all duration-300 focus:outline-none focus:ring-4 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 ${
                         error
                             ? "border-error focus:border-error focus:ring-error/20"
-                            : "border-base-300 focus:border-green-700 focus:ring-green-700/20"
+                            : "border-base-300 focus:border-green-700 focus:ring-green-700/20 dark:border-gray-700"
                     }`}
                 />
                 <button
@@ -190,7 +190,7 @@ export default function Pengaturan() {
                 <Notifikasi notif={notif} />
 
                 {/* ── Profil ─────────────────────────────────────────────────── */}
-                <div className="card bg-white border border-base-200/60 shadow-xl shadow-base-200/40 rounded-2xl">
+                <div className="card bg-white dark:bg-gray-900 border border-base-200/60 shadow-xl shadow-base-200/40 rounded-2xl">
                     <div className="card-body p-6 sm:p-8">
                         <div className="flex items-center gap-3 border-b border-base-200/60 pb-4 mb-6">
                             <div className="p-2 bg-green-700/10 rounded-lg">
@@ -218,10 +218,10 @@ export default function Pengaturan() {
                                         type="text"
                                         value={profileForm.data.nama_pengguna}
                                         onChange={(e) => profileForm.setData("nama_pengguna", e.target.value)}
-                                        className={`input input-bordered w-full rounded-xl text-base transition-all duration-300 focus:outline-none focus:ring-4 ${
+                                        className={`input input-bordered w-full rounded-xl text-base transition-all duration-300 focus:outline-none focus:ring-4 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 ${
                                             profileForm.errors?.nama_pengguna
                                                 ? "border-error focus:border-error focus:ring-error/20"
-                                                : "border-base-300 focus:border-green-700 focus:ring-green-700/20"
+                                                : "border-base-300 focus:border-green-700 focus:ring-green-700/20 dark:border-gray-700"
                                         }`}
                                     />
                                     {profileForm.errors?.nama_pengguna && (
@@ -271,7 +271,7 @@ export default function Pengaturan() {
                 </div>
 
                 {/* ── Keamanan ───────────────────────────────────────────────── */}
-                <div className="card bg-white border border-base-200/60 shadow-xl shadow-base-200/40 rounded-2xl overflow-hidden">
+                <div className="card bg-white dark:bg-gray-900 border border-base-200/60 shadow-xl shadow-base-200/40 rounded-2xl overflow-hidden">
                     <div className="card-body p-0">
                         <div className="p-6 sm:p-8">
                             <div className="flex items-center gap-3 border-b border-base-200/60 pb-4 mb-2">
@@ -306,7 +306,7 @@ export default function Pengaturan() {
                 </div>
 
                 {/* ── Informasi Sistem ───────────────────────────────────────── */}
-                <div className="card bg-white border border-base-200/60 shadow-xl shadow-base-200/30 rounded-2xl">
+                <div className="card bg-white dark:bg-gray-900 border border-base-200/60 shadow-xl shadow-base-200/30 rounded-2xl">
                     <div className="card-body p-6 sm:p-8">
                         <h2 className="text-sm font-bold text-base-content/50 uppercase tracking-wider mb-4">
                             Informasi Sistem
@@ -327,7 +327,7 @@ export default function Pengaturan() {
 
             {/* ── Modal Ubah Password ─────────────────────────────────────── */}
             <dialog ref={passwordModalRef} className="modal" onClose={resetPasswordForm}>
-                <div className="modal-box relative bg-white border border-base-200/60 shadow-2xl rounded-3xl p-6 sm:p-8">
+                <div className="modal-box relative bg-white dark:bg-gray-900 border border-base-200/60 shadow-2xl rounded-3xl p-6 sm:p-8">
                     <form method="dialog">
                         <button
                             type="submit"
@@ -348,7 +348,7 @@ export default function Pengaturan() {
                     </div>
 
                     {passwordFormError && (
-                        <div role="alert" className="alert bg-rose-50 border-rose-200 text-rose-700 text-base py-3 rounded-xl mb-5 flex items-start shadow-sm">
+                        <div role="alert" className="alert bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-900/15 dark:border-rose-800/40 dark:text-rose-400 text-base py-3 rounded-xl mb-5 flex items-start shadow-sm">
                             <AlertCircle size={20} className="mt-0.5 shrink-0" />
                             <span className="font-medium">{passwordFormError}</span>
                         </div>

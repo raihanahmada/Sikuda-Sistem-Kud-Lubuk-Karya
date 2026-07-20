@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Calendar, Menu } from "lucide-react";
+import ThemeToggle from "@/Components/ThemeToggle";
 
 const DAYS = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 const MONTHS = [
@@ -37,13 +38,14 @@ export default function Header({ isOpen, setIsOpen }) {
         bg-white border-b border-gray-100
         flex items-center justify-between px-5
         transition-all duration-300 ease-in-out
+        dark:bg-gray-900 dark:border-gray-800
         ${isOpen ? "left-56" : "left-0"}
       `}
         >
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-100 bg-gray-50 text-gray-400 hover:bg-gray-100 transition-colors"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-100 bg-gray-50 text-gray-400 hover:bg-gray-100 transition-colors dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
                     aria-label="Buka menu"
                 >
                     <Menu size={15} />
@@ -51,19 +53,21 @@ export default function Header({ isOpen, setIsOpen }) {
 
                 <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#1B5E20] shrink-0" />
-                    <h2 className="text-sm font-medium text-gray-900 tracking-tight whitespace-nowrap">
+                    <h2 className="text-sm font-medium text-gray-900 tracking-tight whitespace-nowrap dark:text-gray-100">
                         Ringkasan Strategis Koperasi
                     </h2>
                 </div>
             </div>
 
             <div className="flex items-center gap-1.5">
-                <div className="flex items-center gap-1.5 px-2.5 h-8 rounded-lg border border-gray-100 bg-gray-50 text-xs text-gray-400">
+                <div className="flex items-center gap-1.5 px-2.5 h-8 rounded-lg border border-gray-100 bg-gray-50 text-xs text-gray-400 dark:border-gray-700 dark:bg-gray-800">
                     <Calendar size={13} />
-                    <span className="font-medium text-gray-800">{date}</span>
+                    <span className="font-medium text-gray-800 dark:text-gray-300">{date}</span>
                 </div>
 
-                <div className="w-px h-5 bg-gray-100 mx-1" />
+                <div className="w-px h-5 bg-gray-100 mx-1 dark:bg-gray-700" />
+
+                <ThemeToggle />
 
                 <button className="w-8 h-8 rounded-full bg-[#1B5E20] flex items-center justify-center text-white text-[11px] font-medium tracking-wide">
                     K

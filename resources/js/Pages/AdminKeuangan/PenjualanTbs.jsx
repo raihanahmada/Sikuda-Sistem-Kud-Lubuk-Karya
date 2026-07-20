@@ -29,7 +29,7 @@ export default function PenjualanTbs({ penjualan, hargaBerlaku, daftarAnggota, f
     return (
         <KeuanganLayout title="Penjualan TBS — Keuangan">
             <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">Manajemen Penjualan TBS</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Manajemen Penjualan TBS</h1>
                 <button onClick={() => setModalJual({ buka: true, data: null })}
                     disabled={!hargaBerlaku}
                     className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-50">
@@ -38,24 +38,24 @@ export default function PenjualanTbs({ penjualan, hargaBerlaku, daftarAnggota, f
             </div>
 
             {flash?.sukses && (
-                <div className="mb-4 rounded-lg bg-green-50 px-4 py-2 text-sm text-green-700">{flash.sukses}</div>
+                <div className="mb-4 rounded-lg bg-green-50 px-4 py-2 text-sm text-green-700 dark:bg-green-900/15 dark:text-green-400">{flash.sukses}</div>
             )}
 
             {/* Kartu harga TBS berlaku */}
-            <div className="mb-6 flex items-center justify-between rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="mb-6 flex items-center justify-between rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                 <div>
-                    <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Harga TBS Berlaku</p>
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">Harga TBS Berlaku</p>
                     {hargaBerlaku ? (
                         <>
-                            <p className="mt-1 text-2xl font-bold text-green-700">{rupiah(hargaBerlaku.harga_per_kg)}<span className="text-sm font-normal text-gray-400"> /kg</span></p>
-                            <p className="text-xs text-gray-400">Berlaku sejak {tanggalID(hargaBerlaku.berlaku_mulai)}</p>
+                            <p className="mt-1 text-2xl font-bold text-green-700 dark:text-green-400">{rupiah(hargaBerlaku.harga_per_kg)}<span className="text-sm font-normal text-gray-400 dark:text-gray-500"> /kg</span></p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500">Berlaku sejak {tanggalID(hargaBerlaku.berlaku_mulai)}</p>
                         </>
                     ) : (
-                        <p className="mt-1 text-sm text-red-600">Harga belum diatur — set dulu sebelum mencatat penjualan.</p>
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">Harga belum diatur — set dulu sebelum mencatat penjualan.</p>
                     )}
                 </div>
                 <button onClick={() => setModalHarga(true)}
-                    className="rounded-lg border border-green-600 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-50">
+                    className="rounded-lg border border-green-600 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-50 dark:hover:bg-green-900/15">
                     {hargaBerlaku ? 'Ubah Harga' : 'Set Harga'}
                 </button>
             </div>
@@ -64,14 +64,14 @@ export default function PenjualanTbs({ penjualan, hargaBerlaku, daftarAnggota, f
             <div className="mb-4 flex items-center gap-3">
                 <input type="text" value={cari} onChange={(e) => setCari(e.target.value)}
                     placeholder="Cari nama anggota…"
-                    className="w-full max-w-xs rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-600" />
+                    className="w-full max-w-xs rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500" />
             </div>
 
             {/* Tabel penjualan */}
-            <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b border-gray-100 text-left text-xs text-gray-400">
+                        <tr className="border-b border-gray-100 text-left text-xs text-gray-400 dark:border-gray-800 dark:text-gray-500">
                             <th className="pb-2 font-medium">Tanggal</th>
                             <th className="pb-2 font-medium">Anggota</th>
                             <th className="pb-2 text-right font-medium">Berat (kg)</th>
@@ -82,20 +82,20 @@ export default function PenjualanTbs({ penjualan, hargaBerlaku, daftarAnggota, f
                     </thead>
                     <tbody>
                         {penjualan.data.length === 0 ? (
-                            <tr><td colSpan={6} className="py-6 text-center text-gray-400">Belum ada penjualan TBS</td></tr>
+                            <tr><td colSpan={6} className="py-6 text-center text-gray-400 dark:text-gray-500">Belum ada penjualan TBS</td></tr>
                         ) : (
                             penjualan.data.map((p) => (
-                                <tr key={p.id_penjualan} className="border-b border-gray-50 last:border-0">
-                                    <td className="py-3 text-gray-500">{tanggalID(p.tanggal_timbang)}</td>
-                                    <td className="py-3 text-gray-800">{p.nama_anggota}</td>
-                                    <td className="py-3 text-right text-gray-600">{p.berat_bersih_kg}</td>
-                                    <td className="py-3 text-right text-gray-600">{rupiah(p.harga_per_kg)}</td>
-                                    <td className="py-3 text-right font-semibold text-green-600">{rupiah(p.total_nilai)}</td>
+                                <tr key={p.id_penjualan} className="border-b border-gray-50 last:border-0 dark:border-gray-800">
+                                    <td className="py-3 text-gray-500 dark:text-gray-400">{tanggalID(p.tanggal_timbang)}</td>
+                                    <td className="py-3 text-gray-800 dark:text-gray-100">{p.nama_anggota}</td>
+                                    <td className="py-3 text-right text-gray-600 dark:text-gray-300">{p.berat_bersih_kg}</td>
+                                    <td className="py-3 text-right text-gray-600 dark:text-gray-300">{rupiah(p.harga_per_kg)}</td>
+                                    <td className="py-3 text-right font-semibold text-green-600 dark:text-green-400">{rupiah(p.total_nilai)}</td>
                                     <td className="py-3 text-right">
                                         <button onClick={() => setModalJual({ buka: true, data: p })}
-                                            className="mr-3 text-xs font-medium text-amber-600 hover:underline">Edit</button>
+                                            className="mr-3 text-xs font-medium text-amber-600 hover:underline dark:text-yellow-400">Edit</button>
                                         <button onClick={() => hapus(p.id_penjualan)}
-                                            className="text-xs font-medium text-red-600 hover:underline">Hapus</button>
+                                            className="text-xs font-medium text-red-600 hover:underline dark:text-red-400">Hapus</button>
                                     </td>
                                 </tr>
                             ))
@@ -110,7 +110,7 @@ export default function PenjualanTbs({ penjualan, hargaBerlaku, daftarAnggota, f
                                 dangerouslySetInnerHTML={{ __html: l.label }}
                                 className={`rounded-md px-3 py-1 text-sm ${
                                     l.active ? 'bg-green-700 text-white'
-                                    : l.url ? 'text-gray-600 hover:bg-gray-100' : 'cursor-default text-gray-300'
+                                    : l.url ? 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800' : 'cursor-default text-gray-300 dark:text-gray-600'
                                 }`} />
                         ))}
                     </div>

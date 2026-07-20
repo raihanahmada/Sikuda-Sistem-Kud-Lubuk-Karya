@@ -29,23 +29,23 @@ export default function Create({ daftarAnggota = [] }) {
         post('/admin-anggota/simpanan');
     }
 
-    const inputCls = "w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]";
-    const labelCls = "block text-base font-medium text-gray-600 mb-1.5";
+    const inputCls = "w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-500";
+    const labelCls = "block text-base font-medium text-gray-600 mb-1.5 dark:text-gray-300";
 
     return (
         <AdminAnggotaLayout title="Tambah Simpanan">
             {/* HEADER */}
             <div className="flex items-center gap-3 mb-5">
-                <Link href="/admin-anggota/simpanan" className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
-                    <ArrowLeft size={18} className="text-gray-500" />
+                <Link href="/admin-anggota/simpanan" className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition dark:border-gray-700 dark:hover:bg-gray-800">
+                    <ArrowLeft size={18} className="text-gray-500 dark:text-gray-400" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Input Transaksi Simpanan</h1>
-                    <p className="text-sm text-gray-400">KUD Lubuk Karya</p>
+                    <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Input Transaksi Simpanan</h1>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">KUD Lubuk Karya</p>
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 max-w-2xl mx-auto">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 max-w-2xl mx-auto dark:bg-gray-900 dark:border-gray-800">
                 <form onSubmit={submit} className="space-y-4">
                     <div>
                         <label className={labelCls}>Pilih Anggota</label>
@@ -61,7 +61,7 @@ export default function Create({ daftarAnggota = [] }) {
                                 </option>
                             ))}
                         </select>
-                        {errors.id_anggota && <div className="text-red-500 text-sm mt-1">{errors.id_anggota}</div>}
+                        {errors.id_anggota && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.id_anggota}</div>}
                     </div>
 
                     <div>
@@ -86,7 +86,7 @@ export default function Create({ daftarAnggota = [] }) {
                             value={data.jumlah}
                             onChange={e => setData('jumlah', e.target.value)}
                         />
-                        {errors.jumlah && <div className="text-red-500 text-sm mt-1">{errors.jumlah}</div>}
+                        {errors.jumlah && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.jumlah}</div>}
                     </div>
 
                     <div>
@@ -97,7 +97,7 @@ export default function Create({ daftarAnggota = [] }) {
                             value={data.tanggal_transaksi}
                             onChange={e => setData('tanggal_transaksi', e.target.value)}
                         />
-                        {errors.tanggal_transaksi && <div className="text-red-500 text-sm mt-1">{errors.tanggal_transaksi}</div>}
+                        {errors.tanggal_transaksi && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.tanggal_transaksi}</div>}
                     </div>
 
                     <div>
@@ -111,12 +111,12 @@ export default function Create({ daftarAnggota = [] }) {
                         />
                     </div>
 
-                    <div className="pt-4 flex gap-3 border-t border-gray-100">
+                    <div className="pt-4 flex gap-3 border-t border-gray-100 dark:border-gray-800">
                         <button disabled={processing} className="inline-flex items-center gap-2 bg-[#1B8A3A] hover:bg-[#157030] text-white px-5 py-2.5 rounded-xl text-base font-semibold transition disabled:opacity-70">
                             <Save size={18} />
                             Simpan Transaksi
                         </button>
-                        <Link href="/admin-anggota/simpanan" className="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-base font-semibold transition">
+                        <Link href="/admin-anggota/simpanan" className="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-base font-semibold transition dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300">
                             Batal
                         </Link>
                     </div>

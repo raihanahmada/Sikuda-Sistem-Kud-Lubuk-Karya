@@ -27,14 +27,14 @@ export default function GrafikArusKas({ periode }) {
     };
 
     return (
-        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-gray-800">Grafik Arus Kas</h2>
-                <div className="flex rounded-lg bg-gray-100 p-0.5 text-xs">
+                <h2 className="text-sm font-semibold text-gray-800 dark:text-gray-100">Grafik Arus Kas</h2>
+                <div className="flex rounded-lg bg-gray-100 p-0.5 text-xs dark:bg-gray-800">
                     {PERIODE.map((p) => (
                         <button key={p.key} onClick={() => gantiPeriode(p.key)} disabled={memuat}
                             className={`rounded-md px-3 py-1 font-medium transition disabled:opacity-50 ${
-                                periode === p.key ? 'bg-white text-green-700 shadow-sm' : 'text-gray-500'
+                                periode === p.key ? 'bg-white text-green-700 shadow-sm dark:bg-gray-900 dark:text-emerald-400' : 'text-gray-500 dark:text-gray-400'
                             }`}>
                             {p.label}
                         </button>

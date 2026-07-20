@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { ShieldCheck, TrendingUp, Users2, Sprout } from 'lucide-react';
 import DaunAbstrak from '../Components/DaunAbstrak';
+import ThemeToggle from '../Components/ThemeToggle';
 
 export const NILAI_UTAMA = [
     { icon: ShieldCheck, label: 'Aman & Terpercaya' },
@@ -13,30 +14,33 @@ export default function AuthenticatedLayout({ title, children, status }) {
         <>
             <Head title={title} />
 
-            <div className="relative flex min-h-screen overflow-hidden bg-gradient-to-br from-[#F2F4F3] via-white to-emerald-50">
+            <div className="relative flex min-h-screen overflow-hidden bg-gradient-to-br from-[#F2F4F3] via-white to-emerald-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950">
 
                 {/* Aksen gradasi dekoratif di latar */}
                 <div className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-gradient-to-br from-[#22A94F]/20 to-[#146830]/10 blur-3xl" />
-                <div className="pointer-events-none absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-emerald-200/20 blur-3xl" />
+                <div className="pointer-events-none absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-emerald-200/20 blur-3xl dark:bg-emerald-900/10" />
 
                 {/* ── Kolom Kiri: Form Login ── */}
                 <div className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 md:w-1/2 md:px-10 lg:px-16">
-                    <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-emerald-100/70 bg-white/90 shadow-xl shadow-emerald-900/10 backdrop-blur-sm sm:p-10 p-8">
+                    <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-emerald-100/70 bg-white/90 shadow-xl shadow-emerald-900/10 backdrop-blur-sm sm:p-10 p-8 dark:border-gray-800 dark:bg-gray-900/90">
 
                         {/* Brand mark — konsisten dengan badge di sidebar semua role */}
-                        <div className="mb-8 flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#22A94F] to-[#146830] text-lg font-bold text-white shadow-md shadow-emerald-900/20">
-                                K
+                        <div className="mb-8 flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#22A94F] to-[#146830] text-lg font-bold text-white shadow-md shadow-emerald-900/20">
+                                    K
+                                </div>
+                                <div>
+                                    <p className="text-sm font-semibold text-[#1B5E20] dark:text-emerald-400">KUD Lubuk Karya</p>
+                                    <p className="text-[11px] text-gray-400 dark:text-gray-500">Sistem Informasi Koperasi</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm font-semibold text-[#1B5E20]">KUD Lubuk Karya</p>
-                                <p className="text-[11px] text-gray-400">Sistem Informasi Koperasi</p>
-                            </div>
+                            <ThemeToggle />
                         </div>
 
                         {/* Status session (misal setelah logout) */}
                         {status && (
-                            <div className="mb-5 rounded-xl border border-green-100 bg-green-50 px-4 py-2.5 text-sm text-green-700">
+                            <div className="mb-5 rounded-xl border border-green-100 bg-green-50 px-4 py-2.5 text-sm text-green-700 dark:border-green-900/40 dark:bg-green-900/15 dark:text-green-400">
                                 {status}
                             </div>
                         )}
@@ -45,7 +49,7 @@ export default function AuthenticatedLayout({ title, children, status }) {
                         {children}
                     </div>
 
-                    <p className="relative z-10 mt-6 text-center text-xs text-gray-400">
+                    <p className="relative z-10 mt-6 text-center text-xs text-gray-400 dark:text-gray-500">
                         © {new Date().getFullYear()} KUD Lubuk Karya — Seluruh hak cipta dilindungi.
                     </p>
                 </div>

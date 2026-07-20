@@ -40,7 +40,7 @@ export default function Index({ antrian = { data: [], links: [] }, stats = {}, f
             <Head title="Antrian Verifikasi" />
 
             {flash?.sukses && (
-                <div className="mb-4 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 border border-green-100">
+                <div className="mb-4 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 border border-green-100 dark:bg-green-900/15 dark:text-green-400 dark:border-green-800/40">
                     {flash.sukses}
                 </div>
             )}
@@ -61,20 +61,20 @@ export default function Index({ antrian = { data: [], links: [] }, stats = {}, f
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-emerald-200 overflow-hidden">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between px-6 py-4 border-b border-gray-100 gap-4">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-emerald-200 dark:border-emerald-800/40 overflow-hidden">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 gap-4">
                     <div>
-                        <h2 className="text-base font-semibold text-gray-800">Daftar Pengajuan Anggota</h2>
-                        <p className="text-sm text-gray-400 mt-0.5">Pengajuan anggota yang memerlukan verifikasi</p>
+                        <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">Daftar Pengajuan Anggota</h2>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">Pengajuan anggota yang memerlukan verifikasi</p>
                     </div>
 
                     <div className="relative">
-                        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                         <input
                             type="text"
                             name="searchTerm"
                             placeholder="Cari nama pengajuan..."
-                            className="pl-11 pr-4 py-2.5 text-base border border-gray-200 rounded-xl w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
+                            className="pl-11 pr-4 py-2.5 text-base border border-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-500 rounded-xl w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
                             value={dataForm.searchTerm}
                             onChange={handleChange}
                         />
@@ -82,7 +82,7 @@ export default function Index({ antrian = { data: [], links: [] }, stats = {}, f
                 </div>
 
                 {antrian.data.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-gray-300">
+                    <div className="flex flex-col items-center justify-center py-16 text-gray-300 dark:text-gray-600">
                         <ClipboardList size={40} className="mb-3" />
                         <p className="text-base italic">Tidak ada antrian verifikasi saat ini.</p>
                     </div>
@@ -90,20 +90,20 @@ export default function Index({ antrian = { data: [], links: [] }, stats = {}, f
                     <div className="overflow-x-auto">
                         <table className="w-full text-base">
                             <thead>
-                                <tr className="border-b-2 border-emerald-200 bg-emerald-100/80">
-                                    <th className="text-left text-sm text-emerald-800 font-semibold px-4 py-3">Nama</th>
-                                    <th className="text-left text-sm text-emerald-800 font-semibold px-4 py-3">Tanggal Daftar</th>
-                                    <th className="text-left text-sm text-emerald-800 font-semibold px-4 py-3">Status</th>
-                                    <th className="text-center text-sm text-emerald-800 font-semibold px-4 py-3">Aksi</th>
+                                <tr className="border-b-2 border-emerald-200 dark:border-emerald-800/40 bg-emerald-100/80 dark:bg-emerald-900/20">
+                                    <th className="text-left text-sm text-emerald-800 dark:text-emerald-400 font-semibold px-4 py-3">Nama</th>
+                                    <th className="text-left text-sm text-emerald-800 dark:text-emerald-400 font-semibold px-4 py-3">Tanggal Daftar</th>
+                                    <th className="text-left text-sm text-emerald-800 dark:text-emerald-400 font-semibold px-4 py-3">Status</th>
+                                    <th className="text-center text-sm text-emerald-800 dark:text-emerald-400 font-semibold px-4 py-3">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {antrian.data.map((item) => (
-                                    <tr key={item.id_anggota} className="border-b border-emerald-100 hover:bg-emerald-50 transition">
-                                        <td className="px-4 py-3 font-medium text-gray-800">{item.nama_lengkap}</td>
-                                        <td className="px-4 py-3 text-gray-500">{item.tanggal_daftar}</td>
+                                    <tr key={item.id_anggota} className="border-b border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-50 dark:hover:bg-emerald-900/10 transition">
+                                        <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{item.nama_lengkap}</td>
+                                        <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{item.tanggal_daftar}</td>
                                         <td className="px-4 py-3">
-                                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/15 dark:text-amber-400">
                                                 {item.status_keanggotaan}
                                             </span>
                                         </td>
@@ -126,7 +126,7 @@ export default function Index({ antrian = { data: [], links: [] }, stats = {}, f
 
                 {/* ===== PENERAPAN MATERI: Pagination Server-Side (pola sama seperti Admin Keuangan) ===== */}
                 {antrian.last_page > 1 && (
-                    <div className="flex justify-center gap-1 border-t border-gray-100 px-4 py-4">
+                    <div className="flex justify-center gap-1 border-t border-gray-100 dark:border-gray-800 px-4 py-4">
                         {antrian.links.map((l, i) => (
                             <Link
                                 key={i}
@@ -136,7 +136,7 @@ export default function Index({ antrian = { data: [], links: [] }, stats = {}, f
                                 dangerouslySetInnerHTML={{ __html: l.label }}
                                 className={`rounded-md px-3 py-1 text-sm ${
                                     l.active ? 'bg-[#1B8A3A] text-white'
-                                    : l.url ? 'text-gray-600 hover:bg-gray-100' : 'cursor-default text-gray-300'
+                                    : l.url ? 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' : 'cursor-default text-gray-300 dark:text-gray-600'
                                 }`}
                             />
                         ))}

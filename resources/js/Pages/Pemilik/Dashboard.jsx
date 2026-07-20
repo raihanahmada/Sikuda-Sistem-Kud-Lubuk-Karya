@@ -59,24 +59,24 @@ const MiniChart = memo(function MiniChart({ data, color }) {
 
 function SkeletonCard() {
     return (
-        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm animate-pulse h-full">
-            <div className="h-3 bg-gray-200 rounded w-1/2 mb-3" />
-            <div className="h-6 bg-gray-200 rounded w-3/4 mb-2" />
-            <div className="h-2 bg-gray-100 rounded w-full mb-1" />
-            <div className="h-2 bg-gray-100 rounded w-2/3" />
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm animate-pulse h-full dark:bg-gray-900 dark:border-gray-800">
+            <div className="h-3 bg-gray-200 rounded w-1/2 mb-3 dark:bg-gray-700" />
+            <div className="h-6 bg-gray-200 rounded w-3/4 mb-2 dark:bg-gray-700" />
+            <div className="h-2 bg-gray-100 rounded w-full mb-1 dark:bg-gray-800" />
+            <div className="h-2 bg-gray-100 rounded w-2/3 dark:bg-gray-800" />
         </div>
     );
 }
 
 function ErrorBanner({ onRetry }) {
     return (
-        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl p-4 mb-4">
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl p-4 mb-4 dark:bg-red-900/15 dark:border-red-900/30">
             <AlertCircle size={18} className="text-red-500 flex-shrink-0" />
             <div className="flex-1">
-                <p className="text-sm font-medium text-red-700">Gagal memuat data dashboard</p>
-                <p className="text-[11px] text-red-400">Terjadi kesalahan saat mengambil data. Silakan muat ulang halaman.</p>
+                <p className="text-sm font-medium text-red-700 dark:text-red-400">Gagal memuat data dashboard</p>
+                <p className="text-[11px] text-red-400 dark:text-red-500">Terjadi kesalahan saat mengambil data. Silakan muat ulang halaman.</p>
             </div>
-            <button onClick={onRetry} className="flex items-center gap-1 text-[11px] text-red-600 border border-red-300 rounded-lg px-3 py-1.5 hover:bg-red-100 transition">
+            <button onClick={onRetry} className="flex items-center gap-1 text-[11px] text-red-600 border border-red-300 rounded-lg px-3 py-1.5 hover:bg-red-100 transition dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/30">
                 <RefreshCw size={12} /> Muat Ulang
             </button>
         </div>
@@ -85,7 +85,7 @@ function ErrorBanner({ onRetry }) {
 
 function NilaiData({ value, prefix = "", suffix = "", className = "" }) {
     if (tidakAdaData(value)) {
-        return <span className="text-gray-300 italic text-sm">Belum ada data</span>;
+        return <span className="text-gray-300 italic text-sm dark:text-gray-600">Belum ada data</span>;
     }
     return (
         <span className={className}>
@@ -96,7 +96,7 @@ function NilaiData({ value, prefix = "", suffix = "", className = "" }) {
 
 function LihatDetail() {
     return (
-        <div className="flex items-center gap-0.5 text-[11px] text-gray-600 font-medium hover:text-gray-800 transition mt-1">
+        <div className="flex items-center gap-0.5 text-[11px] text-gray-600 font-medium hover:text-gray-800 transition mt-1 dark:text-gray-300 dark:hover:text-gray-100">
             <span>Lihat detail</span>
             <ChevronRight size={12} />
         </div>
@@ -118,24 +118,24 @@ function PopupPilihBulan({ tahun, bulan, tanggalMulai, tanggalAkhir, onApply, on
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 dark:bg-gray-900" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-2 mb-4">
                     <Calendar size={16} className="text-[#1B8A3A]" />
-                    <h3 className="text-sm font-semibold text-gray-800">Pilih Periode Bulanan</h3>
+                    <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">Pilih Periode Bulanan</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 mb-4">
                     <div>
-                        <label className="text-[11px] text-gray-500 mb-1 block">Bulan</label>
-                        <select value={localBulan} onChange={(e) => setLocalBulan(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]">
+                        <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Bulan</label>
+                        <select value={localBulan} onChange={(e) => setLocalBulan(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                             {NAMA_BULAN.map((nama, idx) => (
                                 <option key={nama} value={idx + 1}>{nama}</option>
                             ))}
                         </select>
                     </div>
                     <div>
-                        <label className="text-[11px] text-gray-500 mb-1 block">Tahun</label>
-                        <select value={localTahun} onChange={(e) => setLocalTahun(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]">
+                        <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Tahun</label>
+                        <select value={localTahun} onChange={(e) => setLocalTahun(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                             {tahunOptions.map((th) => (
                                 <option key={th} value={th}>{th}</option>
                             ))}
@@ -143,22 +143,22 @@ function PopupPilihBulan({ tahun, bulan, tanggalMulai, tanggalAkhir, onApply, on
                     </div>
                 </div>
 
-                <div className="border-t border-gray-100 pt-3 mb-4">
-                    <p className="text-[11px] text-gray-500 mb-2">Atau pilih rentang tanggal kustom (opsional)</p>
+                <div className="border-t border-gray-100 pt-3 mb-4 dark:border-gray-800">
+                    <p className="text-[11px] text-gray-500 mb-2 dark:text-gray-400">Atau pilih rentang tanggal kustom (opsional)</p>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="text-[11px] text-gray-500 mb-1 block">Dari tanggal</label>
-                            <input type="date" value={localMulai} onChange={(e) => setLocalMulai(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]" />
+                            <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Dari tanggal</label>
+                            <input type="date" value={localMulai} onChange={(e) => setLocalMulai(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" />
                         </div>
                         <div>
-                            <label className="text-[11px] text-gray-500 mb-1 block">Sampai tanggal</label>
-                            <input type="date" value={localAkhir} onChange={(e) => setLocalAkhir(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]" />
+                            <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Sampai tanggal</label>
+                            <input type="date" value={localAkhir} onChange={(e) => setLocalAkhir(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" />
                         </div>
                     </div>
                 </div>
 
                 <div className="flex gap-3">
-                    <button onClick={onClose} className="flex-1 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl py-2.5 transition-colors">
+                    <button onClick={onClose} className="flex-1 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl py-2.5 transition-colors dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700">
                         Batal
                     </button>
                     <button onClick={() => onApply({ tahun: localTahun, bulan: localBulan, tanggalMulai: localMulai || null, tanggalAkhir: localAkhir || null })} className="flex-1 text-sm font-semibold text-white bg-[#1B8A3A] hover:bg-[#157030] rounded-xl py-2.5 transition-colors">
@@ -320,19 +320,19 @@ export default function Dashboard() {
                     <>
                         {/* ── Kas ── */}
                         <Link href="/pemilik/kas" className="block h-full">
-                            <div className="h-full flex flex-col justify-between bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm hover:shadow-md transition cursor-pointer">
+                            <div className="h-full flex flex-col justify-between bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm hover:shadow-md transition cursor-pointer dark:bg-emerald-900/15 dark:border-emerald-900/30">
                                 <div>
-                                    <p className="text-[11px] text-gray-600 font-medium mb-1">Saldo Kas Pusat</p>
-                                    <p className="text-xl font-bold text-emerald-800 mb-2">
-                                        <NilaiData value={ringkasanKas?.saldoAkhir} prefix="Rp " className="text-xl font-bold text-emerald-800" />
+                                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Saldo Kas Pusat</p>
+                                    <p className="text-xl font-bold text-emerald-800 mb-2 dark:text-emerald-400">
+                                        <NilaiData value={ringkasanKas?.saldoAkhir} prefix="Rp " className="text-xl font-bold text-emerald-800 dark:text-emerald-400" />
                                     </p>
-                                    <p className="text-[11px] text-gray-600">
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-300">
                                         Kas Masuk:&nbsp;
-                                        <NilaiData value={ringkasanKas?.totalMasuk} prefix="Rp " className="text-[11px] font-medium text-gray-800" />
+                                        <NilaiData value={ringkasanKas?.totalMasuk} prefix="Rp " className="text-[11px] font-medium text-gray-800 dark:text-gray-100" />
                                     </p>
-                                    <p className="text-[11px] text-gray-600 mb-1">
+                                    <p className="text-[11px] text-gray-600 mb-1 dark:text-gray-300">
                                         Kas Keluar:&nbsp;
-                                        <NilaiData value={ringkasanKas?.totalKeluar} prefix="Rp " className="text-[11px] font-medium text-gray-800" />
+                                        <NilaiData value={ringkasanKas?.totalKeluar} prefix="Rp " className="text-[11px] font-medium text-gray-800 dark:text-gray-100" />
                                     </p>
                                     <LihatDetail />
                                 </div>
@@ -342,19 +342,19 @@ export default function Dashboard() {
 
                         {/* ── Simpanan ── */}
                         <Link href="/pemilik/simpanan" className="block h-full">
-                            <div className="h-full flex flex-col justify-between bg-amber-100 rounded-2xl p-4 border border-amber-200 shadow-sm hover:shadow-md transition cursor-pointer">
+                            <div className="h-full flex flex-col justify-between bg-amber-100 rounded-2xl p-4 border border-amber-200 shadow-sm hover:shadow-md transition cursor-pointer dark:bg-amber-900/15 dark:border-amber-900/30">
                                 <div>
-                                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Dana Simpanan</p>
-                                    <p className="text-xl font-bold text-amber-800 mb-2">
-                                        <NilaiData value={totalSimpanan} prefix="Rp " className="text-xl font-bold text-amber-800" />
+                                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Total Dana Simpanan</p>
+                                    <p className="text-xl font-bold text-amber-800 mb-2 dark:text-amber-400">
+                                        <NilaiData value={totalSimpanan} prefix="Rp " className="text-xl font-bold text-amber-800 dark:text-amber-400" />
                                     </p>
-                                    <p className="text-[11px] text-gray-600">
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-300">
                                         Dana Masuk:&nbsp;
-                                        <NilaiData value={ringkasanKas?.totalMasuk} prefix="Rp " className="text-[11px] font-medium text-gray-800" />
+                                        <NilaiData value={ringkasanKas?.totalMasuk} prefix="Rp " className="text-[11px] font-medium text-gray-800 dark:text-gray-100" />
                                     </p>
-                                    <p className="text-[11px] text-gray-600 mb-1">
+                                    <p className="text-[11px] text-gray-600 mb-1 dark:text-gray-300">
                                         Dana Keluar:&nbsp;
-                                        <NilaiData value={ringkasanKas?.totalKeluar} prefix="Rp " className="text-[11px] font-medium text-gray-800" />
+                                        <NilaiData value={ringkasanKas?.totalKeluar} prefix="Rp " className="text-[11px] font-medium text-gray-800 dark:text-gray-100" />
                                     </p>
                                     <LihatDetail />
                                 </div>
@@ -364,19 +364,19 @@ export default function Dashboard() {
 
                         {/* ── Penjualan TBS ── */}
                         <Link href="/pemilik/penjualan-tbs" className="block h-full">
-                            <div className="h-full flex flex-col justify-between bg-lime-100 rounded-2xl p-4 border border-lime-200 shadow-sm hover:shadow-md transition cursor-pointer">
+                            <div className="h-full flex flex-col justify-between bg-lime-100 rounded-2xl p-4 border border-lime-200 shadow-sm hover:shadow-md transition cursor-pointer dark:bg-lime-900/15 dark:border-lime-900/30">
                                 <div>
-                                    <p className="text-[11px] text-gray-600 font-medium mb-1">Penjualan TBS</p>
-                                    <p className="text-xl font-bold text-lime-800 mb-2">
-                                        <NilaiData value={ringkasanTbs?.totalNilai} prefix="Rp " className="text-xl font-bold text-lime-800" />
+                                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Penjualan TBS</p>
+                                    <p className="text-xl font-bold text-lime-800 mb-2 dark:text-lime-400">
+                                        <NilaiData value={ringkasanTbs?.totalNilai} prefix="Rp " className="text-xl font-bold text-lime-800 dark:text-lime-400" />
                                     </p>
-                                    <p className="text-[11px] text-gray-600">
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-300">
                                         Berat Total:&nbsp;
-                                        <NilaiData value={ringkasanTbs?.totalBeratKg} suffix=" kg" className="text-[11px] font-medium text-gray-800" />
+                                        <NilaiData value={ringkasanTbs?.totalBeratKg} suffix=" kg" className="text-[11px] font-medium text-gray-800 dark:text-gray-100" />
                                     </p>
-                                    <p className="text-[11px] text-gray-600 mb-1">
+                                    <p className="text-[11px] text-gray-600 mb-1 dark:text-gray-300">
                                         Harga/kg:&nbsp;
-                                        <NilaiData value={ringkasanTbs?.hargaBerlaku} prefix="Rp " className="text-[11px] font-medium text-gray-800" />
+                                        <NilaiData value={ringkasanTbs?.hargaBerlaku} prefix="Rp " className="text-[11px] font-medium text-gray-800 dark:text-gray-100" />
                                     </p>
                                     <LihatDetail />
                                 </div>
@@ -386,11 +386,11 @@ export default function Dashboard() {
 
                         {/* ── Anggota ── */}
                         <Link href="/pemilik/anggota" className="block h-full">
-                            <div className="h-full flex flex-col justify-between bg-blue-100 rounded-2xl p-4 border border-blue-200 shadow-sm hover:shadow-md transition cursor-pointer">
+                            <div className="h-full flex flex-col justify-between bg-blue-100 rounded-2xl p-4 border border-blue-200 shadow-sm hover:shadow-md transition cursor-pointer dark:bg-blue-900/15 dark:border-blue-900/30">
                                 <div>
-                                    <p className="text-[11px] text-gray-600 font-medium mb-1">Status Keanggotaan</p>
-                                    <p className="text-xl font-bold text-blue-800 mb-1">
-                                        {total > 0 ? `${total} Orang` : <span className="text-gray-400 italic text-sm">Belum ada data</span>}
+                                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Status Keanggotaan</p>
+                                    <p className="text-xl font-bold text-blue-800 mb-1 dark:text-blue-400">
+                                        {total > 0 ? `${total} Orang` : <span className="text-gray-400 italic text-sm dark:text-gray-500">Belum ada data</span>}
                                     </p>
                                     <LihatDetail />
                                 </div>
@@ -400,7 +400,7 @@ export default function Dashboard() {
                                     {barAnggota.map(({ pct, color, label }) => (
                                         <div key={label} className="flex flex-col items-center gap-1 flex-1">
                                             <div className="w-full rounded-t transition-all duration-500" style={{ height: pct > 0 ? `${pct}%` : undefined, minHeight: pct > 0 ? 8 : 4, background: color, opacity: pct > 0 ? 1 : 0.25 }} />
-                                            <span className="text-[10px] text-gray-600 font-medium">{label}</span>
+                                            <span className="text-[10px] text-gray-600 font-medium dark:text-gray-300">{label}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -411,24 +411,24 @@ export default function Dashboard() {
             </div>
 
             {/* GRAFIK ARUS KAS */}
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm dark:bg-gray-900 dark:border-gray-800">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                    <p className="text-sm font-semibold text-gray-700">{judulGrafik}</p>
+                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{judulGrafik}</p>
 
                     <div className="flex items-center gap-4">
                         {/* Toggle Per Bulan / Per Tahun */}
-                        <div className="flex items-center bg-gray-100 rounded-lg p-1 text-xs font-medium">
-                            <button onClick={bukaPopupBulan} className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "bulan" ? "bg-white text-[#1B8A3A] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                        <div className="flex items-center bg-gray-100 rounded-lg p-1 text-xs font-medium dark:bg-gray-800">
+                            <button onClick={bukaPopupBulan} className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "bulan" ? "bg-white text-[#1B8A3A] shadow-sm dark:bg-gray-900" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"}`}>
                                 <Calendar size={12} />
                                 Per Bulan
                                 <ChevronDown size={11} />
                             </button>
-                            <button onClick={pilihPerTahun} className={`px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "tahun" ? "bg-white text-[#1B8A3A] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                            <button onClick={pilihPerTahun} className={`px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "tahun" ? "bg-white text-[#1B8A3A] shadow-sm dark:bg-gray-900" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"}`}>
                                 Per Tahun
                             </button>
                         </div>
 
-                        <div className="flex items-center gap-4 text-[10px] text-gray-400">
+                        <div className="flex items-center gap-4 text-[10px] text-gray-400 dark:text-gray-500">
                             <span className="flex items-center gap-1">
                                 <span className="w-2 h-2 rounded-full bg-[#1B8A3A] inline-block" />{" "}
                                 Pemasukan
@@ -438,7 +438,7 @@ export default function Dashboard() {
                                 Pengeluaran
                             </span>
                             <span className="flex items-center gap-1">
-                                <span className="w-2 h-2 rounded-full bg-gray-300 inline-block" />{" "}
+                                <span className="w-2 h-2 rounded-full bg-gray-300 inline-block dark:bg-gray-600" />{" "}
                                 Saldo Rp {saldoFormatted}
                             </span>
                         </div>
@@ -446,7 +446,7 @@ export default function Dashboard() {
                 </div>
 
                 {grafikData.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-[380px] text-gray-300">
+                    <div className="flex flex-col items-center justify-center h-[380px] text-gray-300 dark:text-gray-600">
                         <AlertCircle size={32} className="mb-2" />
                         <p className="text-sm italic">Belum ada data transaksi</p>
                     </div>

@@ -18,12 +18,12 @@ export default function SikudaLogin({ status }) {
     };
 
     return (
-        <AuthenticatedLayout title="Login — SIKUDA KUD Lubuk Karya" status={status}>
+        <AuthenticatedLayout title="Login SIKUDA KUD Lubuk Karya" status={status}>
             {/* Judul */}
-            <h1 className="mb-1 text-3xl font-bold text-gray-900">
+            <h1 className="mb-1 text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Selamat Datang
             </h1>
-            <p className="mb-7 text-sm text-gray-400">
+            <p className="mb-7 text-sm text-gray-400 dark:text-gray-500">
                 Masukkan username &amp; password Anda untuk melanjutkan
             </p>
 
@@ -33,12 +33,12 @@ export default function SikudaLogin({ status }) {
                 <div>
                     <label
                         htmlFor="nama_pengguna"
-                        className="mb-1.5 block text-sm font-medium text-gray-700"
+                        className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >
                         Username
                     </label>
                     <div className="relative">
-                        <User size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
+                        <User size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300 dark:text-gray-500" />
                         <input
                             id="nama_pengguna"
                             type="text"
@@ -49,10 +49,10 @@ export default function SikudaLogin({ status }) {
                             placeholder="Masukkan username"
                             autoComplete="username"
                             autoFocus
-                            className={`w-full rounded-xl border py-2.5 pl-10 pr-3 text-sm text-gray-900 placeholder-gray-400 transition focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 ${
+                            className={`w-full rounded-xl border py-2.5 pl-10 pr-3 text-sm text-gray-900 placeholder-gray-400 transition focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 dark:text-gray-100 dark:placeholder-gray-500 ${
                                 errors.nama_pengguna
-                                    ? 'border-red-300 bg-red-50 focus:border-red-400'
-                                    : 'border-gray-200 bg-white focus:border-[#1B8A3A]'
+                                    ? 'border-red-300 bg-red-50 focus:border-red-400 dark:border-red-900/50 dark:bg-red-900/10'
+                                    : 'border-gray-200 bg-white focus:border-[#1B8A3A] dark:border-gray-700 dark:bg-gray-800'
                             }`}
                         />
                     </div>
@@ -67,12 +67,12 @@ export default function SikudaLogin({ status }) {
                 <div>
                     <label
                         htmlFor="kata_sandi"
-                        className="mb-1.5 block text-sm font-medium text-gray-700"
+                        className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >
                         Password
                     </label>
                     <div className="relative">
-                        <Lock size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
+                        <Lock size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300 dark:text-gray-500" />
                         <input
                             id="kata_sandi"
                             type={showPassword ? 'text' : 'password'}
@@ -82,17 +82,17 @@ export default function SikudaLogin({ status }) {
                             }
                             placeholder="••••••••••"
                             autoComplete="current-password"
-                            className={`w-full rounded-xl border py-2.5 pl-10 pr-10 text-sm text-gray-900 placeholder-gray-400 transition focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 ${
+                            className={`w-full rounded-xl border py-2.5 pl-10 pr-10 text-sm text-gray-900 placeholder-gray-400 transition focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 dark:text-gray-100 dark:placeholder-gray-500 ${
                                 errors.kata_sandi
-                                    ? 'border-red-300 bg-red-50 focus:border-red-400'
-                                    : 'border-gray-200 bg-white focus:border-[#1B8A3A]'
+                                    ? 'border-red-300 bg-red-50 focus:border-red-400 dark:border-red-900/50 dark:bg-red-900/10'
+                                    : 'border-gray-200 bg-white focus:border-[#1B8A3A] dark:border-gray-700 dark:bg-gray-800'
                             }`}
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword((v) => !v)}
                             tabIndex={-1}
-                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500"
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300"
                         >
                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>

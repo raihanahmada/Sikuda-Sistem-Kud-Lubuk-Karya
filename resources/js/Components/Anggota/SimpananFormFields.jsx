@@ -1,5 +1,5 @@
-const inputCls = "w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]";
-const labelCls = "block text-base font-medium text-gray-600 mb-1.5";
+const inputCls = "w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-500";
+const labelCls = "block text-base font-medium text-gray-600 mb-1.5 dark:text-gray-300";
 
 // Dipakai bersama oleh ModalSimpanan (Tambah) dan ModalDetailSimpanan (Edit riwayat in-place)
 export default function SimpananFormFields({ data, setData, errors, daftarAnggota }) {
@@ -14,7 +14,7 @@ export default function SimpananFormFields({ data, setData, errors, daftarAnggot
                             <option key={a.id_anggota} value={a.id_anggota}>{a.nik} - {a.nama_lengkap}</option>
                         ))}
                     </select>
-                    {errors.id_anggota && <div className="text-red-500 text-sm mt-1">{errors.id_anggota}</div>}
+                    {errors.id_anggota && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.id_anggota}</div>}
                 </div>
             )}
 
@@ -30,13 +30,13 @@ export default function SimpananFormFields({ data, setData, errors, daftarAnggot
             <div>
                 <label className={labelCls}>Jumlah (Rp)</label>
                 <input type="number" placeholder="Contoh: 50000" className={inputCls} value={data.jumlah} onChange={e => setData('jumlah', e.target.value)} />
-                {errors.jumlah && <div className="text-red-500 text-sm mt-1">{errors.jumlah}</div>}
+                {errors.jumlah && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.jumlah}</div>}
             </div>
 
             <div>
                 <label className={labelCls}>Tanggal Transaksi</label>
                 <input type="date" className={inputCls} value={data.tanggal_transaksi} onChange={e => setData('tanggal_transaksi', e.target.value)} />
-                {errors.tanggal_transaksi && <div className="text-red-500 text-sm mt-1">{errors.tanggal_transaksi}</div>}
+                {errors.tanggal_transaksi && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.tanggal_transaksi}</div>}
             </div>
 
             <div>

@@ -35,12 +35,12 @@ function formatTanggalIndo(tanggalStr) {
 const Pagination = memo(function Pagination({ current, total, onChange }) {
     const pages = Array.from({ length: total }, (_, i) => i + 1);
     return (
-        <div className="flex items-center justify-end gap-1.5 mt-4 text-sm text-gray-500">
-            <button onClick={() => onChange(Math.max(1, current - 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md">‹</button>
+        <div className="flex items-center justify-end gap-1.5 mt-4 text-sm text-gray-500 dark:text-gray-400">
+            <button onClick={() => onChange(Math.max(1, current - 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md dark:hover:bg-gray-800">‹</button>
             {pages.map((p) => (
-                <button key={p} onClick={() => onChange(p)} className={`w-8 h-8 rounded-md ${p === current ? "border border-emerald-500 text-emerald-600 bg-emerald-50" : "hover:bg-gray-100"}`}>{p}</button>
+                <button key={p} onClick={() => onChange(p)} className={`w-8 h-8 rounded-md ${p === current ? "border border-emerald-500 text-emerald-600 bg-emerald-50 dark:border-emerald-600 dark:text-emerald-400 dark:bg-emerald-900/20" : "hover:bg-gray-100 dark:hover:bg-gray-800"}`}>{p}</button>
             ))}
-            <button onClick={() => onChange(Math.min(total, current + 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md">›</button>
+            <button onClick={() => onChange(Math.min(total, current + 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md dark:hover:bg-gray-800">›</button>
         </div>
     );
 });
@@ -51,10 +51,10 @@ const ExportButtons = memo(function ExportButtons({ onExport }) {
     return (
         <div className="flex gap-1.5">
             {[
-                { label: "CSV",   type: "csv",   cls: "bg-gray-100"  },
-                { label: "Excel", type: "excel", cls: "bg-green-100" },
-                { label: "PDF",   type: "pdf",   cls: "bg-red-100"   },
-                { label: "DOCX",  type: "docx",  cls: "bg-blue-100"  },
+                { label: "CSV",   type: "csv",   cls: "bg-gray-100 dark:bg-gray-800 dark:text-gray-200"  },
+                { label: "Excel", type: "excel", cls: "bg-green-100 dark:bg-green-900/20 dark:text-green-400" },
+                { label: "PDF",   type: "pdf",   cls: "bg-red-100 dark:bg-red-900/20 dark:text-red-400"   },
+                { label: "DOCX",  type: "docx",  cls: "bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400"  },
             ].map(({ label, type, cls }) => (
                 <button key={type} onClick={() => onExport(type)} className={`px-2.5 py-1.5 ${cls} rounded-lg text-[11px] font-medium`}>{label}</button>
             ))}
@@ -66,13 +66,13 @@ const ExportButtons = memo(function ExportButtons({ onExport }) {
 
 const TogglePeriode = memo(function TogglePeriode({ jenisPeriode, onPilihBulan, onPilihTahun }) {
     return (
-        <div className="flex items-center bg-gray-100 rounded-lg p-1 text-xs font-medium">
-            <button onClick={onPilihBulan} className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "bulan" ? "bg-white text-[#1B8A3A] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+        <div className="flex items-center bg-gray-100 rounded-lg p-1 text-xs font-medium dark:bg-gray-800">
+            <button onClick={onPilihBulan} className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "bulan" ? "bg-white text-[#1B8A3A] shadow-sm dark:bg-gray-900" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"}`}>
                 <Calendar size={12} />
                 Per Bulan
                 <ChevronDown size={11} />
             </button>
-            <button onClick={onPilihTahun} className={`px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "tahun" ? "bg-white text-[#1B8A3A] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+            <button onClick={onPilihTahun} className={`px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "tahun" ? "bg-white text-[#1B8A3A] shadow-sm dark:bg-gray-900" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"}`}>
                 Per Tahun
             </button>
         </div>
@@ -94,24 +94,24 @@ function PopupPilihBulan({ tahun, bulan, onApplyBulan, onApplyRentang, onClose }
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 dark:bg-gray-900" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-2 mb-4">
                     <Calendar size={16} className="text-[#1B8A3A]" />
-                    <h3 className="text-sm font-semibold text-gray-800">Pilih Periode Bulanan</h3>
+                    <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">Pilih Periode Bulanan</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 mb-4">
                     <div>
-                        <label className="text-[11px] text-gray-500 mb-1 block">Bulan</label>
-                        <select value={localBulan} onChange={(e) => setLocalBulan(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]">
+                        <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Bulan</label>
+                        <select value={localBulan} onChange={(e) => setLocalBulan(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                             {NAMA_BULAN.map((nama, idx) => (
                                 <option key={nama} value={idx + 1}>{nama}</option>
                             ))}
                         </select>
                     </div>
                     <div>
-                        <label className="text-[11px] text-gray-500 mb-1 block">Tahun</label>
-                        <select value={localTahun} onChange={(e) => setLocalTahun(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]">
+                        <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Tahun</label>
+                        <select value={localTahun} onChange={(e) => setLocalTahun(Number(e.target.value))} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
                             {tahunOptions.map((th) => (
                                 <option key={th} value={th}>{th}</option>
                             ))}
@@ -119,22 +119,22 @@ function PopupPilihBulan({ tahun, bulan, onApplyBulan, onApplyRentang, onClose }
                     </div>
                 </div>
 
-                <div className="border-t border-gray-100 pt-3 mb-4">
-                    <p className="text-[11px] text-gray-500 mb-2">Atau pilih rentang tanggal kustom (opsional)</p>
+                <div className="border-t border-gray-100 pt-3 mb-4 dark:border-gray-800">
+                    <p className="text-[11px] text-gray-500 mb-2 dark:text-gray-400">Atau pilih rentang tanggal kustom (opsional)</p>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="text-[11px] text-gray-500 mb-1 block">Dari tanggal</label>
-                            <input type="date" value={localMulai} onChange={(e) => setLocalMulai(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]" />
+                            <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Dari tanggal</label>
+                            <input type="date" value={localMulai} onChange={(e) => setLocalMulai(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" />
                         </div>
                         <div>
-                            <label className="text-[11px] text-gray-500 mb-1 block">Sampai tanggal</label>
-                            <input type="date" value={localAkhir} onChange={(e) => setLocalAkhir(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]" />
+                            <label className="text-[11px] text-gray-500 mb-1 block dark:text-gray-400">Sampai tanggal</label>
+                            <input type="date" value={localAkhir} onChange={(e) => setLocalAkhir(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" />
                         </div>
                     </div>
                 </div>
 
                 <div className="flex gap-3">
-                    <button onClick={onClose} className="flex-1 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl py-2.5 transition-colors">
+                    <button onClick={onClose} className="flex-1 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl py-2.5 transition-colors dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700">
                         Batal
                     </button>
                     <button
@@ -316,68 +316,68 @@ export default function Kas() {
             {/* HEADER */}
             <div className="flex items-center justify-between gap-3 mb-2 flex-wrap">
                 <div className="flex items-center gap-3">
-                    <Link href={route('pemilik.dashboard')} className="text-gray-400 hover:text-gray-600">
+                    <Link href={route('pemilik.dashboard')} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
                         <ArrowLeft size={18} />
                     </Link>
-                    <h1 className="text-xl font-semibold text-gray-800">Detail Keuangan Koperasi</h1>
+                    <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Detail Keuangan Koperasi</h1>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <TogglePeriode jenisPeriode={jenisPeriode} onPilihBulan={() => setShowPopupBulan(true)} onPilihTahun={pilihPerTahun} />
-                    <span className="text-xs text-gray-400">{formatTanggalIndo(startDate)} s/d {formatTanggalIndo(endDate)}</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500">{formatTanggalIndo(startDate)} s/d {formatTanggalIndo(endDate)}</span>
                 </div>
             </div>
 
             {/* SUMMARY CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gray-100 rounded-2xl p-4 border border-gray-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Saldo Kas Pusat</p>
-                    <p className="text-xl font-bold text-gray-900 mb-2">Rp {formatRp(saldoAkhir)}</p>
-                    <p className="text-[11px] text-gray-600">Kas Masuk: <span className="font-medium text-gray-800">Rp {formatRp(totalMasuk)}</span></p>
-                    <p className="text-[11px] text-gray-600">Kas Keluar: <span className="font-medium text-gray-800">Rp {formatRp(totalKeluar)}</span></p>
+                <div className="bg-gray-100 rounded-2xl p-4 border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Saldo Kas Pusat</p>
+                    <p className="text-xl font-bold text-gray-900 mb-2 dark:text-gray-100">Rp {formatRp(saldoAkhir)}</p>
+                    <p className="text-[11px] text-gray-600 dark:text-gray-300">Kas Masuk: <span className="font-medium text-gray-800 dark:text-gray-100">Rp {formatRp(totalMasuk)}</span></p>
+                    <p className="text-[11px] text-gray-600 dark:text-gray-300">Kas Keluar: <span className="font-medium text-gray-800 dark:text-gray-100">Rp {formatRp(totalKeluar)}</span></p>
                 </div>
-                <div className="bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Kas Masuk</p>
-                    <p className="text-xl font-bold text-emerald-800 mb-2">Rp {formatRp(totalMasuk)}</p>
-                    <p className="text-[11px] text-gray-600">Total dana masuk</p>
+                <div className="bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm dark:bg-emerald-900/15 dark:border-emerald-900/30">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Kas Masuk</p>
+                    <p className="text-xl font-bold text-emerald-800 mb-2 dark:text-emerald-400">Rp {formatRp(totalMasuk)}</p>
+                    <p className="text-[11px] text-gray-600 dark:text-gray-300">Total dana masuk</p>
                 </div>
-                <div className="bg-red-100 rounded-2xl p-4 border border-red-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Kas Keluar</p>
-                    <p className="text-xl font-bold text-red-800 mb-2">Rp {formatRp(totalKeluar)}</p>
-                    <p className="text-[11px] text-gray-600">Total dana keluar</p>
+                <div className="bg-red-100 rounded-2xl p-4 border border-red-200 shadow-sm dark:bg-red-900/15 dark:border-red-900/30">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Kas Keluar</p>
+                    <p className="text-xl font-bold text-red-800 mb-2 dark:text-red-400">Rp {formatRp(totalKeluar)}</p>
+                    <p className="text-[11px] text-gray-600 dark:text-gray-300">Total dana keluar</p>
                 </div>
-                <div className="bg-blue-100 rounded-2xl p-4 border border-blue-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Jumlah Total Transaksi</p>
-                    <p className="text-xl font-bold text-blue-800 mb-2">{totalTransaksi}</p>
-                    <p className="text-[11px] text-gray-600">Pada periode ini</p>
+                <div className="bg-blue-100 rounded-2xl p-4 border border-blue-200 shadow-sm dark:bg-blue-900/15 dark:border-blue-900/30">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Jumlah Total Transaksi</p>
+                    <p className="text-xl font-bold text-blue-800 mb-2 dark:text-blue-400">{totalTransaksi}</p>
+                    <p className="text-[11px] text-gray-600 dark:text-gray-300">Pada periode ini</p>
                 </div>
-                <div className="bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Dana Simpanan Pokok</p>
-                    <p className="text-xl font-bold text-emerald-800 mb-2">Rp {formatRp(simpananPokok)}</p>
-                    <p className="text-[11px] text-gray-600">Pada periode ini</p>
+                <div className="bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm dark:bg-emerald-900/15 dark:border-emerald-900/30">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Total Dana Simpanan Pokok</p>
+                    <p className="text-xl font-bold text-emerald-800 mb-2 dark:text-emerald-400">Rp {formatRp(simpananPokok)}</p>
+                    <p className="text-[11px] text-gray-600 dark:text-gray-300">Pada periode ini</p>
                 </div>
-                <div className="bg-amber-100 rounded-2xl p-4 border border-amber-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Dana Simpanan Wajib</p>
-                    <p className="text-xl font-bold text-amber-800 mb-2">Rp {formatRp(simpananWajib)}</p>
-                    <p className="text-[11px] text-gray-600">Pada periode ini</p>
+                <div className="bg-amber-100 rounded-2xl p-4 border border-amber-200 shadow-sm dark:bg-amber-900/15 dark:border-amber-900/30">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Total Dana Simpanan Wajib</p>
+                    <p className="text-xl font-bold text-amber-800 mb-2 dark:text-amber-400">Rp {formatRp(simpananWajib)}</p>
+                    <p className="text-[11px] text-gray-600 dark:text-gray-300">Pada periode ini</p>
                 </div>
             </div>
 
             {/* TABEL RINCIAN KEUANGAN */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6 p-6 dark:bg-gray-900 dark:border-gray-800">
                 <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                    <h2 className="font-semibold text-gray-800">
+                    <h2 className="font-semibold text-gray-800 dark:text-gray-100">
                         Rincian Keuangan ({(perSumber || []).length})
                     </h2>
                     <div className="flex items-center gap-2 flex-wrap">
                         <div className="relative">
-                            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                             <input
                                 type="text"
                                 placeholder="Cari kategori..."
                                 value={cariSumber}
                                 onChange={(e) => setCariSumber(e.target.value)}
-                                className="border rounded-lg pl-8 pr-3 py-1.5 text-xs w-56"
+                                className="border rounded-lg pl-8 pr-3 py-1.5 text-xs w-56 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
                             />
                         </div>
                         <ExportButtons onExport={doExportSumber} />
@@ -385,14 +385,14 @@ export default function Kas() {
                 </div>
 
                 {(perSumber || []).length === 0 ? (
-                    <div className="text-center py-12 text-gray-300 italic text-sm">
+                    <div className="text-center py-12 text-gray-300 italic text-sm dark:text-gray-600">
                         Belum ada data kas
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="bg-gray-50 text-gray-500 text-xs uppercase">
+                                <tr className="bg-gray-50 text-gray-500 text-xs uppercase dark:bg-gray-800 dark:text-gray-400">
                                     <th className="py-3 px-4 text-left">Kategori</th>
                                     <th className="py-3 px-4 text-right">Jumlah Transaksi</th>
                                     <th className="py-3 px-4 text-right">Kas Masuk</th>
@@ -400,14 +400,14 @@ export default function Kas() {
                                     <th className="py-3 px-4 text-right">Net</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                 {paginatedSumber.map((s) => (
-                                    <tr key={s.sumber_key} className="hover:bg-gray-50">
-                                        <td className="py-3 px-4 text-[11px] text-gray-600">{s.sumber}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600">{s.jumlah_transaksi}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600">Rp {formatRp(s.kas_masuk)}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600">Rp {formatRp(s.kas_keluar)}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] font-medium text-gray-800">Rp {formatRp(s.net)}</td>
+                                    <tr key={s.sumber_key} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                        <td className="py-3 px-4 text-[11px] text-gray-600 dark:text-gray-300">{s.sumber}</td>
+                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600 dark:text-gray-300">{s.jumlah_transaksi}</td>
+                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600 dark:text-gray-300">Rp {formatRp(s.kas_masuk)}</td>
+                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600 dark:text-gray-300">Rp {formatRp(s.kas_keluar)}</td>
+                                        <td className="py-3 px-4 text-right text-[11px] font-medium text-gray-800 dark:text-gray-100">Rp {formatRp(s.net)}</td>
                                     </tr>
                                 ))}
                             </tbody>

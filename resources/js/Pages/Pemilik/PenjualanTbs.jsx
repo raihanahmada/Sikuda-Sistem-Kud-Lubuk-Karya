@@ -33,12 +33,12 @@ function formatTanggalIndo(tanggalStr) {
 const Pagination = memo(function Pagination({ current, total, onChange }) {
     const pages = Array.from({ length: total }, (_, i) => i + 1);
     return (
-        <div className="flex items-center justify-end gap-1.5 mt-4 text-sm text-gray-500">
-            <button onClick={() => onChange(Math.max(1, current - 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md">‹</button>
+        <div className="flex items-center justify-end gap-1.5 mt-4 text-sm text-gray-500 dark:text-gray-400">
+            <button onClick={() => onChange(Math.max(1, current - 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md dark:hover:bg-gray-800">‹</button>
             {pages.map((p) => (
-                <button key={p} onClick={() => onChange(p)} className={`w-8 h-8 rounded-md ${p === current ? "border border-emerald-500 text-emerald-600 bg-emerald-50" : "hover:bg-gray-100"}`}>{p}</button>
+                <button key={p} onClick={() => onChange(p)} className={`w-8 h-8 rounded-md ${p === current ? "border border-emerald-500 text-emerald-600 bg-emerald-50 dark:border-emerald-600 dark:text-emerald-400 dark:bg-emerald-900/20" : "hover:bg-gray-100 dark:hover:bg-gray-800"}`}>{p}</button>
             ))}
-            <button onClick={() => onChange(Math.min(total, current + 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md">›</button>
+            <button onClick={() => onChange(Math.min(total, current + 1))} className="w-8 h-8 hover:bg-gray-100 rounded-md dark:hover:bg-gray-800">›</button>
         </div>
     );
 });
@@ -49,10 +49,10 @@ const ExportButtons = memo(function ExportButtons({ onExport }) {
     return (
         <div className="flex gap-1.5">
             {[
-                { label: "CSV",   type: "csv",   cls: "bg-gray-100"  },
-                { label: "Excel", type: "excel", cls: "bg-green-100" },
-                { label: "PDF",   type: "pdf",   cls: "bg-red-100"   },
-                { label: "DOCX",  type: "docx",  cls: "bg-blue-100"  },
+                { label: "CSV",   type: "csv",   cls: "bg-gray-100 dark:bg-gray-800 dark:text-gray-200"  },
+                { label: "Excel", type: "excel", cls: "bg-green-100 dark:bg-green-900/20 dark:text-green-400" },
+                { label: "PDF",   type: "pdf",   cls: "bg-red-100 dark:bg-red-900/20 dark:text-red-400"   },
+                { label: "DOCX",  type: "docx",  cls: "bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400"  },
             ].map(({ label, type, cls }) => (
                 <button key={type} onClick={() => onExport(type)} className={`px-2.5 py-1.5 ${cls} rounded-lg text-[11px] font-medium`}>{label}</button>
             ))}
@@ -64,13 +64,13 @@ const ExportButtons = memo(function ExportButtons({ onExport }) {
 
 const TogglePeriode = memo(function TogglePeriode({ jenisPeriode, onPilihBulan, onPilihTahun }) {
     return (
-        <div className="flex items-center bg-gray-100 rounded-lg p-1 text-xs font-medium">
-            <button onClick={onPilihBulan} className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "bulan" ? "bg-white text-[#1B8A3A] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+        <div className="flex items-center bg-gray-100 rounded-lg p-1 text-xs font-medium dark:bg-gray-800">
+            <button onClick={onPilihBulan} className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "bulan" ? "bg-white text-[#1B8A3A] shadow-sm dark:bg-gray-900" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"}`}>
                 <Calendar size={12} />
                 Per Bulan
                 <ChevronDown size={11} />
             </button>
-            <button onClick={onPilihTahun} className={`px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "tahun" ? "bg-white text-[#1B8A3A] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+            <button onClick={onPilihTahun} className={`px-3 py-1.5 rounded-md transition-colors ${jenisPeriode === "tahun" ? "bg-white text-[#1B8A3A] shadow-sm dark:bg-gray-900" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"}`}>
                 Per Tahun
             </button>
         </div>
@@ -96,70 +96,70 @@ const ModalPilihPeriode = memo(function ModalPilihPeriode({ tahun, bulan, onAppl
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 dark:bg-gray-900">
                 <div className="flex items-center gap-2 mb-5">
                     <Calendar size={18} className="text-[#1B8A3A]" />
-                    <h3 className="font-semibold text-gray-800">Pilih Periode Bulanan</h3>
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-100">Pilih Periode Bulanan</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 mb-5">
                     <div>
-                        <label className="text-xs text-gray-500 mb-1.5 block">Bulan</label>
+                        <label className="text-xs text-gray-500 mb-1.5 block dark:text-gray-400">Bulan</label>
                         <div className="relative">
                             <select
                                 value={selBulan}
                                 onChange={(e) => setSelBulan(Number(e.target.value))}
-                                className="w-full appearance-none border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20"
+                                className="w-full appearance-none border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                             >
                                 {NAMA_BULAN.map((nama, i) => (
                                     <option key={nama} value={i + 1}>{nama}</option>
                                 ))}
                             </select>
-                            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none dark:text-gray-500" />
                         </div>
                     </div>
                     <div>
-                        <label className="text-xs text-gray-500 mb-1.5 block">Tahun</label>
+                        <label className="text-xs text-gray-500 mb-1.5 block dark:text-gray-400">Tahun</label>
                         <div className="relative">
                             <select
                                 value={selTahun}
                                 onChange={(e) => setSelTahun(Number(e.target.value))}
-                                className="w-full appearance-none border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20"
+                                className="w-full appearance-none border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                             >
                                 {tahunOptions.map((t) => <option key={t} value={t}>{t}</option>)}
                             </select>
-                            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none dark:text-gray-500" />
                         </div>
                     </div>
                 </div>
 
-                <hr className="border-gray-100 mb-4" />
+                <hr className="border-gray-100 mb-4 dark:border-gray-800" />
 
-                <p className="text-xs text-gray-400 mb-3">Atau pilih rentang tanggal kustom (opsional)</p>
+                <p className="text-xs text-gray-400 mb-3 dark:text-gray-500">Atau pilih rentang tanggal kustom (opsional)</p>
 
                 <div className="grid grid-cols-2 gap-3 mb-6">
                     <div>
-                        <label className="text-xs text-gray-500 mb-1.5 block">Dari tanggal</label>
+                        <label className="text-xs text-gray-500 mb-1.5 block dark:text-gray-400">Dari tanggal</label>
                         <input
                             type="date"
                             value={dari}
                             onChange={(e) => setDari(e.target.value)}
-                            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20"
+                            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                         />
                     </div>
                     <div>
-                        <label className="text-xs text-gray-500 mb-1.5 block">Sampai tanggal</label>
+                        <label className="text-xs text-gray-500 mb-1.5 block dark:text-gray-400">Sampai tanggal</label>
                         <input
                             type="date"
                             value={sampai}
                             onChange={(e) => setSampai(e.target.value)}
-                            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20"
+                            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                         />
                     </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                    <button onClick={onClose} className="py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition">
+                    <button onClick={onClose} className="py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
                         Batal
                     </button>
                     <button onClick={handleTerapkan} className="py-2.5 rounded-xl bg-[#1B8A3A] text-white text-sm font-medium hover:bg-[#166e2e] transition">
@@ -310,10 +310,10 @@ export default function PenjualanTbs() {
 
             {/* HEADER */}
             <div className="flex items-center gap-3 mb-2">
-                <Link href={route('pemilik.dashboard')} className="text-gray-400 hover:text-gray-600">
+                <Link href={route('pemilik.dashboard')} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
                     <ArrowLeft size={18} />
                 </Link>
-                <h1 className="text-xl font-semibold text-gray-800">Detail Penjualan TBS</h1>
+                <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Detail Penjualan TBS</h1>
             </div>
 
             {/* FILTER PERIODE */}
@@ -323,44 +323,44 @@ export default function PenjualanTbs() {
                     onPilihBulan={() => setShowPopupBulan(true)}
                     onPilihTahun={pilihPerTahun}
                 />
-                <span className="text-xs text-gray-400">{formatTanggalIndo(startDate)} s/d {formatTanggalIndo(endDate)}</span>
+                <span className="text-xs text-gray-400 dark:text-gray-500">{formatTanggalIndo(startDate)} s/d {formatTanggalIndo(endDate)}</span>
             </div>
 
             {/* SUMMARY CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-lime-100 rounded-2xl p-4 border border-lime-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Nilai Penjualan</p>
-                    <p className="text-xl font-bold text-lime-800">Rp {formatRp(ringkasanTbs?.totalNilai)}</p>
+                <div className="bg-lime-100 rounded-2xl p-4 border border-lime-200 shadow-sm dark:bg-lime-900/15 dark:border-lime-900/30">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Total Nilai Penjualan</p>
+                    <p className="text-xl font-bold text-lime-800 dark:text-lime-400">Rp {formatRp(ringkasanTbs?.totalNilai)}</p>
                 </div>
-                <div className="bg-gray-100 rounded-2xl p-4 border border-gray-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Total Berat</p>
-                    <p className="text-xl font-bold text-gray-900">{formatRp(ringkasanTbs?.totalBeratKg)} kg</p>
+                <div className="bg-gray-100 rounded-2xl p-4 border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Total Berat</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatRp(ringkasanTbs?.totalBeratKg)} kg</p>
                 </div>
-                <div className="bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Harga TBS Berlaku</p>
-                    <p className="text-xl font-bold text-emerald-800">Rp {formatRp(ringkasanTbs?.hargaBerlaku)}<span className="text-xs font-normal text-gray-600"> /kg</span></p>
+                <div className="bg-emerald-100 rounded-2xl p-4 border border-emerald-200 shadow-sm dark:bg-emerald-900/15 dark:border-emerald-900/30">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Harga TBS Berlaku</p>
+                    <p className="text-xl font-bold text-emerald-800 dark:text-emerald-400">Rp {formatRp(ringkasanTbs?.hargaBerlaku)}<span className="text-xs font-normal text-gray-600 dark:text-gray-400"> /kg</span></p>
                 </div>
-                <div className="bg-blue-100 rounded-2xl p-4 border border-blue-200 shadow-sm">
-                    <p className="text-[11px] text-gray-600 font-medium mb-1">Jumlah Transaksi</p>
-                    <p className="text-xl font-bold text-blue-800">{(transaksi || []).length}</p>
+                <div className="bg-blue-100 rounded-2xl p-4 border border-blue-200 shadow-sm dark:bg-blue-900/15 dark:border-blue-900/30">
+                    <p className="text-[11px] text-gray-600 font-medium mb-1 dark:text-gray-300">Jumlah Transaksi</p>
+                    <p className="text-xl font-bold text-blue-800 dark:text-blue-400">{(transaksi || []).length}</p>
                 </div>
             </div>
 
             {/* TABEL PENJUALAN TBS */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6 p-6 dark:bg-gray-900 dark:border-gray-800">
                 <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                    <h2 className="font-semibold text-gray-800">
+                    <h2 className="font-semibold text-gray-800 dark:text-gray-100">
                         Riwayat Penjualan ({(transaksi || []).length})
                     </h2>
                     <div className="flex items-center gap-2 flex-wrap">
                         <div className="relative">
-                            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                             <input
                                 type="text"
                                 placeholder="Cari nama anggota..."
                                 value={cari}
                                 onChange={(e) => setCari(e.target.value)}
-                                className="border rounded-lg pl-8 pr-3 py-1.5 text-xs w-56"
+                                className="border rounded-lg pl-8 pr-3 py-1.5 text-xs w-56 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
                             />
                         </div>
                         <ExportButtons onExport={doExport} />
@@ -368,14 +368,14 @@ export default function PenjualanTbs() {
                 </div>
 
                 {(transaksi || []).length === 0 ? (
-                    <div className="text-center py-12 text-gray-300 italic text-sm">
+                    <div className="text-center py-12 text-gray-300 italic text-sm dark:text-gray-600">
                         Belum ada data penjualan TBS
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="bg-gray-50 text-gray-500 text-xs uppercase">
+                                <tr className="bg-gray-50 text-gray-500 text-xs uppercase dark:bg-gray-800 dark:text-gray-400">
                                     <th className="py-3 px-4 text-left">Tanggal</th>
                                     <th className="py-3 px-4 text-left">Anggota</th>
                                     <th className="py-3 px-4 text-right">Berat (kg)</th>
@@ -383,14 +383,14 @@ export default function PenjualanTbs() {
                                     <th className="py-3 px-4 text-right">Total Nilai</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                 {paginatedTransaksi.map((t) => (
-                                    <tr key={t.id_penjualan} className="hover:bg-gray-50">
-                                        <td className="py-3 px-4 text-[11px] text-gray-500">{formatTanggalIndo(t.tanggal_timbang)}</td>
-                                        <td className="py-3 px-4 text-[11px] text-gray-600">{t.nama_anggota}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600">{t.berat_bersih_kg}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600">Rp {formatRp(t.harga_per_kg)}</td>
-                                        <td className="py-3 px-4 text-right text-[11px] font-medium text-gray-800">Rp {formatRp(t.total_nilai)}</td>
+                                    <tr key={t.id_penjualan} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                        <td className="py-3 px-4 text-[11px] text-gray-500 dark:text-gray-400">{formatTanggalIndo(t.tanggal_timbang)}</td>
+                                        <td className="py-3 px-4 text-[11px] text-gray-600 dark:text-gray-300">{t.nama_anggota}</td>
+                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600 dark:text-gray-300">{t.berat_bersih_kg}</td>
+                                        <td className="py-3 px-4 text-right text-[11px] text-gray-600 dark:text-gray-300">Rp {formatRp(t.harga_per_kg)}</td>
+                                        <td className="py-3 px-4 text-right text-[11px] font-medium text-gray-800 dark:text-gray-100">Rp {formatRp(t.total_nilai)}</td>
                                     </tr>
                                 ))}
                             </tbody>

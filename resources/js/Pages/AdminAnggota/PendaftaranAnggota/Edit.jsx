@@ -19,16 +19,16 @@ export default function Edit({ anggota }) {
         <AdminAnggotaLayout title="Edit Anggota">
             {/* HEADER */}
             <div className="flex items-center gap-3 mb-5">
-                <Link href="/admin-anggota/pendaftaran-anggota" className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
-                    <ArrowLeft size={18} className="text-gray-500" />
+                <Link href="/admin-anggota/pendaftaran-anggota" className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition dark:border-gray-800 dark:hover:bg-gray-800">
+                    <ArrowLeft size={18} className="text-gray-500 dark:text-gray-400" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Edit Data Pendaftaran</h1>
-                    <p className="text-sm text-gray-400">KUD Lubuk Karya</p>
+                    <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Edit Data Pendaftaran</h1>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">KUD Lubuk Karya</p>
                 </div>
             </div>
 
-            <form onSubmit={submit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+            <form onSubmit={submit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4 dark:bg-gray-900 dark:border-gray-800">
                 {/* ===== PENERAPAN MATERI: Memanggil Reusable Component InputField ===== */}
                 <InputField
                     label="Nama Lengkap"
@@ -39,14 +39,14 @@ export default function Edit({ anggota }) {
                 {/* ================================================================ */}
 
                 <div>
-                    <label className="block text-base font-medium text-gray-600 mb-1.5">Alamat</label>
+                    <label className="block text-base font-medium text-gray-600 mb-1.5 dark:text-gray-300">Alamat</label>
                     <textarea
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A]"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-[#1B8A3A]/20 focus:border-[#1B8A3A] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
                         rows="3"
                         value={data.alamat}
                         onChange={e => setData('alamat', e.target.value)}
                     />
-                    {errors.alamat && <div className="text-red-500 text-sm mt-1">{errors.alamat}</div>}
+                    {errors.alamat && <div className="text-red-500 text-sm mt-1 dark:text-red-400">{errors.alamat}</div>}
                 </div>
 
                 {/* ===== PENERAPAN MATERI: Memanggil Reusable Component InputField ===== */}
@@ -58,7 +58,7 @@ export default function Edit({ anggota }) {
                 />
                 {/* ================================================================ */}
 
-                <div className="flex gap-3 pt-4 border-t border-gray-100">
+                <div className="flex gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
                     <button
                         disabled={processing}
                         className="inline-flex items-center gap-2 bg-[#1B8A3A] hover:bg-[#157030] text-white px-5 py-2.5 rounded-xl text-base font-semibold transition disabled:opacity-70"
@@ -69,7 +69,7 @@ export default function Edit({ anggota }) {
 
                     <Link
                         href="/admin-anggota/pendaftaran-anggota"
-                        className="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-base font-semibold transition"
+                        className="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-base font-semibold transition dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300"
                     >
                         Batal
                     </Link>
